@@ -20,16 +20,15 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Console\\": "vendor/thupan/framework/Console/",
-            "Kernel\\": "vendor/thupan/framework/Kernel/",
-            "Service\\": "vendor/thupan/framework/Service/",
-            "Database\\": "vendor/thupan/framework/Database/",
-            "Support\\": "vendor/thupan/framework/Support/",
-            "Exception\\": "vendor/thupan/framework/Exception/",
-            "Routing\\": "vendor/thupan/framework/Routing/",
-            "Log\\": "vendor/thupan/framework/Log/",
-            "Generator\\": "vendor/thupan/framework/Generator/"
+            "Console\\": "Console/",
+            "Kernel\\": "Kernel/",
+            "Service\\": "Service/",
+            "Database\\": "Database/",
+            "Support\\": "Support/",
+            "Exception\\": "Exception/",
+            "Routing\\": "Routing/",
+            "Log\\": "Log/",
+            "Generator\\": "Generator/"
         }
     }
 }
