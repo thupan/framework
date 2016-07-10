@@ -1,0 +1,35 @@
+{
+    "name": "thupan/framework",
+    "description": "Thupan PHP Framework",
+    "license": "MIT",
+    "authors": [{
+        "name": "DSTI - Departamento de Sistemas e Tecnologias da Informação",
+        "email": "sistemaspmm@pmm.am.gov.br",
+        "homepage": "http://gitlab.com/thupan",
+        "role": "Developer"
+    }],
+    "require": {
+        "php": ">=5.5.0",
+        "os/php-excel": "~2.1",
+        "maximebf/debugbar": "~1.10",
+        "twig/twig": "~1.24.0",
+        "setasign/fpdf": "~1.7",
+        "phpmailer/phpmailer": "~5.2",
+        "intervention/image": "~2.3",
+	"filp/whoops": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Console\\": "vendor/thupan/framework/Console/",
+            "Kernel\\": "vendor/thupan/framework/Kernel/",
+            "Service\\": "vendor/thupan/framework/Service/",
+            "Database\\": "vendor/thupan/framework/Database/",
+            "Support\\": "vendor/thupan/framework/Support/",
+            "Exception\\": "vendor/thupan/framework/Exception/",
+            "Routing\\": "vendor/thupan/framework/Routing/",
+            "Log\\": "vendor/thupan/framework/Log/",
+            "Generator\\": "vendor/thupan/framework/Generator/"
+        }
+    }
+}
