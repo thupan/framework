@@ -2,21 +2,45 @@
     "name": "thupan/framework",
     "description": "Thupan PHP Framework",
     "license": "MIT",
-    "authors": [{
-        "name": "DSTI - Departamento de Sistemas e Tecnologias da Informação",
-        "email": "sistemaspmm@pmm.am.gov.br",
-        "homepage": "http://gitlab.com/thupan",
+    "authors": [
+    {
+        "name": "Eduardo Vieira",
+        "email": "gceduvieira@gmail.com",
+        "homepage": "http://github.com/Eduardo-Vieira",
+        "role": "Developer"
+    },
+    {
+        "name": "Harryson Palheta",
+        "email": "harryson.palheta@gmail.com",
+        "homepage": "http://gitlab.com/rexrod",
+        "role": "Developer"
+    },
+    {
+        "name": "Luiz Schmitt",
+        "email": "lzschmitt@gmail.com",
+        "homepage": "http://github.com/luizschmitt",
+        "role": "Developer"
+    },
+    {
+        "name": "Rodrigo Cabral",
+        "email": "rodrixcornell@gmail.com",
+        "homepage": "http://github.com/rodrixcornell",
+        "role": "Developer"
+    },
+    {
+        "name": "Smith Junior",
+        "email": "smith.junior@icloud.com",
+        "homepage": "http://github.com/smithjunior",
         "role": "Developer"
     }],
     "require": {
         "php": ">=5.5.0",
-        "os/php-excel": "~2.1",
-        "maximebf/debugbar": "~1.10",
-        "twig/twig": "~1.24.0",
-        "setasign/fpdf": "~1.7",
-        "phpmailer/phpmailer": "~5.2",
-        "intervention/image": "~2.3",
-	"filp/whoops": "2.*"
+        "maximebf/debugbar": "1.10",
+        "twig/twig": "1.24.0",
+        "setasign/fpdf": "1.7",
+        "phpmailer/phpmailer": "5.2",
+        "intervention/image": "2.3",
+	    "filp/whoops": "2.*"
     },
     "autoload": {
         "psr-4": {
