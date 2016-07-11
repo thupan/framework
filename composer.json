@@ -40,7 +40,7 @@
         "setasign/fpdf": "~1.7",
         "phpmailer/phpmailer": "~5.2",
         "intervention/image": "~2.3",
-	"filp/whoops": "~2.*"
+	"filp/whoops": "2.*"
     },
     "autoload": {
         "psr-4": {
