@@ -35,7 +35,7 @@ class View
                 ]);
 
                 $loader->addPath(self::$config['app']['TWIG_VIEWS'], 'view');
-                $loader->addPath(DOC_ROOT . 'vendor/thupan/framework/Support/Templates/', 'stemplates');
+                $loader->addPath(__DIR__ . DS . '../Support/Templates/', 'stemplates');
                 $loader->addPath(DOC_ROOT . 'app/Support/Templates/', 'templates');
 
                 self::$instance = new \Twig_Environment($loader, [
