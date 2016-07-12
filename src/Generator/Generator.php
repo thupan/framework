@@ -28,29 +28,34 @@ class Generator {
             $pathTemplate;
 
   public function __construct() {
-    //print_r($_POST);
+    //print_r();
     $this->setPaths();
 
-    $this->program_name     = $_POST['TX_URL'];
-    $this->tablePk          = $this->cleanPk($_POST['TABLE_PK']);
-    $this->tablePk_var      = $this->cleanPk_var($_POST['TABLE_PK']);
-    $this->table            = $_POST['TABLE_NAME'];
-    $this->query            = $_POST['TABLE_SQL'];
-    $this->queryBuscar      = $_POST['TABLE_SQL_BUSCAR'];
-    $this->ColumnsDB        = $this->Options($_POST);
-    $this->search           = $this->setSearch($_POST);
-    $this->tableHeader      = $this->setHeader($_POST);
-    $this->HTMLNew          = $this->setNewPage($_POST);
-    $this->HTMLNewFields    = $this->setNewSql($_POST);
-    $this->HTMLEdit         = $this->setEditPage($_POST);
-    $this->HTMLEditFields   = $this->setEditSql($_POST);
-    $this->HTMLEditFieldsID = $this->setEditIds($_POST);
-    $this->HTMLDetail       = $this->setDetailPage($_POST);
-    $this->HTMLDetailBtn    = $this->setDetailButtons($_POST);
+    $this->program_name     = $_REQUEST['TX_URL'];
+    $this->tablePk          = $this->cleanPk($_REQUEST['TABLE_PK']);
+    $this->tablePk_var      = $this->cleanPk_var($_REQUEST['TABLE_PK']);
+    $this->table            = $_REQUEST['TABLE_NAME'];
+    $this->query            = $_REQUEST['TABLE_SQL'];
+    $this->queryBuscar      = $_REQUEST['TABLE_SQL_BUSCAR'];
+    $this->ColumnsDB        = $this->Options();
+    $this->search           = $this->setSearch();
+    $this->tableHeader      = $this->setHeader();
+    $this->HTMLNew          = $this->setNewPage();
+    $this->HTMLNewFields    = $this->setNewSql();
+    $this->HTMLEdit         = $this->setEditPage();
+    $this->HTMLEditFields   = $this->setEditSql();
+    $this->HTMLEditFieldsID = $this->setEditIds();
+    $this->HTMLDetail       = $this->setDetailPage();
+    $this->HTMLDetailBtn    = $this->setDetailButtons();
 
-    if(!$this->createFiles()) {
-      echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
-    }
+    // if(!$this->createFiles()) {
+    //   echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
+    // }
+  }
+  public function generate() {
+      if(!$this->createFiles()) {
+        echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
+      }
   }
   private function setPaths() {
     $this->pathController = DOC_ROOT . 'app/Http/Controllers/';
@@ -85,8 +90,8 @@ class Generator {
       return rtrim($new, '-');
   }
 
-  public function Options($post) {
-      $campos = $post['campos'];
+  public function Options() {
+    $campos  = $_REQUEST['campos'];
       foreach($campos as $key => $val) {
           if(!$val) continue;
           $val = str_replace(':', '.', $val);
@@ -97,8 +102,12 @@ class Generator {
   }
 
   public function query() {
-    $campos  = $_POST['campos'];
-    $tabelas = $_POST['TABLE_NAME'];
+    $campos  = $_REQUEST['campos'];
+    $tabelas = $_REQUEST['TABLE_NAME'];
+
+if(!$campos) return false;
+if(!$tabelas) return false;
+    //dd($_REQUEST,1);
 
     $all = (is_null($campos)) ? " <b style='color:red'>*</b> " : false;
     $query = "<b style='color:#F56A6A'>SELECT</b>$all<br/> ";
@@ -132,8 +141,10 @@ class Generator {
     return $query;
   }
 
-  private function setSearch($post) {
-    $rel = $post['TABLE_PK'];
+  private function setSearch() {
+    $rel = $_REQUEST['TABLE_PK'];
+
+if(!$rel) return false;
     $rel = explode('-', $rel);
 
     if($rel) {
@@ -143,7 +154,7 @@ class Generator {
         $query = ' WHERE ';
       }
 
-      $campos = $post['campos'];
+      $campos = $_REQUEST['campos'];
 
       foreach($campos as $key => $val) {
         $val = str_replace(':','.', $val);
@@ -154,9 +165,10 @@ class Generator {
 
     return $query;
   }
-  private function setHeader($post) {
-    $campos = $post['campos'];
+  private function setHeader() {
+    $campos = $_REQUEST['campos'];
 
+if(!$campos) return false;
     if($campos) {
       $table = "<th>#</th>\n";
       foreach($campos as $key => $val) {
@@ -171,8 +183,9 @@ class Generator {
     return $table;
   }
 
-  private function getFieldType($type, $label) {
+  private function getFieldType($type = false, $label = false) {
 
+    if(!$type) return false;
     $html = "\n<div class='col-md-12'>\n";
 
     switch($type) {
@@ -357,6 +370,7 @@ class Generator {
   }
 
   private function tableView($fields) {
+      if(!$fields) return false;
       $form = "<table class='table table-striped'>";
       foreach($fields as $key => $val) {
           $val = explode(':', $val);
@@ -374,11 +388,13 @@ class Generator {
       return $form;
   }
 
-  private function setNewPage($post) {
-    $campos = $post['campos_novo'];
+  private function setNewPage() {
+    $campos = $_REQUEST['campos_novo'];
+
+if(!$campos) return false;
 
     foreach($campos as $key => $val) {
-      //$form .= $this->getFieldType($post[$val], explode(':', $val)[1]);
+      //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
       $form .= $this->getFieldType($val, explode(':', $key)[1]);
 
       //echo $key.'->'.$val.'<br/>';
@@ -387,9 +403,9 @@ class Generator {
     return $form;
   }
 
-  private function setNewSql($post) {
-      $campos = $post['campos_novo'];
-
+  private function setNewSql() {
+      $campos = $_REQUEST['campos_novo'];
+if(!$campos) return false;
       //print_r($campos);
 
         $data = "'". $this->tablePk ."' => \$fgpk,\n\t\t\t  ";
@@ -401,9 +417,9 @@ class Generator {
       return $data;
   }
 
-  private function setEditSql($post) {
-      $campos = $post['campos_edit'];
-
+  private function setEditSql() {
+      $campos = $_REQUEST['campos_edit'];
+if(!$campos) return false;
       //print_r($campos);
 
       foreach($campos as $key => $val) {
@@ -413,9 +429,10 @@ class Generator {
       return $data;
   }
 
-  private function setEditIds($post) {
-      $id = $post['TABLE_PK'];
+  private function setEditIds() {
+      $id = $_REQUEST['TABLE_PK'];
 
+if(!$id) return false;
       $ids = explode('-', $id);
 
       foreach($ids as $k => $v) {
@@ -427,10 +444,11 @@ class Generator {
       return $query;
   }
 
-  private function setEditPage($post) {
-      $campos   = $post['campos_novo'];
-      $campos_e = $post['campos_edit'];
+  private function setEditPage() {
+      $campos   = $_REQUEST['campos_novo'];
+      $campos_e = $_REQUEST['campos_edit'];
 
+if(!$campos || !$campos_e) return false;
       $nao_editar = array_diff(array_keys($campos), array_values($campos_e));
 
       $form = $this->tableView($nao_editar);
@@ -438,7 +456,7 @@ class Generator {
       foreach($campos_e as $key => $val) {
           foreach($campos as $k => $v) {
               if($val == $k) {
-                  //$form .= $this->getFieldType($post[$val], explode(':', $val)[1]);
+                  //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
                   $form .= $this->getFieldType($v, explode(':', $k)[1]);
               }
           }
@@ -446,15 +464,17 @@ class Generator {
       return $form ;
   }
 
-  private function setDetailPage($post) {
-      $campos   = $post['campos_detail'];
+  private function setDetailPage() {
+      $campos   = $_REQUEST['campos_detail'];
+      if(!$campos) return false;
       $form = $this->tableView($campos);
       return $form ;
   }
 
-  private function setDetailButtons($post) {
-      $botoes = $post['botoes_acao'];
+  private function setDetailButtons() {
+      $botoes = $_REQUEST['botoes_acao'];
 
+if(!$botoes) return false;
       $botao = "";
 
       foreach($botoes as $key => $val) {
