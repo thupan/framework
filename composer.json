@@ -44,15 +44,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Console\\": "Console/",
-            "Kernel\\": "Kernel/",
-            "Service\\": "Service/",
-            "Database\\": "Database/",
-            "Support\\": "Support/",
-            "Exception\\": "Exception/",
-            "Routing\\": "Routing/",
-            "Log\\": "Log/",
-            "Generator\\": "Generator/"
+            "Console\\": "src/Console/",
+            "Kernel\\": "src/Kernel/",
+            "Service\\": "src/Service/",
+            "Database\\": "src/Database/",
+            "Support\\": "src/Support/",
+            "Exception\\": "src/Exception/",
+            "Routing\\": "src/Routing/",
+            "Log\\": "src/Log/",
+            "Generator\\": "src/Generator/"
         }
     },
     "minimum-stability": "dev"
