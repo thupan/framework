@@ -2,8 +2,11 @@
 
 namespace Generator;
 
-class Generator {
-  public    $program_name,
+use Service\Session;
+
+class Generator
+{
+    public $program_name,
             $query,
             $queryBuscar,
             $search,
@@ -20,175 +23,255 @@ class Generator {
             $HTMLDetailBtn,
             $ColumnsDB;
 
-  protected $pathController,
+    protected $pathController,
             $pathModel,
             $pathViewCss,
             $pathViewJs,
             $pathView,
             $pathTemplate;
 
-  public function __construct() {
-    //print_r();
-    $this->setPaths();
+    public function __construct()
+    {
+        //dd($_REQUEST);
+        $this->setPaths();
 
-    $this->program_name     = $_REQUEST['TX_URL'];
-    $this->tablePk          = $this->cleanPk($_REQUEST['TABLE_PK']);
-    $this->tablePk_var      = $this->cleanPk_var($_REQUEST['TABLE_PK']);
-    $this->table            = $_REQUEST['TABLE_NAME'];
-    $this->query            = $_REQUEST['TABLE_SQL'];
-    $this->queryBuscar      = $_REQUEST['TABLE_SQL_BUSCAR'];
-    $this->ColumnsDB        = $this->Options();
-    $this->search           = $this->setSearch();
-    $this->tableHeader      = $this->setHeader();
-    $this->HTMLNew          = $this->setNewPage();
-    $this->HTMLNewFields    = $this->setNewSql();
-    $this->HTMLEdit         = $this->setEditPage();
-    $this->HTMLEditFields   = $this->setEditSql();
-    $this->HTMLEditFieldsID = $this->setEditIds();
-    $this->HTMLDetail       = $this->setDetailPage();
-    $this->HTMLDetailBtn    = $this->setDetailButtons();
+        $this->program_name = $_REQUEST['TX_URL'];
+        $this->tablePk = $this->cleanPk($_REQUEST['TABLE_PK']);
+        $this->tablePk_var = $this->cleanPk_var($_REQUEST['TABLE_PK']);
+        $this->table = $_REQUEST['TABLE_NAME'];
+        $this->query = $_REQUEST['TABLE_SQL'];
+        $this->queryBuscar = $_REQUEST['TABLE_SQL_BUSCAR'];
+        $this->ColumnsDB = $this->Options();
+        $this->search = $this->setSearch();
+        $this->tableHeader = $this->setHeader();
+        $this->HTMLNew = $this->setNewPage();
+        $this->HTMLNewFields = $this->setNewSql();
+        $this->HTMLEdit = $this->setEditPage();
+        $this->HTMLEditFields = $this->setEditSql();
+        $this->HTMLEditFieldsID = $this->setEditIds();
+        $this->HTMLDetail = $this->setDetailPage();
+        $this->HTMLDetailBtn = $this->setDetailButtons();
+    }
+    public function generate()
+    {
+        // cria os diretorios
+      $this->createFolder();
 
-    // if(!$this->createFiles()) {
-    //   echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
-    // }
-  }
-  public function generate() {
-      if(!$this->createFiles()) {
-        echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
-      }
-  }
-  private function setPaths() {
-    $this->pathController = DOC_ROOT . 'app/Http/Controllers/';
-    $this->pathModel      = DOC_ROOT . 'app/Http/Models/';
-    $this->pathView       = DOC_ROOT . 'app/Http/Views/';
+        if (!$this->createFiles()) {
+            echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
+        }
+    }
+    private function setPaths()
+    {
+        $this->pathController = DOC_ROOT.'app/Http/Controllers/';
+        $this->pathModel = DOC_ROOT.'app/Http/Models/';
+        $this->pathView = DOC_ROOT.'app/Http/Views/';
 
-    $this->pathViewCss    = DOC_ROOT . 'public/app/css/';
-    $this->pathViewJs     = DOC_ROOT . 'public/app/js/';
+        $this->pathViewCss = DOC_ROOT.'public/app/css/';
+        $this->pathViewJs = DOC_ROOT.'public/app/js/';
 
-    $this->pathTemplate   = __DIR__  . DS . '../Support/Templates/Generator/tpl/';
-  }
+        $this->pathTemplate = __DIR__.DS.'../Support/Templates/Generator/tpl/';
+    }
 
-  private function cleanPk($pk) {
-      $pk = explode('-', $pk);
+    private function cleanPk($pk)
+    {
+        $pk = explode('-', $pk);
 
-      foreach($pk as $k => $v) {
-        $clean = explode('.', $v);
-        $new  .= $clean[1].'-';
-      }
+        foreach ($pk as $k => $v) {
+            $clean = explode('.', $v);
+            $new  .= $clean[1].'-';
+        }
 
-      return rtrim($new, '-');
-  }
+        return rtrim($new, '-');
+    }
 
-  private function cleanPk_var($pk) {
-      $pk = explode('-', $pk);
+    private function cleanPk_var($pk)
+    {
+        $pk = explode('-', $pk);
 
-      foreach($pk as $k => $v) {
-        $clean = explode('.', $v);
-        $new  .= '$'.$clean[1].'-';
-      }
+        foreach ($pk as $k => $v) {
+            $clean = explode('.', $v);
+            $new  .= '$'.$clean[1].'-';
+        }
 
-      return rtrim($new, '-');
-  }
+        return rtrim($new, '-');
+    }
 
-  public function Options() {
-    $campos  = $_REQUEST['campos'];
-      foreach($campos as $key => $val) {
-          if(!$val) continue;
-          $val = str_replace(':', '.', $val);
-          $options .= " <option value='$val'>".explode('_', explode('.', $val)[1])[1]."</option> ";
-      }
+    public function Options()
+    {
+        $campos = $_REQUEST['campos'];
+        foreach ($campos as $key => $val) {
+            if (!$val) {
+                continue;
+            }
+            $val = str_replace(':', '.', $val);
+            $options .= " <option value='$val'>".explode('_', explode('.', $val)[1])[1].'</option> ';
+        }
 
-      return $options;
-  }
+        return $options;
+    }
 
-  public function query() {
-    $campos  = $_REQUEST['campos'];
-    $tabelas = $_REQUEST['TABLE_NAME'];
+    public function query()
+    {
+        $campos = $_REQUEST['campos'];
+        $tabelas = $_REQUEST['TABLE_NAME'];
 
-if(!$campos) return false;
-if(!$tabelas) return false;
+        if (!$campos) {
+            return false;
+        }
+        if (!$tabelas) {
+            return false;
+        }
     //dd($_REQUEST,1);
 
     $all = (is_null($campos)) ? " <b style='color:red'>*</b> " : false;
-    $query = "<b style='color:#F56A6A'>SELECT</b>$all<br/> ";
-    foreach($campos as $key => $val) {
-        if(!$val) continue;
+        $query = "<b style='color:#F56A6A'>SELECT</b>$all<br/> ";
+        foreach ($campos as $key => $val) {
+            if (!$val) {
+                continue;
+            }
 
-        $options .= " <option value='$val'>".explode('.', $val)[1]."</option> ";
+            $options .= " <option value='$val'>".explode('.', $val)[1].'</option> ';
 
-      $val = str_replace(':', '.', $val);
+            $val = str_replace(':', '.', $val);
 
-      $text = explode('.', $val);
+            $text = explode('.', $val);
 
-      if(substr($text[1],0,3) == 'DT_') {
-          $query .= 'TO_CHAR('.$val.', \'dd/mm/yyyy\') '.$text[1].',<br/>';
-      } else {
-          $query .= $val.',<br/>';
-      }
+            if (substr($text[1], 0, 3) == 'DT_') {
+                $query .= 'TO_CHAR('.$val.', \'dd/mm/yyyy\') '.$text[1].',<br/>';
+            } else {
+                $query .= $val.',<br/>';
+            }
+        }
+
+        $query = rtrim($query, ',<br/>');
+
+        $query .= " <br/><br/><b style='color:#F56A6A'>FROM</b><br/> ";
+
+        foreach ($tabelas as $key => $val) {
+            $query .= $val.' '.$val.',<br/>';
+        }
+
+        $query = rtrim($query, ',<br/>');
+
+        $this->ColumnsDB = $options;
+
+        return $query;
     }
 
-    $query = rtrim($query, ',<br/>');
+    private function setSearch()
+    {
+        $rel = $_REQUEST['TABLE_PK'];
 
-    $query .= " <br/><br/><b style='color:#F56A6A'>FROM</b><br/> ";
+        if (!$rel) {
+            return false;
+        }
+        $rel = explode('-', $rel);
 
-    foreach($tabelas as $key => $val) {
-      $query .= $val.' '.$val.',<br/>';
+        if ($rel) {
+            if (count($rel) > 1) {
+                $query = ' AND ';
+            } else {
+                $query = ' WHERE ';
+            }
+
+            $campos = $_REQUEST['campos'];
+
+            foreach ($campos as $key => $val) {
+                $val = str_replace(':', '.', $val);
+                $query .= $val.' LIKE \'%$columns%\' OR ';
+            }
+            $query = rtrim($query, ' OR ');
+        }
+
+        return $query;
+    }
+/*
+
+<tr>
+  <th>#</th>
+  <th>LOGIN</th>
+  <th>FUNCIONÁRIO</th>
+  <th>UNIDADE GESTORA</th>
+  <th>MOTIVO</th>
+  <th>AÇÕES</th>
+</tr>
+<tr class="search-fields">
+  <form class="form-fields">
+    <td><input name="USUARIO.ID_USUARIO" class="form-control" type='text'/></td>
+    <td><input name="USUARIO.TX_LOGIN" class="form-control" type='text'/></td>
+    <td><input name="PESSOA.TX_NOME:ANY" class="form-control" type='text'/></td>
+    <td><input name="UNID_GESTORA_PESSOA.TX_UNIDADE_GESTORA:ANY" class="form-control" type='text'/></td>
+    <td><input name="USUARIO.TX_MOTIVO_SITUACAO:ANY" class="form-control" type='text'/></td>
+    <td style='width:130px !important;'>
+      <button type="button" class="btn btn-primary search">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+      </button>
+
+      <button type="button" class="btn btn-default search-refresh">
+        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+      </button>
+    </td>
+</form>
+</tr>
+
+*/
+
+    private function setHeader()
+    {
+        $campos = $_REQUEST['campos'];
+
+        if (!$campos) {
+            return false;
+        }
+        if ($campos) {
+            $i = 0;
+            foreach ($campos as $key => $val) {
+                $val = explode(':', $val);
+                $val = explode('_', $val[1]);
+                if($val[0] === 'ID' && $i === 0) {
+                    $val[1] = '#';
+                    $i++;
+                }
+                $table .= "<th>{$val[1]}</th>\n";
+            }
+
+            $table .= "<th class='text-center'>AÇÕES</th>\n";
+
+            $table .= "<tr class='search-fields'>\n
+                            <form class='form-fields'>\n";
+
+            foreach ($campos as $key => $val) {
+                    $val = str_replace(':', '.', $val);
+                    $table .= "<td><input name='$val:ANY' class='form-control' type='text'/></td>\n";
+            }
+
+            $table .= "
+            <td style='width:130px !important;'>
+              <button type='button' class='btn btn-primary search'>
+                <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
+              </button>\n\n
+
+              <button type='button' class='btn btn-default search-refresh'>
+                <span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>
+              </button>\n\n
+            </td> \n\n";
+
+            $table .= "</form>\n
+                        </tr>\n";
+        }
+
+        return $table;
     }
 
-    $query = rtrim($query, ',<br/>');
+    private function getFieldType($type = false, $label = false)
+    {
+        if (!$type) {
+            return false;
+        }
+        $html = "\n<div class='col-md-12'>\n";
 
-    $this->ColumnsDB = $options;
-    return $query;
-  }
-
-  private function setSearch() {
-    $rel = $_REQUEST['TABLE_PK'];
-
-if(!$rel) return false;
-    $rel = explode('-', $rel);
-
-    if($rel) {
-      if(count($rel) > 1) {
-        $query = ' AND ';
-      } else {
-        $query = ' WHERE ';
-      }
-
-      $campos = $_REQUEST['campos'];
-
-      foreach($campos as $key => $val) {
-        $val = str_replace(':','.', $val);
-        $query .= $val.' LIKE \'%$columns%\' OR ';
-      }
-      $query = rtrim($query, ' OR ');
-    }
-
-    return $query;
-  }
-  private function setHeader() {
-    $campos = $_REQUEST['campos'];
-
-if(!$campos) return false;
-    if($campos) {
-      $table = "<th>#</th>\n";
-      foreach($campos as $key => $val) {
-        $val    = explode(':', $val);
-        $val    = explode('_', $val[1]);
-        $table .= "\t\t\t\t\t<th>{$val[1]}</th>\n";
-      }
-
-      $table .= "\t\t\t\t\t<th class='text-center'>AÇÕES</th>";
-    }
-
-    return $table;
-  }
-
-  private function getFieldType($type = false, $label = false) {
-
-    if(!$type) return false;
-    $html = "\n<div class='col-md-12'>\n";
-
-    switch($type) {
+        switch ($type) {
       case 1:
         $html .= "
 
@@ -364,121 +447,147 @@ if(!$campos) return false;
       break;
     }
 
-    $html .= "\n</div>\n";
+        $html .= "\n</div>\n";
 
-    return $html;
-  }
+        return $html;
+    }
 
-  private function tableView($fields) {
-      if(!$fields) return false;
-      $form = "<table class='table table-striped'>";
-      foreach($fields as $key => $val) {
-          $val = explode(':', $val);
+    private function tableView($fields)
+    {
+        if (!$fields) {
+            return false;
+        }
+        $form = "<table class='table table-striped'>";
+        foreach ($fields as $key => $val) {
+            $val = explode(':', $val);
 
-          $form .= "<tr>
+            $form .= "<tr>
                         <td><b>{$val[1]}</b></td>
                         <td>
                             {\$dados[0].$val[1]}
                             <input id='{$val[1]}' name='{$val[1]}' value='{\$dados[0].$val[1]}' type='hidden' />
                         </td>
                     </tr>";
-      }
-      $form .= "</table>";
+        }
+        $form .= '</table>';
 
-      return $form;
-  }
+        return $form;
+    }
 
-  private function setNewPage() {
-    $campos = $_REQUEST['campos_novo'];
+    private function setNewPage()
+    {
+        $campos = $_REQUEST['campos_novo'];
 
-if(!$campos) return false;
+        if (!$campos) {
+            return false;
+        }
 
-    foreach($campos as $key => $val) {
-      //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
+        foreach ($campos as $key => $val) {
+            //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
       $form .= $this->getFieldType($val, explode(':', $key)[1]);
 
       //echo $key.'->'.$val.'<br/>';
+        }
+
+        return $form;
     }
 
-    return $form;
-  }
-
-  private function setNewSql() {
-      $campos = $_REQUEST['campos_novo'];
-if(!$campos) return false;
+    private function setNewSql()
+    {
+        $campos = $_REQUEST['campos_novo'];
+        if (!$campos) {
+            return false;
+        }
       //print_r($campos);
 
-        $data = "'". $this->tablePk ."' => \$fgpk,\n\t\t\t  ";
+        $data = "'".$this->tablePk."' => \$fgpk,\n\t\t\t  ";
 
-      foreach($campos as $key => $val) {
-        $data .= "'".explode(':', $key)[1]."' => \$data['".explode(':', $key)[1]."'],\n\t\t\t";
-      }
+        foreach ($campos as $key => $val) {
+            $data .= "'".explode(':', $key)[1]."' => \$data['".explode(':', $key)[1]."'],\n\t\t\t";
+        }
 
-      return $data;
-  }
+        return $data;
+    }
 
-  private function setEditSql() {
-      $campos = $_REQUEST['campos_edit'];
-if(!$campos) return false;
+    private function setEditSql()
+    {
+        $campos = $_REQUEST['campos_edit'];
+        if (!$campos) {
+            return false;
+        }
       //print_r($campos);
 
-      foreach($campos as $key => $val) {
-        $data .= "'".explode(':', $val)[1]."' => \$data['".explode(':', $val)[1]."'],\n\t\t\t";
+      foreach ($campos as $key => $val) {
+          $data .= "'".explode(':', $val)[1]."' => \$data['".explode(':', $val)[1]."'],\n\t\t\t";
       }
 
-      return $data;
-  }
+        return $data;
+    }
 
-  private function setEditIds() {
-      $id = $_REQUEST['TABLE_PK'];
+    private function setEditIds()
+    {
+        $id = $_REQUEST['TABLE_PK'];
 
-if(!$id) return false;
-      $ids = explode('-', $id);
+        if (!$id) {
+            return false;
+        }
+        $ids = explode('-', $id);
 
-      foreach($ids as $k => $v) {
-          $query .= " $v = '\$".  explode('.', $v)[1]   ."' AND";
-      }
+        foreach ($ids as $k => $v) {
+            $query .= " $v = '\$".explode('.', $v)[1]."' AND";
+        }
 
-      $query = rtrim($query, ' AND');
+        $query = rtrim($query, ' AND');
 
-      return $query;
-  }
+        return $query;
+    }
 
-  private function setEditPage() {
-      $campos   = $_REQUEST['campos_novo'];
-      $campos_e = $_REQUEST['campos_edit'];
+    private function setEditPage()
+    {
+        $campos = $_REQUEST['campos_novo'];
+        $campos_e = $_REQUEST['campos_edit'];
 
-if(!$campos || !$campos_e) return false;
-      $nao_editar = array_diff(array_keys($campos), array_values($campos_e));
+        if (!$campos || !$campos_e) {
+            return false;
+        }
+        $nao_editar = array_diff(array_keys($campos), array_values($campos_e));
 
-      $form = $this->tableView($nao_editar);
+        $form = $this->tableView($nao_editar);
 
-      foreach($campos_e as $key => $val) {
-          foreach($campos as $k => $v) {
-              if($val == $k) {
-                  //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
+        foreach ($campos_e as $key => $val) {
+            foreach ($campos as $k => $v) {
+                if ($val == $k) {
+                    //$form .= $this->getFieldType($_REQUEST[$val], explode(':', $val)[1]);
                   $form .= $this->getFieldType($v, explode(':', $k)[1]);
-              }
-          }
-      }
-      return $form ;
-  }
+                }
+            }
+        }
 
-  private function setDetailPage() {
-      $campos   = $_REQUEST['campos_detail'];
-      if(!$campos) return false;
-      $form = $this->tableView($campos);
-      return $form ;
-  }
+        return $form;
+    }
 
-  private function setDetailButtons() {
-      $botoes = $_REQUEST['botoes_acao'];
+    private function setDetailPage()
+    {
+        $campos = $_REQUEST['campos_detail'];
+        if (!$campos) {
+            return false;
+        }
+        $form = $this->tableView($campos);
 
-if(!$botoes) return false;
-      $botao = "";
+        return $form;
+    }
 
-      foreach($botoes as $key => $val) {
-          switch($val) {
+    private function setDetailButtons()
+    {
+        $botoes = $_REQUEST['botoes_acao'];
+
+        if (!$botoes) {
+            return false;
+        }
+        $botao = '';
+
+        foreach ($botoes as $key => $val) {
+            switch ($val) {
 
               case 'remover':
               $botao .= '<a href="{$url}'.strtolower($this->program_name).'/delete/{$dados[0].'.$this->tablePk.'}" class="btn btn-danger delete">
@@ -494,92 +603,100 @@ if(!$botoes) return false;
                         </a>&nbsp;';
               break;
           }
-      }
+        }
 
-      return $botao;
-  }
+        return $botao;
+    }
 
-  private function decodeTemplate($file) {
-    // controller
+    private function decodeTemplate($file)
+    {
+        // controller
     $file = str_replace('{%Controller%}',           ucwords(strtolower($this->program_name)), $file);
-    $file = str_replace('{%controller_name%}',      strtolower($this->program_name), $file);
-    $file = str_replace('{%tablePk%}',              $this->tablePk,     $file);
-    $file = str_replace('{%tablePk_var%}',          $this->tablePk_var,     $file);
-    $file = str_replace('{%TABLE_NAME%}',           strtoupper($this->table[0]), $file);
-    $file = str_replace('{%ColumnsDB%}',            $this->ColumnsDB, $file);
+        $file = str_replace('{%controller_name%}',      strtolower($this->program_name), $file);
+        $file = str_replace('{%tablePk%}',              $this->tablePk,     $file);
+        $file = str_replace('{%tablePk_var%}',          $this->tablePk_var,     $file);
+        $file = str_replace('{%TABLE_NAME%}',           strtoupper($this->table[0]), $file);
+        $file = str_replace('{%ColumnsDB%}',            $this->ColumnsDB, $file);
     // model
     $file = str_replace('{%QueryPesquisar%}',       $this->query,       $file);
-    $file = str_replace('{%QueryCamposPesquisa%}',  $this->search,      $file);
-    $file = str_replace('{%QueryBuscar%}',          $this->queryBuscar, $file);
+        $file = str_replace('{%QueryCamposPesquisa%}',  $this->search,      $file);
+        $file = str_replace('{%QueryBuscar%}',          $this->queryBuscar, $file);
     // index.tpl
     $file = str_replace('{%tableHeader%}',          $this->tableHeader, $file);
     // novo.tpl
     $file = str_replace('{%HTMLNew%}',              $this->HTMLNew, $file);
-    $file = str_replace('{%HTMLNewFields%}',        $this->HTMLNewFields, $file);
-    $file = str_replace('{%HTMLNew-valid%}',        'validar', $file);
+        $file = str_replace('{%HTMLNewFields%}',        $this->HTMLNewFields, $file);
+        $file = str_replace('{%HTMLNew-valid%}',        'validar', $file);
     // editar.tpl
     $file = str_replace('{%HTMLEdit%}',             $this->HTMLEdit, $file);
-    $file = str_replace('{%HTMLEditFields%}',       $this->HTMLEditFields, $file);
-    $file = str_replace('{%HTMLEditFieldsID%}',     $this->HTMLEditFieldsID, $file);
-    $file = str_replace('{%HTMLEdit-valid%}',       'validar', $file);
+        $file = str_replace('{%HTMLEditFields%}',       $this->HTMLEditFields, $file);
+        $file = str_replace('{%HTMLEditFieldsID%}',     $this->HTMLEditFieldsID, $file);
+        $file = str_replace('{%HTMLEdit-valid%}',       'validar', $file);
     // detail.tpl
     $file = str_replace('{%HTMLDetail%}',           $this->HTMLDetail, $file);
-    $file = str_replace('{%HTMLDetailBtn%}',        $this->HTMLDetailBtn, $file);
+        $file = str_replace('{%HTMLDetailBtn%}',        $this->HTMLDetailBtn, $file);
 
+        $file = str_replace('{%GC_VERSION%}',         '1.0', $file);
+        $file = str_replace('{%GC_DATE%}',            date('d/m/Y G:i:s'), $file);
+        $file = str_replace('{%GC_DEVELOPER%}',       Session::get('TX_LOGIN'), $file);
+        $file = str_replace('{%GC_MACHINE%}',         gethostname(), $file);
 
-    $file = str_replace('{%GC_VERSION%}',         '1.0', $file);
-    $file = str_replace('{%GC_DATE%}',            date('d/m/Y G:i:s'), $file);
-    $file = str_replace('{%GC_DEVELOPER%}',       Session::get('TX_LOGIN'), $file);
-    $file = str_replace('{%GC_MACHINE%}',         gethostname(), $file);
+        return $file;
+    }
 
-    return $file;
-  }
-
-  private function createFolder($mode=0777) {
-    // se não tem programa, não tem nada!
-    if(!$this->program_name) return false;
+    private function createFolder($mode = 0777)
+    {
+        // se não tem programa, não tem nada!
+    if (!$this->program_name) {
+        return false;
+    }
     // cria o diretorio passado.
-    mkdir($this->pathView . $this->program_name, $mode, true);
+    if (!file_exists($this->pathView.$this->program_name)) {
+        mkdir($this->pathView.$this->program_name, $mode, true);
+    }
     // tudo ok!
-    return true;
-  }
+    //return true;
+    }
 
-  private function createFiles() {
-    // só permite executar este método se tiver um nome de programa.
-    if(!$this->program_name) return false;
+    private function createFiles()
+    {
+        // só permite executar este método se tiver um nome de programa.
+    if (!$this->program_name) {
+        return false;
+    }
 
     // verifica todos os templates
-    foreach(glob(__DIR__ . DS . '../Support/Templates/Generator/tpl/*.tpl') as $localfile) {
+    foreach (glob(__DIR__.DS.'../Support/Templates/Generator/tpl/*.tpl') as $localfile) {
         // somente se existir o template
-        if( file_exists($localfile) ) {
+        if (file_exists($localfile)) {
 
           // carrega na memoria
-          $fp      = fopen($localfile, 'r') or die('Não foi possível abrir o arquivo: '.$localfile);
-          $file    = fread($fp, filesize($localfile));
-          fclose($fp);
+          $fp = fopen($localfile, 'r') or die('Não foi possível abrir o arquivo: '.$localfile);
+            $file = fread($fp, filesize($localfile));
+            fclose($fp);
 
           // decodifica o arquivo
           $file = $this->decodeTemplate($file);
 
           // pega o nome do arquivo atual
           $filename = explode('/', $localfile);
-          $filename = end($filename);
-          $filename = explode('.', $filename);
+            $filename = end($filename);
+            $filename = explode('.', $filename);
 
           // faz o devido tratamento de path e nome do programa referente o seu tipo
-          switch($filename[0]) {
+          switch ($filename[0]) {
             case 'controller':
-              $path    = $this->pathController;
-              $program = strtolower($this->program_name) . EXT_PHP;
+              $path = $this->pathController;
+              $program = ucfirst(strtolower($this->program_name)).'Controller'.EXT_PHP;
             break;
 
             case 'model':
-              $path    = $this->pathModel;
-              $program = ucfirst(strtolower($this->program_name)) . EXT_PHP;
+              $path = $this->pathModel;
+              $program = ucfirst(strtolower($this->program_name)).EXT_PHP;
             break;
 
             case 'css':
-              $path    = $this->pathViewCss;
+              $path = $this->pathViewCss;
               $program = strtolower($this->program_name).'.css';
             break;
 
@@ -590,41 +707,38 @@ if(!$botoes) return false;
 
             case 'twig':
 
-            // cria os diretorios
-            $this->createFolder();
-
-            switch($filename[1]) {
+            switch ($filename[1]) {
               case 'index':
-                $path = $this->pathView . strtolower($this->program_name) . DS;
-                $program = 'index' . EXT_TWIG;
+                $path = $this->pathView.strtolower($this->program_name).DS;
+                $program = 'index'.EXT_TWIG;
               break;
               case 'detail':
-                $path = $this->pathView . strtolower($this->program_name) . DS;
-                $program = 'detail' . EXT_TWIG;
+                $path = $this->pathView.strtolower($this->program_name).DS;
+                $program = 'detail'.EXT_TWIG;
               break;
-              case 'editar':
-                $path = $this->pathView . strtolower($this->program_name) . DS;
-                $program = 'edit' . EXT_TWIG;
+              case 'edit':
+                $path = $this->pathView.strtolower($this->program_name).DS;
+                $program = 'edit'.EXT_TWIG;
               break;
               case 'novo':
-                $path = $this->pathView . strtolower($this->program_name) . DS;
-                $program = 'novo' . EXT_TWIG;
+                $path = $this->pathView.strtolower($this->program_name).DS;
+                $program = 'novo'.EXT_TWIG;
               break;
             }
 
             break;
           }
         } else {
-          // arquivo não existe! mata tudo!
+            // arquivo não existe! mata tudo!
           return false;
         }
 
         // cria os arquivos
-        $fp  = fopen($path . $program, 'w+') or die('Não foi possível criar o arquivo: ' . $program);
+        $fp = fopen($path.$program, 'w+') or die('Não foi possível criar o arquivo: '.$program);
         fwrite($fp, $file);
         fclose($fp);
     }
 
-    return true;
-  }
+        return true;
+    }
 }
