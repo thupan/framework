@@ -21,7 +21,9 @@ class Generator
             $HTMLEditFieldsID,
             $HTMLDetail,
             $HTMLDetailBtn,
-            $ColumnsDB;
+            $ColumnsDB,
+            $HeaderClean,
+            $FieldsPDF;
 
     protected $pathController,
             $pathModel,
@@ -63,14 +65,15 @@ class Generator
     }
     private function setPaths()
     {
-        $this->pathController = DOC_ROOT.'app/Http/Controllers/';
-        $this->pathModel = DOC_ROOT.'app/Http/Models/';
-        $this->pathView = DOC_ROOT.'app/Http/Views/';
+        $this->pathController = DOC_ROOT . 'app/Http/Controllers/';
+        $this->pathModel      = DOC_ROOT . 'app/Http/Models/';
+        $this->pathView       = DOC_ROOT . 'app/Http/Views/';
 
-        $this->pathViewCss = DOC_ROOT.'public/app/css/';
-        $this->pathViewJs = DOC_ROOT.'public/app/js/';
+        $this->pathViewCss    = DOC_ROOT . 'public/app/css/';
+        $this->pathViewJs     = DOC_ROOT . 'public/app/js/';
+        $this->pathPdf       = DOC_ROOT  . 'app/Pdf/';
 
-        $this->pathTemplate = __DIR__.DS.'../Support/Templates/Generator/tpl/';
+        $this->pathTemplate = __DIR__ . DS . '../Support/Templates/Generator/tpl/';
     }
 
     private function cleanPk($pk)
@@ -233,6 +236,7 @@ class Generator
                     $val[1] = '#';
                     $i++;
                 }
+                $pdf_header .= " '$val[1]',\n ";
                 $table .= "<th>{$val[1]}</th>\n";
             }
 
@@ -243,6 +247,13 @@ class Generator
 
             foreach ($campos as $key => $val) {
                     $val = str_replace(':', '.', $val);
+                    $field_name = explode('.', $val);
+                    if(count($field_name) > 1) {
+                        $pdf_fields .= "\$linha['{$field_name[1]}'],\n";
+                    } else {
+                        $pdf_fields .= "\$linha['{$field_name[0]}'],\n";
+                    }
+
                     $table .= "<td><input name='$val:ANY' class='form-control' type='text'/></td>\n";
             }
 
@@ -261,6 +272,8 @@ class Generator
                         </tr>\n";
         }
 
+        $this->HeaderClean = rtrim($pdf_header, ',');
+        $this->FieldsPDF   = rtrim($pdf_fields, ',');
         return $table;
     }
 
@@ -277,7 +290,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -288,7 +301,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <textarea class='form-control' id='{$label}' name='{$label}' required>{\$dados[0].{$label}}</textarea>
+            <textarea class='form-control' id='{$label}' name='{$label}' required>{{{$label}}}</textarea>
           </div>
 
           ";
@@ -298,7 +311,7 @@ class Generator
         $html .= "
 
           <div class='form-group'>
-            <input type='hidden' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' />
+            <input type='hidden' name='{$label}' id='{$label}' value='{{{$label}}}' />
           </div>
 
           ";
@@ -309,7 +322,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control' type='password' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control' type='password' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -332,7 +345,7 @@ class Generator
         $html .= "
 
           <div class='form-group'>
-            <input type='file' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' />
+            <input type='file' name='{$label}' id='{$label}' value='{{{$label}}}' />
           </div>
 
           ";
@@ -343,7 +356,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control cpf' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control cpf' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -354,7 +367,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control cnpj' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control cnpj' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -365,7 +378,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control data' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control data' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -378,7 +391,7 @@ class Generator
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
             <div class='input-group'>
               <div class='input-group-addon'>R$</div>
-              <input class='form-control moeda' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+              <input class='form-control moeda' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
             </div>
           </div>
 
@@ -390,7 +403,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control telefone' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control telefone' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -401,7 +414,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control celular' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control celular' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -414,7 +427,7 @@ class Generator
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
             <div class='input-group'>
               <div class='input-group-addon'>@</div>
-              <input class='form-control email' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+              <input class='form-control email' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
             </div>
           </div>
 
@@ -428,7 +441,7 @@ class Generator
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
             <div class='input-group'>
               <div class='input-group-addon'>@</div>
-              <input class='form-control email-gov' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+              <input class='form-control email-gov' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
             </div>
           </div>
 
@@ -440,7 +453,7 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <input class='form-control cep' type='text' name='{$label}' id='{$label}' value='{\$dados[0].{$label}}' required />
+            <input class='form-control cep' type='text' name='{$label}' id='{$label}' value='{{{$label}}}' required />
           </div>
 
           ";
@@ -457,15 +470,16 @@ class Generator
         if (!$fields) {
             return false;
         }
-        $form = "<table class='table table-striped'>";
+
+        $form = '<table class="table table-striped table-hover table-detail">';
         foreach ($fields as $key => $val) {
             $val = explode(':', $val);
 
             $form .= "<tr>
                         <td><b>{$val[1]}</b></td>
                         <td>
-                            {\$dados[0].$val[1]}
-                            <input id='{$val[1]}' name='{$val[1]}' value='{\$dados[0].$val[1]}' type='hidden' />
+                            {{{$val[1]}}}
+                            <input id='{$val[1]}' name='{$val[1]}' value='{{{$val[1]}}}' type='hidden' />
                         </td>
                     </tr>";
         }
@@ -552,7 +566,7 @@ class Generator
         }
         $nao_editar = array_diff(array_keys($campos), array_values($campos_e));
 
-        $form = $this->tableView($nao_editar);
+        $form = $this->tableView(array_unique($nao_editar));
 
         foreach ($campos_e as $key => $val) {
             foreach ($campos as $k => $v) {
@@ -572,7 +586,8 @@ class Generator
         if (!$campos) {
             return false;
         }
-        $form = $this->tableView($campos);
+
+        $form = $this->tableView(array_unique($campos));
 
         return $form;
     }
@@ -590,16 +605,16 @@ class Generator
             switch ($val) {
 
               case 'remover':
-              $botao .= '<a href="{$url}'.strtolower($this->program_name).'/delete/{$dados[0].'.$this->tablePk.'}" class="btn btn-danger delete">
+              $botao .= '<a href="{{URL}}'.strtolower($this->program_name).'/delete/{{'.$this->tablePk.'}}" class="btn btn-danger delete">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            Remover
+                            {{langApp.delete}}
                         </a> &nbsp;';
               break;
 
               case 'editar':
-              $botao .= '<a href="{$url}'.strtolower($this->program_name).'/edit/{$dados[0].'.$this->tablePk.'}" class="btn btn-warning">
+              $botao .= '<a href="{{URL}}'.strtolower($this->program_name).'/edit/{{'.$this->tablePk.'}}" class="btn btn-warning">
                             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            Editar
+                            {{langApp.edit}}
                         </a>&nbsp;';
               break;
           }
@@ -636,10 +651,16 @@ class Generator
     $file = str_replace('{%HTMLDetail%}',           $this->HTMLDetail, $file);
         $file = str_replace('{%HTMLDetailBtn%}',        $this->HTMLDetailBtn, $file);
 
+        //pdf
+        $file = str_replace('{%HeaderClean%}',        $this->HeaderClean, $file);
+        $file = str_replace('{%FieldsPDF%}',        $this->FieldsPDF, $file);
+
+        //comentario
         $file = str_replace('{%GC_VERSION%}',         '1.0', $file);
         $file = str_replace('{%GC_DATE%}',            date('d/m/Y G:i:s'), $file);
         $file = str_replace('{%GC_DEVELOPER%}',       Session::get('TX_LOGIN'), $file);
         $file = str_replace('{%GC_MACHINE%}',         gethostname(), $file);
+
 
         return $file;
     }
@@ -706,26 +727,41 @@ class Generator
             break;
 
             case 'twig':
+                switch ($filename[1]) {
+                  case 'index':
+                    $path = $this->pathView.strtolower($this->program_name).DS;
+                    $program = 'index'.EXT_TWIG;
+                  break;
 
-            switch ($filename[1]) {
-              case 'index':
-                $path = $this->pathView.strtolower($this->program_name).DS;
-                $program = 'index'.EXT_TWIG;
-              break;
-              case 'detail':
-                $path = $this->pathView.strtolower($this->program_name).DS;
-                $program = 'detail'.EXT_TWIG;
-              break;
-              case 'edit':
-                $path = $this->pathView.strtolower($this->program_name).DS;
-                $program = 'edit'.EXT_TWIG;
-              break;
-              case 'novo':
-                $path = $this->pathView.strtolower($this->program_name).DS;
-                $program = 'novo'.EXT_TWIG;
-              break;
-            }
+                  case 'detail':
+                    $path = $this->pathView.strtolower($this->program_name).DS;
+                    $program = 'detail'.EXT_TWIG;
+                  break;
 
+                  case 'edit':
+                    $path = $this->pathView.strtolower($this->program_name).DS;
+                    $program = 'edit'.EXT_TWIG;
+                  break;
+
+                  case 'novo':
+                    $path = $this->pathView.strtolower($this->program_name).DS;
+                    $program = 'novo'.EXT_TWIG;
+                  break;
+                }
+            break;
+
+            case 'pdf':
+                switch ($filename[1]) {
+                  case 'pesquisa':
+                    $path = $this->pathPdf;
+                    $program = 'Pdf' . ucfirst(strtolower($this->program_name)) . 'Pesquisa' . EXT_PHP;
+                  break;
+
+                  case 'detail':
+                    $path = $this->pathPdf;
+                    $program = 'Pdf' . ucfirst(strtolower($this->program_name)) . 'Detail' . EXT_PHP;
+                  break;
+                }
             break;
           }
         } else {
