@@ -89,7 +89,7 @@ class View
                 self::$instance->addGlobal('theme',         self::$config['app']['DEFAULT_THEME']);
                 self::$instance->addGlobal('page_lang',     self::$config['app']['TWIG_PAGE_LANG']);
                 self::$instance->addGlobal('page_charset',  self::$config['app']['TWIG_PAGE_CHARSET']);
-                self::$instance->addGlobal('debug',         self::$config['app']['DEBUG']);
+                self::$instance->addGlobal('debug',         (autoload_machines()) ? false : self::$config['app']['DEBUG']);
 
                 self::$instance->addGlobal('configure',  self::$config);
 
