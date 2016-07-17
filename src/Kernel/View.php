@@ -47,6 +47,14 @@ class View
 
                 Debug::collectorTwig(self::$instance);
 
+                self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
+                    return XHR::alert($message, $alert);
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('dd', function($var) {
+                    return dd($var);
+                });
+                
                 foreach (self::$functions as $key => $function) {
                     self::$instance->addFunction($function);
                 }
