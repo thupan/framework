@@ -14,7 +14,7 @@ class Pdf{%Controller%}Pesquisa {
         self::$pdf->setTitle('Lista de {%Controller%} - Pesquisa');
         self::$pdf->AliasNbPages();
         self::$pdf->AddPage();
-        self::$pdf->SetFont('courier', '', 12);
+        self::$pdf->SetFont('Helvetica', '', 12);
     }
 
     public static function conteudo($data = null) {
@@ -25,32 +25,31 @@ class Pdf{%Controller%}Pesquisa {
         self::$pdf->SetBackgrounds(true);
 
         $col = 23.14;
-        self::$pdf->SetAligns(['C']);
+
         self::$pdf->SetWidths([1*$col,
                                3*$col,
                                2*$col,
                                3*$col,
                                3*$col]);
 
-         self::$pdf->SetBorders([0=>'LT',3=>'T']);
+         self::$pdf->SetAligns(['C', 'C', 'C', 'C', 'C']);
 
         // Titulo
-        self::$pdf->newRow([
+        self::$pdf->Row([
             {%HeaderClean%}
         ]);
 
-        self::$pdf->SetBackgrounds([true, false,true, false, true]);
+        self::$pdf->SetBackgrounds(false);
         self::$pdf->SetDrawColor(0);
-//        unset(self::$pdf->borders);
-        self::$pdf->SetBorders(['LB','B','B','B','RB']);
+        self::$pdf->SetAligns(['C', 'L', 'L', 'L', 'L']);
+
         // Imprimir linhas
         foreach ($data as $linha) {
-            self::$pdf->newRow([
+            self::$pdf->Row([
                 {%FieldsPDF%}
             ]);
         }
 
         return self::$pdf->Output();
     }
-
 }
