@@ -109,7 +109,7 @@ class PDF extends FPDF
              if (is_array($this->fontz[$i]))
                 $this->SetFont($this->fontz[$i]['font'], $this->fontz[$i]['style'], $this->fontz[$i]['size']);
             //Print the text
-            $this->MultiCell($w,5,$data[$i],$b,$a, $bfc);
+            $this->MultiCell($w,5,utf8_decode($data[$i]),$b,$a, $bfc);
             //Put the position to the right of the cell
             $this->SetXY($x+$w,$y);
         }
