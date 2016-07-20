@@ -23,6 +23,13 @@
 
                         {%HTMLEdit%}
 
+                        <div class="left">
+                            <a class="btn btn-default cancel">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                {{langApp.cancel}}
+                            </a>
+                        </div>
+                        
                          <div class="right">
                              <a class="btn btn-success validate">
                                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>

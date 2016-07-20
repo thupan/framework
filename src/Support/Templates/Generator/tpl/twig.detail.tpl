@@ -18,6 +18,13 @@
                 </div>
                 <div class="panel-body">
                     {%HTMLDetail%}
+                    
+                    <div class="left">
+                        <a class="btn btn-default cancel">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            {{langApp.cancel}}
+                        </a>
+                    </div>
 
                     {% if validarAcesso() %}
                         <div class="right">
