@@ -30,7 +30,7 @@ class Model
         return self::$db;
     }
 
-    public static function getColumns($data)
+    public static function getColumns($data, $ignore = [])
     {
         if ($data['filter']) {
             unset($data['filter']);
@@ -38,6 +38,16 @@ class Model
             return false;
         } else {
             unset($data[ 'filter']);
+        }
+
+        if($ignore) {
+          foreach($data as $key => $value) {
+            foreach($ignore as $k) {
+              if($key === $k) {
+                unset($data[$key]);
+              }
+            }
+          }
         }
 
         foreach ($data as $key => $value) {
