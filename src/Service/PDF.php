@@ -20,6 +20,12 @@ class PDF extends FPDF
         $this->widths=$w;
     }
 
+    /**
+    * Função para aplicar alinhamentos na função Row().
+    * @param mixed[] $a array ou string ('R' || 'L' || 'C' || ['R||L||R'])
+    * @example SetAligns(['R', L, 'R', 'C']) - Congurações para quantidades exata de colunas.
+    * @example SetAligns('C') - Centralizado para todos.
+    */
     function SetAligns($a)
     {
         //Set the array of column alignments
@@ -34,15 +40,10 @@ class PDF extends FPDF
 
      /**
      * Array para aplicar borda de cada célula da função Row.
-     *
      * O símbolo '&|' significa que pode ser 'E ou OU'
-     *
      * @todo add an array parameter to border.
-     *
      * @param mixed[] $border int ou string (0 || 1, 'B &| L &| R &| T')
-     *
      * @example SetBorder([0, 1, 'TB', 'RL' , 'TBRL'])
-     *
      * @return array de string ou de int.
      */
     public function SetBorders($b)
@@ -85,7 +86,12 @@ class PDF extends FPDF
         for($i=0;$i<count($data);$i++)
         {
             $w=$this->widths[$i];
-            $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+            // Alinhamentos em array ou string
+              if (!is_array($this->aligns)){
+                 $a= is_string($this->aligns) ? $this->aligns : false;
+              }else{
+                $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+              }
             // Array Background Fill Color
             if (!is_array($this->backgrounds)){
                 $bfc= $this->backgrounds == true ? true : false;
