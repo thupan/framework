@@ -134,19 +134,6 @@
          Pdf{%Controller%}Pesquisa::conteudo($data);
      }
 
-     public function xhrImprimirGrupo() {
-         Request::any($data);
-
-         $data = {%Controller%}::pesquisarGrupo($data);
-
-         if({%Controller%}::getError()) {
-             View::alert({%Controller%}::getError(), 'danger');
-             Redirect::to("$this->controller/detail/" . $data['{%tablePk%}']);
-         }
-
-         PdfUsuarioDetailGrupo::conteudo($data);
-     }
-
      public function xhrPesquisar() {
          Request::any($data);
 

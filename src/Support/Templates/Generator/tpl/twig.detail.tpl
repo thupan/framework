@@ -18,13 +18,6 @@
                 </div>
                 <div class="panel-body">
                     {%HTMLDetail%}
-                    
-                    <div class="left">
-                        <a class="btn btn-default cancel">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            {{langApp.cancel}}
-                        </a>
-                    </div>
 
                     {% if validarAcesso() %}
                         <div class="right">
@@ -57,9 +50,43 @@
                 </ul>
                 <div class="tab-content">
                     <div id="aba1" class="tab-pane active">
-                        <div class="row">
                             {# CONTEUDO ABA 1 #}
-                        </div>
+
+                            <div class="row">
+                                {% if validarAcesso() %}
+                                    <button id="form-aba1-grid-show" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        {{langApp.new}}
+                                    </button>
+
+                                    <div id="form-aba1-grid"  style="display:none; width:100%; padding-top:10px; padding-bottom:10px;">
+                                        <form class="form-aba1" role="form" novalidate>
+
+                                            <input type="hidden" name="edit" id="edit" value="" />
+                                            <input type="hidden" name="CAMPO_ESCONDIDO" value="{{CAMPO_ESCONDIDO}}" id="CAMPO_ESCONDIDO"/>
+
+                                            <div class="form-group">
+                                                <label for="CAMPO_ABA1" class="obrigatorio">CAMPO_ABA1</label>
+                                                <input type="text" class="form-control" name="CAMPO_ABA1" id="CAMPO_ABA1" placeholder="Entre com o valor" required>
+                                            </div>
+
+
+                                            <a id="form-aba1-grid-cancel" class="btn btn-default left">
+                                                <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+                                                {{langApp.cancel}}
+                                            </a>
+
+                                            <button id="form-aba1-add" class="btn btn-success right">
+                                                <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>
+                                                {{langApp.save}}
+                                            </button>
+
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            {# FIM CONTEUDO EXEMPLO ABA 1 #}
                     </div>
 
                     <div id="aba2" class="tab-pane">
