@@ -22,13 +22,26 @@ class Record {
      */
     public static function merge($table1, $table2, $pk = [])
     {
-        foreach($table1 as $key => $field) {
-            foreach($table2 as $k => $f) {
-                if($field[$pk[0]] == $f[$pk[1]]) {
-                    $array[] = array_merge($field, $f);
-                }
-            }
-        }
+
+        // join de 1 - n
+          $false = 0;
+          foreach($table1 as $key => $field) {
+              foreach($table2 as $k => $f) {
+                  if($field[$pk[0]] == $f[$pk[1]]) {
+                      $array[] = array_merge($field, $f);
+                      $false = 0;
+                      break; // para quando achar
+                  }else{
+                    $false = 1;
+                  }
+              }
+              // Verificar se tem resultado
+              if($false == 1){
+                $array[] = $field;
+                $false = 0;
+              }
+          }
+        
         return $array;
     }
 
