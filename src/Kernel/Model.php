@@ -10,11 +10,11 @@ class Model
     public static $all = false;
 
     protected static $db = null;
-    public $allowed;
+    public $autoload = true;
 
-    public function getAllowed()
+    public function modelAutoload()
     {
-        return $this->allowed;
+        return $this->autoload;
     }
 
     public static function dbConnection()
