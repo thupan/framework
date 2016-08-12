@@ -97,7 +97,7 @@ class Request
                     }
                 }
 
-                $data[$key] = ($upper) ? strtoupper(addslashes(trim($value))) : addslashes(trim($value));
+                $data[str_replace('|','.',$key)] = ($upper) ? strtoupper(addslashes(trim($value))) : addslashes(trim($value));
             }
 
             if ($request['request_data']) {
