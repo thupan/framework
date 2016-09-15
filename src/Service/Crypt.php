@@ -1,6 +1,10 @@
 <?php
 /**
  * Classe de Crypt.
+ * Para user a e so declarar use \Service\Crypt;
+ * $hash = Crypt::encode('Texto','senha');
+ * echo $hash;
+ * echo Crypt::decode($hash,'senha');
  *
  * @package \Service\Crypt
  * @version 1.0
