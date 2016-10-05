@@ -8,8 +8,8 @@ use \Service\Debug\Debug;
 class Oci implements \Database\Interfaces\PersistenceDatabase
 {
     protected static $config = [];
-    protected static $error = [];
-    protected $connection = [];
+    protected static $error  = [];
+    protected $connection    = [];
 
     public function __construct($connection, $database, $host, $port, $username, $password)
     {

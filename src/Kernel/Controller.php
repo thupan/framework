@@ -16,8 +16,7 @@ class Controller
         $_GET['lang'] ? Session::set('s_locale', $_GET['lang']) : false;
 
         $this->config = autoload_config();
-
-        $this->model = new Model();
+        $this->model  = new Model();
     }
 
     public function model($name)
@@ -27,7 +26,7 @@ class Controller
 
         if (file_exists($modelRoot)) {
             require $modelRoot;
-            $model = '\\App\\Http\\Models\\'.$modelClass;
+            $model = '\\App\\Http\\Models\\' . $modelClass;
             $this->model = new $model();
         }
     }

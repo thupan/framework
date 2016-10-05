@@ -9,7 +9,7 @@ class Response
     public static function error($number, $message = false)
     {
         View::assign('message', $message);
-        View::render('@templates/Error/'.$number);
+        View::render('@templates/Error/' . $number);
     }
 
     public static function json($data)

@@ -49,6 +49,13 @@
   }
 }
 
+/**
+ * Função global para retornar um timestamp para uma data.
+ *
+ * @method get_timestamp()
+ * @param  Date
+ * @return timestamp
+ */
 if(!function_exists('get_timestamp')) {
     function get_timestamp($date) {
 
@@ -176,9 +183,9 @@ if(!function_exists('autoload_config')) {
  * @return none
  */
 if(!function_exists('dd')) {
-    function dd($variable, $die = false, $dump = true) {
+    function dd($variable, $die = false, $dump = true, $color = 'red') {
         ob_start();
-        echo "<pre style='color:red'>", ($dump) ? var_dump($variable) : print_r($variable) ,"</pre>";
+        echo "<pre style='color:$color'>", ($dump) ? var_dump($variable) : print_r($variable) ,"</pre>";
         ob_end_flush();
         $die ? die('--- FIM DA APLICAÇÃO ---') : false;
     }

@@ -38,7 +38,7 @@ class Database
         foreach (self::$config['database']['connections'] as $environment => $connections) {
             // força o ambiente padrão de uma determinada maquina.
             autoload_machines();
-                        
+
             $DB_DEFAULT_ENV = Session::get('s_environment') ? Session::get('s_environment') : self::$config['database']['DB_DEFAULT_ENV'];
 
             if ($DB_DEFAULT_ENV === $environment) {

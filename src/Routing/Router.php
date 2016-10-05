@@ -2,6 +2,8 @@
 
 namespace Routing;
 
+use \Service\Session;
+use \Service\Redirect;
 use \Service\Response;
 use \Service\XHR;
 
@@ -328,8 +330,12 @@ class Router
                     $method = explodeCamelCase(self::$method);
 
                     if ($method[0] !== 'xhr') {
-                        header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
-                        Response::error('404');
+                        if(Session::get('logged_in')) {
+                            header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
+                            Response::error('404');
+                        } else {
+                            Redirect::to("/");
+                        }
                     }
                };
             }

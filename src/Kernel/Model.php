@@ -7,14 +7,15 @@ use \Database\Database;
 class Model
 {
     public static $connection = false;
-    public static $all = false;
+    public static $all        = false;
 
     protected static $db = null;
-    public $autoload = true;
 
-    public function modelAutoload()
+    public $validate = true;
+
+    public function validateAccess()
     {
-        return $this->autoload;
+        return $this->validate;
     }
 
     public static function dbConnection()

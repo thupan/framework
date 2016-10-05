@@ -55,6 +55,20 @@ class View
                     }
                 });
 
+                self::$functions[] = new \Twig_SimpleFunction('table', function($id, $fields = [], $actions = []) {
+                    //NOME:TABELA.CAMPO:TIPO_PESQUISA
+                    foreach($fields as $key) {
+                        $k = explode(':', $key);
+                        $arr[$k[0]] = $k[1].':'.$k[2];
+                    }
+
+                    \Service\HTML\Table::Open();
+                    \Service\HTML\Table::Header([], $arr, $actions);
+                    \Service\HTML\Table::Body(['id' => $id]);
+
+                    return \Service\HTML\Table::Close();
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
                     return XHR::alert($message, $alert);
                 });
@@ -98,7 +112,7 @@ class View
                 self::$instance->addGlobal('hostname',      gethostname());
 
                 self::$instance->addGlobal('URL',           URL);
-                self::$instance->addGlobal('bower_dir',     URL.self::$config['app']['BOWER_COMPONENTS']);
+                self::$instance->addGlobal('bower_dir',     URL . self::$config['app']['BOWER_COMPONENTS']);
 
                 self::$instance->addGlobal('app_name',      self::$config['app']['APP_NAME']);
                 self::$instance->addGlobal('app_version',   self::$config['app']['APP_VERSION']);
