@@ -11,6 +11,7 @@ class Model
 
     protected static $db = null;
 
+    // validacao do model automatico.
     public $validate = true;
 
     public function validateAccess()

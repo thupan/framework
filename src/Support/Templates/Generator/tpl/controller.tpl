@@ -22,7 +22,9 @@
  use \App\Pdf\Pdf{%Controller%}Pesquisa;
 
  class {%Controller%}Controller extends Controller implements \App\Http\Controllers\Interfaces\CRUD {
-
+     // para acessar um controller é obrigatorio estar logado.
+     public $auth = true;
+     
      /**
       * Guarda o nome deste controlador em variavél para uso posterior.
       *

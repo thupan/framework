@@ -10,6 +10,8 @@
  use \App\Domain\AppModel as Model;
 
  class {%Controller%} extends Model {
+     // faz a validação do model automatica.
+     public $validate = true;
 
      /**
       * Retorna os dados de todos os registros cadastrados.

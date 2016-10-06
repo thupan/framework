@@ -60,6 +60,9 @@ class Debug extends StandardDebugBar
         return ($key) ? self::$instance[$key] : self::$instance;
     }
 
+    public static function message($message) {
+        self::getInstance()['messages']->info($message);
+    }
     public static function collectorTwig($twig_instance)
     {
         try {

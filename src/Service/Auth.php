@@ -24,6 +24,6 @@ class Auth {
 
     public static function logout() {
         Session::destroy();
-        Redirect::('/');
+        Redirect::to('/');
     }
 }
