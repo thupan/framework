@@ -40,13 +40,14 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             $this->connection[$current] = new \PDO("oci:dbname=$tns;charset=UTF8", $username, $password);
             $this->connection[$current]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $this->connection[$current]->exec("ALTER SESSION set NLS_TERRITORY='BRAZIL'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_LANGUAGE = 'BRAZILIAN PORTUGUESE'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_ISO_CURRENCY='BRAZIL'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_NUMERIC_CHARACTERS ='.,'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_DATE_FORMAT='DD/MM/RRRR HH24:MI:SS'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_SORT='WEST_EUROPEAN_AI'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_COMP='LINGUISTIC'");              
+
+            if($nls = self::$config['database']['DB_OCI_NLS']) {
+              foreach($nls as $key => $value) {
+                self::$config['database']['DB_OCI_NLS'][$key] ?
+                  $this->connection[$current]->exec("ALTER SESSION set $key='$value'")
+                : false;
+              }
+            }
 
             Debug::collectorPDO($this->connection[$current]);
         } catch (PDOException $e) {

@@ -47,6 +47,14 @@ class View
 
                 Debug::collectorTwig(self::$instance);
 
+                self::$functions[] = new \Twig_SimpleFunction('load_modals', function() {
+                    foreach(glob(DOC_ROOT . 'app/Http/Views/_modals/modal.*.twig') as $modal) {
+                        if(file_exists($modal)) {
+                            require $modal;
+                        }
+                    }
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
                     return XHR::alert($message, $alert);
                 });
@@ -54,7 +62,7 @@ class View
                 self::$functions[] = new \Twig_SimpleFunction('dd', function($var) {
                     return dd($var);
                 });
-                
+
                 foreach (self::$functions as $key => $function) {
                     self::$instance->addFunction($function);
                 }
