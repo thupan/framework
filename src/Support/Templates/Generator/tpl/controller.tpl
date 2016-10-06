@@ -31,6 +31,11 @@
      }
 
      public function detail($id) {
+         if(!{%Controller%}::buscar($id)) {
+             View::flash("Você não pode editar o registro atual! <br/><br/> <p>Possíveis causas:</p><p>1 - O registro não existe mais.<br/>2 - O id passado é inválido.</p>", "warning");
+             Redirect::to("$this->controller");
+         }
+
          $dados = {%Controller%}::buscar($id);
          Request::prepare($dados);
          View::render("$this->controller/detail");
@@ -127,19 +132,6 @@
          }
 
          Pdf{%Controller%}Pesquisa::conteudo($data);
-     }
-
-     public function xhrImprimirGrupo() {
-         Request::any($data);
-
-         $data = {%Controller%}::pesquisarGrupo($data);
-
-         if({%Controller%}::getError()) {
-             View::alert({%Controller%}::getError(), 'danger');
-             Redirect::to("$this->controller/detail/" . $data['{%tablePk%}']);
-         }
-
-         PdfUsuarioDetailGrupo::conteudo($data);
      }
 
      public function xhrPesquisar() {

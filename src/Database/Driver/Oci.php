@@ -45,6 +45,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             $this->connection[$current]->exec("ALTER SESSION set NLS_ISO_CURRENCY='BRAZIL'");
             $this->connection[$current]->exec("ALTER SESSION set NLS_NUMERIC_CHARACTERS ='.,'");
             $this->connection[$current]->exec("ALTER SESSION set NLS_DATE_FORMAT='DD/MM/RRRR HH24:MI:SS'");
+            $this->connection[$current]->exec("ALTER SESSION set NLS_SORT='WEST_EUROPEAN_AI'");
+            $this->connection[$current]->exec("ALTER SESSION set NLS_COMP='LINGUISTIC'");              
 
             Debug::collectorPDO($this->connection[$current]);
         } catch (PDOException $e) {

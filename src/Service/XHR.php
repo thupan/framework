@@ -145,16 +145,13 @@ class XHR
 
                 ++$fields;
 
-                foreach ($ids as $k => $i) {
-                    $prepare .= "\$data[$item]['$i']";
-                    $prepare = $prepare.".'-'.";
+                foreach($ids as $k => $i) {
+                    $x[] = $data[$item][$i];
                 }
 
-                $prepare = rtrim($prepare, ".'-'.");
+                $id = implode('-', $x);
 
-                eval('$id = '.$prepare.';');
-
-                unset($prepare);
+                unset($x);
 
                 ++$item;
 
@@ -243,15 +240,13 @@ class XHR
                 }
                 ++$fields;
 
-                foreach ($ids as $k => $i) {
-                    $prepare .= "\$data[$item]['$i']";
-                    $prepare = $prepare.".'-'.";
+                foreach($ids as $k => $i) {
+                    $x[] = $data[$item][$i];
                 }
 
-                $prepare = rtrim($prepare, ".'-'.");
+                $id = implode('-', $x);
 
-                eval('$id = '.$prepare.';');
-                unset($prepare);
+                unset($x);
 
                 ++$item;
 

@@ -8,7 +8,6 @@ use \Exception;
 use \DebugBar;
 use \DebugBar\StandardDebugBar;
 
-
 class Debug extends StandardDebugBar
 {
     protected static $instance;
@@ -24,8 +23,15 @@ class Debug extends StandardDebugBar
 
         self::$instance = new \DebugBar\StandardDebugBar();
 
-        self::collectorConfig(require DOC_ROOT.'app/Config/App.php', 'config-app');
-        self::collectorConfig(require DOC_ROOT.'app/Config/Database.php', 'config-database');
+        foreach(glob(DOC_ROOT . 'app/Config/*.php') as $file) {
+            if(file_exists($file)) {
+                $name = explode('/', $file);
+                $name = end($name);
+                $name = str_replace('.php', '', $name);
+                self::collectorConfig(require $file, 'Config-' . $name);
+            }
+        }
+
         self::collectorTimeLine('teste', 'Teste de timeline', null);
     }
 

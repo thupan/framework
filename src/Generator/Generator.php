@@ -333,8 +333,8 @@ class Generator
 
           <div class='form-group'>
             <label class='form-control-label obrigatorio' for='{$label}'>{$label}</label>
-            <select class='form-control' name='{$label}' id='{$label}' required>
-                <option value=''>Escolha...</option>
+            <select class='form-control form-control-select2' name='{$label}' id='{$label}' required>
+
             </select>
           </div>
 
@@ -476,9 +476,9 @@ class Generator
             $val = explode(':', $val);
 
             $form .= "<tr>
-                        <td><b>{$val[1]}</b></td>
                         <td>
-                            {{{$val[1]}}}
+                            <label>{$val[1]}</label>
+                            <span>{{{$val[1]}}}</span>
                             <input id='{$val[1]}' name='{$val[1]}' value='{{{$val[1]}}}' type='hidden' />
                         </td>
                     </tr>";

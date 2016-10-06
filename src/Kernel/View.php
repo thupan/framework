@@ -47,6 +47,14 @@ class View
 
                 Debug::collectorTwig(self::$instance);
 
+                self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
+                    return XHR::alert($message, $alert);
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('dd', function($var) {
+                    return dd($var);
+                });
+                
                 foreach (self::$functions as $key => $function) {
                     self::$instance->addFunction($function);
                 }
@@ -89,7 +97,7 @@ class View
                 self::$instance->addGlobal('theme',         self::$config['app']['DEFAULT_THEME']);
                 self::$instance->addGlobal('page_lang',     self::$config['app']['TWIG_PAGE_LANG']);
                 self::$instance->addGlobal('page_charset',  self::$config['app']['TWIG_PAGE_CHARSET']);
-                self::$instance->addGlobal('debug',         self::$config['app']['DEBUG']);
+                self::$instance->addGlobal('debug',         (autoload_machines()) ? false : self::$config['app']['DEBUG']);
 
                 self::$instance->addGlobal('configure',  self::$config);
 
