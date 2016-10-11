@@ -69,6 +69,10 @@ class View
                     return \Service\HTML\Table::Close();
                 });
 
+                self::$functions[] = new \Twig_SimpleFunction('mobileSearch', function($url, $actions = [], $validate = true) {
+                    return \Service\HTML\Form::MobileSearch($url, $actions, $validate);
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
                     return XHR::alert($message, $alert);
                 });

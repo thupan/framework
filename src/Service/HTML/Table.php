@@ -45,7 +45,7 @@ class Table {
                          <form class="form-fields">';
 
         foreach($data as $field => $key) {
-         self::$table .= '<td><input name="'.$key.'" class="form-control" type="text"/></td>';
+         self::$table .= '<td><input name="'.$key.'" class="form-control Enter" type="text"/></td>';
         }
 
         // se houver botoes de acoes

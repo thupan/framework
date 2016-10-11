@@ -32,16 +32,17 @@ class Model
         return self::$db;
     }
 
-    public static function getColumns($data, $ignore = [])
+    public static function getColumns($data, $where = true, $ignore = [])
     {
+        // ser verdadeiro, forca a perda de filtros
         if ($data['filter']) {
             unset($data['filter']);
-
             return false;
         } else {
-            unset($data[ 'filter']);
+            unset($data['filter']);
         }
 
+        // remove campos do filtro
         if($ignore) {
           foreach($data as $key => $value) {
             foreach($ignore as $k) {
@@ -53,16 +54,29 @@ class Model
         }
 
         foreach ($data as $key => $value) {
-            if (!$value) {
+
+            // da prioridade de pesquisa na versao mobile
+            if(in_array('TX_PESQUISA', array_keys($data))) {
+                if($value) {
+                    $value_all = $value;
+                }
+                unset($data['TX_PESQUISA']);
                 continue;
             }
 
+            // se nao tiver nenhum valor passa pro proximo campo
+            if (!$value_all && !$value) {
+                continue;
+            }
+
+            // ignora paginacao
             if ($key == 'p') {
                 continue;
             }
 
             $k = explode(':', $key);
 
+            // prepara as regras de pesquisa por campo
             switch ($k[1]) {
                 case 'ANY':
                     $value = '%'.$value.'%';
@@ -84,7 +98,23 @@ class Model
                     $value = $value.'%';
             }
 
-            $columns[] = " AND (UPPER($k[0]) LIKE '$value') ";
+            if($where === false) {
+            // pesquisa por todos os campos
+            if($value_all) {
+                $value = '%'. $value_all .'%';
+                $opt   = 'OR';
+            } else {
+                // pesquisa por campos combinados
+                $opt = 'AND';
+            }
+        } else {
+            $value = (!$value_all) ? $value : '%'. $value_all .'%';
+            $opt = ' WHERE ';
+            $where = false;
+        }
+
+            // monta a query
+            $columns[] = " $opt (UPPER($k[0]) LIKE '$value') ";
         }
 
         return ($columns) ? implode(' ', $columns) : false;
