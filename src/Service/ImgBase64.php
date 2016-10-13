@@ -1,6 +1,6 @@
 <?php
 /**
- * Classe controladora de requisições do PHP.
+ * Classe para converter imagens Base64 e salvar em pasta.
  *
  * @version 1.0
  */
