@@ -1,5 +1,7 @@
 <?php
 
+use \Service\Session;
+
 /**
  * Função global para fazer concat em scripts.
  *
