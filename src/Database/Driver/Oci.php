@@ -11,6 +11,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     protected static $error  = [];
     protected $connection    = [];
 
+    protected static $queries = [];
+
     public function __construct($connection, $database, $host, $port, $username, $password)
     {
         $this->connect($connection, $database, $host, $port, $username, $password);
@@ -58,8 +60,35 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         return $this;
     }
 
+    public function getQueries() {
+        return self::$queries;
+    }
+
+    public function setQuery($sql) {
+        $sql = self::getError() ? self::getError() : $sql;
+
+        if(!is_array($sql)) {
+            if(preg_match("/select/i", $sql)) {
+                $reg = 'SELECT';
+            } else if(preg_match("/insert/i", $sql)) {
+                $reg = 'INSERT';
+            } else if(preg_match("/delete/i", $sql)) {
+                $reg = 'DELETE';
+            } else if(preg_match("/update/i", $sql)) {
+                $reg = 'UPDATE';
+            } else {
+                $reg = 'SQL';
+            }
+        } else {
+            $reg = 'ERRO';
+        }
+        self::$queries[date('d/m/Y G:i:s')." ($reg)"] = $sql;
+    }
+
     public function query($sql, $type = null)
     {
+        $this->setQuery($sql);
+
         foreach ($this->connection as $connection);
         try {
             $sth = $connection->prepare($sql);
@@ -91,6 +120,9 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             }
 
             $sql = "SELECT * FROM $table $where";
+
+            $this->setQuery($sql);
+
             $sth = $connection->prepare($sql);
             $sth->execute();
 
@@ -119,7 +151,12 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
+                $values .= "'$value',";
             }
+
+            $values = rtrim($values, ',');
+
+            $this->setQuery("INSERT INTO $table ($fieldNames) VALUES ($values)");
 
             return $sth->execute();
         } catch (PDOException $e) {
@@ -138,9 +175,11 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $fieldDetails .= "$key=:$key,";
+                $values .= "$key='$value',";
             }
 
             $fieldDetails = rtrim($fieldDetails, ',');
+            $values       = rtrim($value, ',');
 
             $sql = "UPDATE $table SET $fieldDetails WHERE $where";
 
@@ -149,6 +188,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
             }
+
+            $this->setQuery("UPDATE $table SET $values");
 
             return $sth->execute();
         } catch (PDOException $e) {
@@ -162,6 +203,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         foreach ($this->connection as $connection);
         try {
             $sql = "DELETE FROM $table WHERE $where";
+
+            $this->setQuery($sql);
 
             return $connection->exec($sql);
         } catch (PDOException $e) {

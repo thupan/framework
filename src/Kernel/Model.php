@@ -158,6 +158,10 @@ class Model
         return ($search) ? implode(' ', $search) : false;
     }
 
+    public static function getQueries($connection = null) {
+        return self::dbConnection()->getInstance($connection ? $connection : self::$connection)->getQueries();
+    }
+
     public static function getError()
     {
         return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getError());

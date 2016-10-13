@@ -96,7 +96,6 @@ class Table {
             // prepara os dados para paginação, se solicitado.
             if(self::$paginate) {
                 $paginator = new Paginator();
-                $paginator->per_page = 2;
                 $paginator->paginate($data);
             }
 
