@@ -6,11 +6,14 @@ use \Service\Session;
 
 class Form {
 
-    public static function MobileSearch($url, $actions = [], $validate = true) {
+    public static function formSearch($id, $url, $actions = [], $validate = true) {
         // carrega as configurações do frame para pegar o idioma
         $language = autoload_config();
 
-        $mobile = "
+        $name[0] = ($id) ? 'search-'.$id : 'search';
+        $name[1] = ($id) ? 'form-fields-'.$id : 'form-fields';
+
+        $form = "
           <div class='row'>
           <div class='container'>
             <div class='form-horizontal' role='form'>
@@ -21,7 +24,7 @@ class Form {
                 if(in_array('new', $actions)) {
                     if($validate) {
 
-                        $mobile .= "
+                        $form .= "
                         <a href='$url' class='btn btn-success'>
                           <span class='glyphicon glyphicon-plus' aria-hidden='true'></span> ".$language[Session::get('s_locale')]['app']['new']."
                         </a>";
@@ -29,23 +32,23 @@ class Form {
                 }
 
                 if(in_array('print', $actions)) {
-                    $mobile .= "
+                    $form .= "
 
                       <a id='imprimir' class='btn btn-primary'>
                         <span class='glyphicon glyphicon-print' aria-hidden='true'></span> ".$language[Session::get('s_locale')]['app']['print']."
                       </a>";
                 }
-                  $mobile .= "
+                  $form .= "
                 </div>
 
                 <div class='clearfix visible-xs visible-sm right mobile-search'>
-                    <form class='form-fields'>
+                    <form class='$name[1]'>
                           <div class='form-group'>
                             <div class='input-group right' style='width:300px; margin-right:15px;'>
                               <input type='text' class='form-control Enter' id='TX_PESQUISA' name='TX_PESQUISA' placeholder='".$language[Session::get('s_locale')]['app']['search_']."'>
                               <div class='input-group-btn'>
                                   <div class='btn-group' role='group'>
-                                    <button type='button' class='btn btn-primary search'>
+                                    <button type='button' class='btn btn-primary $name[0]'>
                                       <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
                                     </button>
                                   </div>
@@ -59,7 +62,7 @@ class Form {
           </div>
         </div>";
 
-        echo $mobile;
+        echo $form;
     }
 
 }

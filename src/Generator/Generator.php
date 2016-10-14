@@ -254,7 +254,7 @@ class Generator
                         $pdf_fields .= "\$linha['{$field_name[0]}'],\n";
                     }
 
-                    $table .= "<td><input name='$val:ANY' class='form-control' type='text'/></td>\n";
+                    $table .= "<td><input name='$val:ANY' class='form-control Enter' type='text'/></td>\n";
             }
 
             $table .= "
@@ -623,8 +623,15 @@ class Generator
         return $botao;
     }
 
+    private function arrayPkTable() {
+        $array = explode('-', $this->tablePk);
+
+        return  "['". implode("','", $array) . "']";
+    }
+
     private function decodeTemplate($file)
     {
+        $file = str_replace('{%arrayPkTable%}', $this->arrayPkTable(), $file);
         // controller
     $file = str_replace('{%Controller%}',           ucwords(strtolower($this->program_name)), $file);
         $file = str_replace('{%controller_name%}',      strtolower($this->program_name), $file);
@@ -633,6 +640,10 @@ class Generator
         $file = str_replace('{%TABLE_NAME%}',           strtoupper($this->table[0]), $file);
         $file = str_replace('{%ColumnsDB%}',            $this->ColumnsDB, $file);
     // model
+        $this->query = str_replace(',', ",\n", $this->query);
+        $this->query = str_replace("\n\n\n\n", "\n", $this->query);
+
+
     $file = str_replace('{%QueryPesquisar%}',       $this->query,       $file);
         $file = str_replace('{%QueryCamposPesquisa%}',  $this->search,      $file);
         $file = str_replace('{%QueryBuscar%}',          $this->queryBuscar, $file);

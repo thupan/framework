@@ -13,14 +13,14 @@ class View
     protected $twig;
     protected $twig_loader;
 
-    protected static $data = [];
+    protected static $data     = [];
     protected static $instance = false;
-    public static $config = false;
 
-    public static $title = false;
+    public static $config = false;
+    public static $title  = false;
 
     public static $functions = [];
-    public static $filters = [];
+    public static $filters   = [];
 
     public static function getInstance()
     {
@@ -63,14 +63,19 @@ class View
                     }
 
                     \Service\HTML\Table::Open();
-                    \Service\HTML\Table::Header([], $arr, $actions);
+                    \Service\HTML\Table::Header([], $id, $arr, $actions);
+
+                    if($id != 'tabela') {
+                        $id = 'tabela-'.$id;
+                    }
+
                     \Service\HTML\Table::Body(['id' => $id]);
 
                     return \Service\HTML\Table::Close();
                 });
 
-                self::$functions[] = new \Twig_SimpleFunction('mobileSearch', function($url, $actions = [], $validate = true) {
-                    return \Service\HTML\Form::MobileSearch($url, $actions, $validate);
+                self::$functions[] = new \Twig_SimpleFunction('formSearch', function($id = null, $url = null, $actions = [], $validate = true) {
+                    return \Service\HTML\Form::formSearch($id, $url, $actions, $validate);
                 });
 
                 self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
@@ -79,6 +84,22 @@ class View
 
                 self::$functions[] = new \Twig_SimpleFunction('dd', function($var) {
                     return dd($var);
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('validate', function($array, $key) {
+                    if(in_array($key, $array)) {
+                        return '<span style="color:red">' . self::$config[Session::get('s_locale')]['app']['requiredMsg'] . '</span>';
+                    }
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array, $var = null) {
+                    $options = "<option value=''></option>";
+                    foreach($array as $index) {
+                            $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
+                            $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";
+                    }
+
+                    return $options;
                 });
 
                 foreach (self::$functions as $key => $function) {
@@ -119,6 +140,7 @@ class View
                 self::$instance->addGlobal('bower_dir',     URL . self::$config['app']['BOWER_COMPONENTS']);
 
                 self::$instance->addGlobal('app_name',      self::$config['app']['APP_NAME']);
+                self::$instance->addGlobal('app_title',      self::$config['app']['APP_TITLE']);
                 self::$instance->addGlobal('app_version',   self::$config['app']['APP_VERSION']);
                 self::$instance->addGlobal('theme',         self::$config['app']['DEFAULT_THEME']);
                 self::$instance->addGlobal('page_lang',     self::$config['app']['TWIG_PAGE_LANG']);
@@ -168,6 +190,7 @@ class View
                 self::$instance->addGlobal('debugbar_header',   Debug::render()->renderHead());
                 self::$instance->addGlobal('debugbar_body',     Debug::render()->render());
             } catch (Exception $e) {
+                echo $e->getMessage();
             }
         }
 

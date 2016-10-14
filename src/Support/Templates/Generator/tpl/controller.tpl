@@ -24,7 +24,7 @@
  class {%Controller%}Controller extends Controller implements \App\Http\Controllers\Interfaces\CRUD {
      // para acessar um controller é obrigatorio estar logado.
      public $auth = true;
-     
+
      /**
       * Guarda o nome deste controlador em variavél para uso posterior.
       *
@@ -285,7 +285,9 @@
          $data = {%Controller%}::pesquisar($data);
 
          // Formata os dados dinamicamente em tabela
-         XHR::table($data, "$this->controller:{%tablePk%}");
+         //XHR::table($data, "$this->controller:{%tablePk%}");
+
+         XHR::table('tabela', $data, ['detail'], {%arrayPkTable%});         
      }
 
      /**

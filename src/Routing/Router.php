@@ -329,8 +329,8 @@ class Router
                 self::$errorCallback = function () {
                     $method = explodeCamelCase(self::$method);
 
-                    if ($method[0] !== 'xhr') {
-                        if(Session::get('logged_in')) {
+                    if ($method[0] != 'xhr') {
+                        if(Session::get('s_loggedIn')) {
                             header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
                             Response::error('404');
                         } else {
