@@ -66,29 +66,10 @@ class XHR
 
     public static function table($id, $data, $action = [], $pkey = [], $config = [])
     {
-        // verifica se existe campos para serem eliminados
         if(self::$ignore) {
-            // prepara os dados do banco
-            foreach($data as $index => $array) {
-                foreach($array as $key => $value) {
-                    // procura o campo a ser ignorado na base da dados
-                    if(in_array($key, self::$ignore)) {
-                        // se encontrado, entao removido.
-                        unset($data[$index][$key]);
-                    }
-                }
-            }
+            Table::ignore(self::$ignore);
         } else if(self::$only) {
-            // prepara os dados do banco
-            foreach($data as $index => $array) {
-                foreach($array as $key => $value) {
-                    // procura o campo a ser eliminados na base da dados
-                    if(!in_array($key, self::$only)) {
-                        // se não encontrado, entao removido.
-                        unset($data[$index][$key]);
-                    }
-                }
-            }
+            Table::only(self::$only);
         }
 
         // prepara a tabela com o dados passados.
