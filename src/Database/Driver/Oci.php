@@ -90,6 +90,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         $this->setQuery($sql);
 
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+                1 => self::getError(),
+                ])]];
+        }
+
         try {
             $sth = $connection->prepare($sql);
             $sth->execute();
@@ -111,6 +118,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function find($table, $where = null)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             if (!empty($table)) {
                 $table = rtrim($table);
@@ -136,6 +150,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function insert($table, $data)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             $fieldNames = implode(',', array_keys($data));
 
@@ -168,6 +189,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function update($table, $data, $where)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             ksort($data);
 
@@ -201,6 +229,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function delete($table, $where)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             $sql = "DELETE FROM $table WHERE $where";
 
@@ -222,6 +257,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function execute($sql)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             return $connection->exec($sql);
         } catch (PDOException $e) {

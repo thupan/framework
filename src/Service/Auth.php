@@ -55,9 +55,9 @@ class Auth {
     {
     }
 
-    public static function logout()
+    public static function logout($redirect = '/')
     {
         Session::destroy();
-        Redirect::to('/');
+        Redirect::to($redirect);
     }
 }
