@@ -9,6 +9,8 @@ class Table {
     protected static $table    = null;
     protected static $message  = null;
     protected static $paginate = true;
+    public static $ignore = null;
+    public static $only   = null;
 
     public static function Open($options = ['class' => 'table table-striped table-hover listview']) {
         foreach($options as $key => $value) {
@@ -119,35 +121,57 @@ class Table {
             $name[1] = ($options['id']) ? 'del-'.$options['id'] : 'delete';
 
             // prepara o conteudo dos campos para cada linha
-            foreach($data as $row) {
+            foreach($data as $index => $row) {
 
                 // prepara atributos para os elementos tr e td, se solicitado.
                 if($config) {
                     //dd($config);
                     foreach($config as $key => $configure) {
 
-                        switch($key) {
-                            case 'tr':
-                                foreach($configure as $tr_key => $tr_value) {
-                                    $attr_tr .= $tr_key.'="'.$tr_value.'" ';
-                                }
-                            break;
+                        $k = explode(':', $key);
 
-                            case 'td':
-                                foreach($configure as $td_key => $td_value) {
-                                    if(is_array($td_value)) {
-                                        if(array_key_exists($td_key,$row))
-                                        foreach($td_value as $ktd => $vtd) {
-                                            dd($vtd);
-                                        }
-                                    }
-                                    else {
-                                        $attr_td .= $td_key.'="'.$td_value.'" ';
-                                    }
+                        //
+                        // switch($k[0]) {
+                        //     case 'td':
+                        //
+                        //
+                        //
+                        //
+                        //         foreach($configure as $cfg_key => $cfg_val) {
+                        //             if($k[1]) {
+                        //
+                        //                 $attr_td = $cfg_key.'="'.$cfg_val.'" ';
+                        //             } else {
+                        //                 $attr_td = $cfg_key.'="'.$cfg_val.'" ';
+                        //             }
+                        //         }
+                        //         //dd($attr_td);
+                        //
+                        //     break;
+                        // }
 
-                                }
-                            break;
-                        }
+                        // switch($key) {
+                        //     case 'tr':
+                        //         foreach($configure as $tr_key => $tr_value) {
+                        //             $attr_tr .= $tr_key.'="'.$tr_value.'" ';
+                        //         }
+                        //     break;
+                        //
+                        //     case 'td':
+                        //     //dd($configure);
+                        //         foreach($configure as $td_key => $td_value) {
+                        //             //dd($td_key);
+                        //             if(is_array($td_value)) {
+                        //                 //dd($td_value);
+                        //             }
+                        //             else {
+                        //                 $attr_td .= $td_key.'="'.$td_value.'" ';
+                        //             }
+                        //
+                        //         }
+                        //     break;
+                        // }
+
                     }
                 }
 
@@ -155,6 +179,20 @@ class Table {
                 self::$table .= "<tr $attr_tr>";
                 // pega o conteudo de cada campo
                 foreach($row as $field => $value) {
+
+                    // verifica se existe campos para serem eliminados
+                    if(self::$ignore) {
+                        // remove os campos ignorados
+                        if(in_array($field, self::$ignore)) {
+                            continue;
+                        }
+                    } else if(self::$only) {
+                        // remove todos os campos que nao forem passados
+                        if(!in_array($field, self::$only)) {
+                            continue;
+                        }
+                    }
+
                     // retorna nome do campo limpo
                     $fname = explode('_', $field)[1];
 
@@ -166,7 +204,7 @@ class Table {
                             self::$table .= "<td data-label='$fname'>$value</td>";
                         }
                     } else {
-                        self::$table .= "<td data-label='$fname' $attr_td>$value</td>";
+                        self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";
                     }
 
                 }
@@ -191,7 +229,7 @@ class Table {
 
                     $validarAcesso = true;
                     $link = URL . \Routing\Router::getControllerName();
-                    
+
                     // verifica quais os botoes serao adicionados
                     foreach($actions as $k => $action) {
 
@@ -310,5 +348,15 @@ class Table {
 
     public static function Show() {
         return self::$table;
+    }
+
+    public static function ignore($field = [])
+    {
+        self::$ignore = $field;
+    }
+
+    public static function only($field = [])
+    {
+        self::$only = $field;
     }
 }
