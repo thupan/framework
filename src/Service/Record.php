@@ -41,7 +41,9 @@ class Record {
                 $false = 0;
               }
           }
-        
+
+          if(!$array){$array = [];}
+
         return $array;
     }
 
@@ -59,6 +61,9 @@ class Record {
         foreach ($result as $key => $fields) {
          $dados[] = self::sortkeys($fields,$array);
         }
+
+        if(!$dados){ $dados = [];}
+
         return $dados;
     }
     /**
@@ -127,25 +132,31 @@ class Record {
     {
         $cont = 0;
 
-        foreach ($dados as $key => $value) {
+        if($valor){
+          foreach ($dados as $key => $value) {
 
-              if(strpos($value[$coluna],$valor)!== false){
-                $obj[$cont] = $value;
-                $cont++;
-              }else if(strpos($value[$coluna],strtoupper($valor))!== false){
-                $obj[$cont] = $value;
-                $cont++;
-              } else if(strpos($value[$coluna],ucwords(strtolower($valor)))!== false){
-                $obj[$cont] = $value;
-                $cont++;
-              }else if(strpos($value[$coluna],strtolower($valor))!== false){
-                $obj[$cont] = $value;
-                $cont++;
-              }else if(strpos($value[$coluna],ucfirst(strtolower($valor)))!== false){
-                $obj[$cont] = $value;
-                $cont++;
-              }
+                if(strpos($value[$coluna],$valor)!== false){
+                  $obj[$cont] = $value;
+                  $cont++;
+                }else if(strpos($value[$coluna],mb_strtoupper($valor))!== false){
+                  $obj[$cont] = $value;
+                  $cont++;
+                } else if(strpos($value[$coluna],ucwords(strtolower($valor)))!== false){
+                  $obj[$cont] = $value;
+                  $cont++;
+                }else if(strpos($value[$coluna],mb_strtolower($valor))!== false){
+                  $obj[$cont] = $value;
+                  $cont++;
+                }else if(strpos($value[$coluna],ucfirst(strtolower($valor)))!== false){
+                  $obj[$cont] = $value;
+                  $cont++;
+                }
+          }
+        }else{
+          $obj = $dados;
         }
+
+        if(!$obj){ $obj = [];}
 
         return $obj;
     }
