@@ -1,7 +1,5 @@
 <?php
 
-use \Service\Session;
-
 /**
  * Função global para fazer concat em scripts.
  *
@@ -51,13 +49,6 @@ use \Service\Session;
   }
 }
 
-/**
- * Função global para retornar um timestamp para uma data.
- *
- * @method get_timestamp()
- * @param  Date
- * @return timestamp
- */
 if(!function_exists('get_timestamp')) {
     function get_timestamp($date) {
 
@@ -148,38 +139,6 @@ if(!function_exists('autoload_config')) {
 }
 
 /**
- * Função global para retornar a traduacao.
- * @method translate(param, param)
- * @param  String Arquivo de idiomas
- * @param  String Chave do arquivo de idiomas
- * @param  Array  Troca de palavras sequencias
- * @return Array
- */
-if(!function_exists('translate')) {
-    function translate($l = 'app', $k = null, $a = []) {
-
-        foreach(glob(DOC_ROOT . 'app/Language/*/*') as $file) {
-            $keys = explode('/', $file);
-            $lang = $keys[ sizeof($keys) - 2 ];
-            $key  = $keys[ sizeof($keys) - 1 ];
-            $key  = strtolower(str_replace('.php', '', $key));
-
-            $array[$lang][$key] = require $file;
-        }
-
-        $key = $array[\Service\Session::get('s_locale')][$l][$k];
-
-        if($a) {
-            foreach($a as $index => $value) {
-                    $key = str_replace('{'.$index.'}', $value, $key);
-            }
-        }
-
-        return $key;
-    }
-}
-
-/**
  * Função global de carregar maquinas de acesso ao ambiente
  *
  * Quando utilizado a maquina que estiver na lista de ambientes so podera ter acesso
@@ -217,9 +176,9 @@ if(!function_exists('translate')) {
  * @return none
  */
 if(!function_exists('dd')) {
-    function dd($variable, $die = false, $dump = true, $color = 'red') {
+    function dd($variable, $die = false, $dump = true) {
         ob_start();
-        echo "<pre style='color:$color'>", ($dump) ? var_dump($variable) : print_r($variable) ,"</pre>";
+        echo "<pre style='color:red'>", ($dump) ? var_dump($variable) : print_r($variable) ,"</pre>";
         ob_end_flush();
         $die ? die('--- FIM DA APLICAÇÃO ---') : false;
     }
