@@ -13,11 +13,17 @@ class Controller
 
     public function __construct()
     {
-        $_GET['lang'] ? Session::set('s_locale', $_GET['lang']) : false;
-
         $this->config = autoload_config();
+        $this->model  = new Model();
 
-        $this->model = new Model();
+        if($_GET['lang']) {
+            $languages = scandir(DOC_ROOT . 'app/Language');
+            if(in_array($_GET['lang'], $languages)) {
+                Session::set('s_locale', $_GET['lang']);
+            } else {
+                \Service\Debug\Debug::message('não foi possível localizar o idioma ' . $_GET['lang'] . '. Seu idioma não foi alterado.');
+            }
+        }
     }
 
     public function model($name)
@@ -27,7 +33,7 @@ class Controller
 
         if (file_exists($modelRoot)) {
             require $modelRoot;
-            $model = '\\App\\Http\\Models\\'.$modelClass;
+            $model = '\\App\\Http\\Models\\' . $modelClass;
             $this->model = new $model();
         }
     }

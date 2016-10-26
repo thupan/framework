@@ -13,14 +13,14 @@ class View
     protected $twig;
     protected $twig_loader;
 
-    protected static $data = [];
+    protected static $data     = [];
     protected static $instance = false;
-    public static $config = false;
 
-    public static $title = false;
+    public static $config = false;
+    public static $title  = false;
 
     public static $functions = [];
-    public static $filters = [];
+    public static $filters   = [];
 
     public static function getInstance()
     {
@@ -47,6 +47,37 @@ class View
 
                 Debug::collectorTwig(self::$instance);
 
+                self::$functions[] = new \Twig_SimpleFunction('load_modals', function() {
+                    foreach(glob(DOC_ROOT . 'app/Http/Views/_modals/modal.*.twig') as $modal) {
+                        if(file_exists($modal)) {
+                            require $modal;
+                        }
+                    }
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('table', function($id, $fields = [], $actions = []) {
+                    //NOME:TABELA.CAMPO:TIPO_PESQUISA
+                    foreach($fields as $key) {
+                        $k = explode(':', $key);
+                        $arr[$k[0]] = $k[1].':'.$k[2];
+                    }
+
+                    \Service\HTML\Table::Open();
+                    \Service\HTML\Table::Header([], $id, $arr, $actions);
+
+                    if($id != 'tabela') {
+                        $id = 'tabela-'.$id;
+                    }
+
+                    \Service\HTML\Table::Body(['id' => $id]);
+
+                    return \Service\HTML\Table::Close();
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('formSearch', function($id = null, $url = null, $actions = [], $validate = true) {
+                    return \Service\HTML\Form::formSearch($id, $url, $actions, $validate);
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('alert', function($message, $alert = 'info') {
                     return XHR::alert($message, $alert);
                 });
@@ -54,7 +85,23 @@ class View
                 self::$functions[] = new \Twig_SimpleFunction('dd', function($var) {
                     return dd($var);
                 });
-                
+
+                self::$functions[] = new \Twig_SimpleFunction('validate', function($array, $key) {
+                    if(in_array($key, $array)) {
+                        return '<span style="color:red">' . self::$config[Session::get('s_locale')]['app']['requiredMsg'] . '</span>';
+                    }
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array, $var = null) {
+                    $options = "<option value=''></option>";
+                    foreach($array as $index) {
+                            $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
+                            $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";
+                    }
+
+                    return $options;
+                });
+
                 foreach (self::$functions as $key => $function) {
                     self::$instance->addFunction($function);
                 }
@@ -90,9 +137,10 @@ class View
                 self::$instance->addGlobal('hostname',      gethostname());
 
                 self::$instance->addGlobal('URL',           URL);
-                self::$instance->addGlobal('bower_dir',     URL.self::$config['app']['BOWER_COMPONENTS']);
+                self::$instance->addGlobal('bower_dir',     URL . self::$config['app']['BOWER_COMPONENTS']);
 
                 self::$instance->addGlobal('app_name',      self::$config['app']['APP_NAME']);
+                self::$instance->addGlobal('app_title',      self::$config['app']['APP_TITLE']);
                 self::$instance->addGlobal('app_version',   self::$config['app']['APP_VERSION']);
                 self::$instance->addGlobal('theme',         self::$config['app']['DEFAULT_THEME']);
                 self::$instance->addGlobal('page_lang',     self::$config['app']['TWIG_PAGE_LANG']);
@@ -142,6 +190,7 @@ class View
                 self::$instance->addGlobal('debugbar_header',   Debug::render()->renderHead());
                 self::$instance->addGlobal('debugbar_body',     Debug::render()->render());
             } catch (Exception $e) {
+                echo $e->getMessage();
             }
         }
 

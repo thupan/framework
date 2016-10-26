@@ -2,46 +2,21 @@
 
 namespace Service;
 
-use \Service\Paginator;
+use Service\HTML\Table;
 
 class XHR
 {
-    public static $ignore = [];
-    public static $only = [];
+    public static $ignore = null;
+    public static $only   = null;
 
     protected static $alert = false;
     public static $validator = true;
 
-    public static function alert($message, $alert = 'info')
+    public static $paginate = true;
+
+    public static function alert($message, $type = 'info')
     {
-        switch ($alert) {
-            case 'info':
-                $icon = '<span class="glyphicon glyphicon-info-sign"></span>';
-            break;
-
-            case 'warning':
-                $icon = '<span class="glyphicon glyphicon-exclamation-sign"></span>';
-            break;
-
-            case 'danger':
-                $icon = '<span class="glyphicon glyphicon-remove-sign"></span>';
-            break;
-
-            case 'success':
-                $icon = '<span class="glyphicon glyphicon-ok-sign"></span>';
-            break;
-        }
-
-        self::$alert = "
-                        <div class='alert alert-$alert alert-dismissible fade in' role='alert'>
-                            $icon
-                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                <span aria-hidden='true'>&times;</span>
-                            </button>
-                            $message
-                        </div>";
-
-        return self::$alert;
+        return Table::Alert($message, $type);
     }
 
     public static function getBreadCrumb($title)
@@ -89,211 +64,27 @@ class XHR
         return self::$validator;
     }
 
-    public static function tablex($data = array(), $action = null, $paginate = true)
+    public static function table($id, $data, $action = [], $pkey = [], $config = [])
     {
-        $paginator = new Paginator();
-
-        if ($paginate) {
-            $paginator->paginate($data);
+        if(self::$ignore) {
+            Table::ignore(self::$ignore);
+        } else if(self::$only) {
+            Table::only(self::$only);
         }
 
-        $fields = (int) 0;
-        $item = (int) 0;
-
-        if ($action) {
-            $reg = explode(':', $action);
-            $ids = explode('-', $reg[2]);
-
-            $controller = $reg[0];
-
-            switch ($reg[1]) {
-        case 'edit':
-          $edit = true;
-          $delete = false;
-        break;
-
-        case 'del':
-          $delete = true;
-          $edit = false;
-        break;
-
-        case 'edit.del':
-          $edit = true;
-          $delete = true;
-        break;
-      }
-        }
-
-        if (self::$alert) {
-            $table .= "<tr><td colspan='15'>".self::$alert.'</td></tr>';
-        }
-
-        if ($data) {
-            foreach ($data as $key => $field) {
-
-        // só carrega os campos selecionados
-        // foreach(array_keys($field) as $r => $c) {
-        //     if(!in_array($c, array_keys(self::$only))) {
-        //         unset($field[$c]);
-        //     }
-        // }
-
-        // remove só os campos selecionados
-        foreach (self::$ignore as $k => $key) {
-            unset($field[$key]);
-        }
-
-                ++$fields;
-
-                foreach($ids as $k => $i) {
-                    $x[] = $data[$item][$i];
-                }
-
-                $id = implode('-', $x);
-
-                unset($x);
-
-                ++$item;
-
-                $table .= '<tr>';
-
-                foreach ($field as $key => $value) {
-                    if (in_array($key, array_keys(self::$only))) {
-                        $attr = explode(',', self::$only[$key]);
-                        $attr = implode(' ', $attr);
-                    }
-
-                    $key = explode('_', $key);
-                    $key = ($key[0] == 'ID') ? '#' : $key[1];
-
-                    $table .= "<td data-label='{$key}' $attr>{$value}</td>";
-
-                    unset($attr);
-                }
-
-                if (self::validator()) {
-                    $table .= "<td align='center'>";
-
-                    if ($edit) {
-                        if ($reg[3] != $item) {
-                            $table .= "<a href='$id' class='btn btn-warning edit-$controller'>
-                                <span class='glyphicon glyphicon-pencil' aria-hidden='true'></span>
-                           </a> &nbsp;";
-                        }
-                    }
-
-                    if ($delete) {
-                        if ($reg[4] != $item) {
-                            $table .= "<a href='$id' class='btn btn-danger delete del-$controller'>
-                              <span class='glyphicon glyphicon-trash' aria-hidden='true'></span>
-                           </a>";
-                        }
-                    }
-
-                    $table .= '</td>';
-                }
-
-                $table .= '</tr>';
-            }
-        } else {
-            $table .= "<tr>
-                            <td colspan='100' align='center' class='nohover' style='padding:30px; font-size:15px'>
-                                <span class='glyphicon glyphicon-exclamation-sign'></span> Nenhum registro foi encontrado.
-                            </td>
-                       </tr>";
-        }
-
-        if ($paginate) {
-            $table .= "<tr class='tfoot'><td colspan='100' class='nohover'>{$paginator->pages()}</td></tr>";
-        }
-
-        echo $table;
+        // prepara a tabela com o dados passados.
+        Table::Rows(is_array($id) ? $id : ['id' => $id], $data, $action, $pkey, $config);
+        // retorna a tabela montanda.
+        echo Table::Show();
     }
 
-    // XHR HTML
-    public static function table($data = array(), $detail = null, $paginate = true)
-    {
-        $paginator = new Paginator();
-
-        if ($paginate) {
-            $paginator->paginate($data);
-        }
-
-        $fields = (int) 0;
-        $item = (int) 0;
-
-        if ($detail) {
-            $reg = explode(':', $detail);
-            $ids = explode('-', $reg[1]);
-        }
-
-        if (self::$alert) {
-            $table .= "<tr><td colspan='100'>".self::$alert.'</td></tr>';
-        }
-
-        if ($data) {
-            foreach ($data as $key => $field) {
-                if (self::$ignore) {
-                    foreach (self::$ignore as $k => $key) {
-                        unset($field[$key]);
-                    }
-                }
-                ++$fields;
-
-                foreach($ids as $k => $i) {
-                    $x[] = $data[$item][$i];
-                }
-
-                $id = implode('-', $x);
-
-                unset($x);
-
-                ++$item;
-
-                $table .= '<tr>';
-                foreach ($field as $key => $value) {
-                    $key = explode('_', $key)[1];
-                    $table .= "<td data-label='".$key."'>{$value}</td>";
-                }
-
-                if ($detail) {
-                    $table .= "<td align='center' width='150'>
-                        <a href='".URL.$reg[0]."/detail/{$id}' class='btn btn-info'>
-                        <span class='glyphicon glyphicon-list' aria-hidden='true'></span>
-                          <span class='hidden-xs'>Detalhes</span>
-                        </a>
-                      </td>";
-                }
-
-                $table .= '</tr>';
-            }
-        } else {
-            $table .= "<tr>
-                            <td colspan='100' align='center' class='nohover' style='padding:30px; font-size:15px'>
-                                <span class='glyphicon glyphicon-exclamation-sign'></span> Nenhum registro foi encontrado.
-                            </td>
-                       </tr>";
-        }
-
-        if ($paginate) {
-            $table .= "<tr class='tfoot'><td colspan='100' class='nohover'>{$paginator->pages()}</td></tr>";
-        }
-
-        echo $table;
-    }
-
-    public static function ignore($field = array())
+    public static function ignore($field = [])
     {
         self::$ignore = $field;
     }
 
-    public static function only($field = array())
+    public static function only($field = [])
     {
-        foreach ($field as $key => $value) {
-            // força a chave do array ser o campo
-          $key = (is_integer($key)) ? $value : $key;
-          // se nao tiver valor o value vai ser o mesmo nome da key
-          self::$only[$key] = $value;
-        }
+        self::$only = $field;
     }
 }

@@ -8,8 +8,10 @@ use \Service\Debug\Debug;
 class Oci implements \Database\Interfaces\PersistenceDatabase
 {
     protected static $config = [];
-    protected static $error = [];
-    protected $connection = [];
+    protected static $error  = [];
+    protected $connection    = [];
+
+    protected static $queries = [];
 
     public function __construct($connection, $database, $host, $port, $username, $password)
     {
@@ -40,13 +42,14 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             $this->connection[$current] = new \PDO("oci:dbname=$tns;charset=UTF8", $username, $password);
             $this->connection[$current]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $this->connection[$current]->exec("ALTER SESSION set NLS_TERRITORY='BRAZIL'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_LANGUAGE = 'BRAZILIAN PORTUGUESE'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_ISO_CURRENCY='BRAZIL'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_NUMERIC_CHARACTERS ='.,'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_DATE_FORMAT='DD/MM/RRRR HH24:MI:SS'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_SORT='WEST_EUROPEAN_AI'");
-            $this->connection[$current]->exec("ALTER SESSION set NLS_COMP='LINGUISTIC'");              
+
+            if($nls = self::$config['database']['DB_OCI_NLS']) {
+              foreach($nls as $key => $value) {
+                self::$config['database']['DB_OCI_NLS'][$key] ?
+                  $this->connection[$current]->exec("ALTER SESSION set $key='$value'")
+                : false;
+              }
+            }
 
             Debug::collectorPDO($this->connection[$current]);
         } catch (PDOException $e) {
@@ -57,8 +60,35 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         return $this;
     }
 
+    public function getQueries() {
+        return self::$queries;
+    }
+
+    public function setQuery($sql) {
+        $sql = self::getError() ? self::getError() : $sql;
+
+        if(!is_array($sql)) {
+            if(preg_match("/select/i", $sql)) {
+                $reg = 'SELECT';
+            } else if(preg_match("/insert/i", $sql)) {
+                $reg = 'INSERT';
+            } else if(preg_match("/delete/i", $sql)) {
+                $reg = 'DELETE';
+            } else if(preg_match("/update/i", $sql)) {
+                $reg = 'UPDATE';
+            } else {
+                $reg = 'SQL';
+            }
+        } else {
+            $reg = 'ERRO';
+        }
+        self::$queries[date('d/m/Y G:i:s')." ($reg)"] = $sql;
+    }
+
     public function query($sql, $type = null)
     {
+        $this->setQuery($sql);
+
         foreach ($this->connection as $connection);
         try {
             $sth = $connection->prepare($sql);
@@ -90,6 +120,9 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             }
 
             $sql = "SELECT * FROM $table $where";
+
+            $this->setQuery($sql);
+
             $sth = $connection->prepare($sql);
             $sth->execute();
 
@@ -118,7 +151,12 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
+                $values .= "'$value',";
             }
+
+            $values = rtrim($values, ',');
+
+            $this->setQuery("INSERT INTO $table ($fieldNames) VALUES ($values)");
 
             return $sth->execute();
         } catch (PDOException $e) {
@@ -137,9 +175,11 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $fieldDetails .= "$key=:$key,";
+                $values .= "$key='$value',";
             }
 
             $fieldDetails = rtrim($fieldDetails, ',');
+            $values       = rtrim($value, ',');
 
             $sql = "UPDATE $table SET $fieldDetails WHERE $where";
 
@@ -148,6 +188,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
             }
+
+            $this->setQuery("UPDATE $table SET $values");
 
             return $sth->execute();
         } catch (PDOException $e) {
@@ -161,6 +203,8 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         foreach ($this->connection as $connection);
         try {
             $sql = "DELETE FROM $table WHERE $where";
+
+            $this->setQuery($sql);
 
             return $connection->exec($sql);
         } catch (PDOException $e) {

@@ -1,7 +1,7 @@
 {#************************************************************
  * SCRIPT CRIADO PELO GERADOR DE CÓDIGO v{%GC_VERSION%}
  * CRIADO EM: {%GC_DATE%}
- * CRIADOR POR: {%GC_DEVELOPER%}@{%GC_MACHINE%}
+ * GERADO POR: {%GC_DEVELOPER%} @ {%GC_MACHINE%}
  ************************************************************#}
 
  {% extends "index.twig" %}
@@ -29,7 +29,7 @@
                                  {{langApp.cancel}}
                              </a>
                          </div>
-                         
+
                          <div class="right">
                              <a class="btn btn-success validate">
                                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
