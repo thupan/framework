@@ -92,6 +92,10 @@ class View
                     }
                 });
 
+                self::$functions[] = new \Twig_SimpleFunction('tokenCsrf', function($name) {
+                    return self::tokenCsrf($name);
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array, $var = null) {
                     $options = "<option value=''></option>";
                     foreach($array as $index) {
@@ -195,6 +199,13 @@ class View
         }
 
         return self::$instance;
+    }
+
+    public static function tokenCsrf($name = null) {
+        $name  = ($name) ? '_' . $name : null;
+        $token = md5(uniqid(rand(), true) . $name);
+        Session::set('s_token_csrf' . $name, $token);
+        return $token;
     }
 
     public static function flash($message, $alert = 'info')
