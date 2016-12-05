@@ -13,6 +13,7 @@ class Paginator {
   public  $current_page;
   public  $total_page;
   public  $links_page;
+  public $id;
 
   public function __construct() {
     $this->links_page = 10;
@@ -66,7 +67,8 @@ class Paginator {
   }
 
   public function pages() {
-    $pages = "<div class='text-center'><ul class='pagination'>
+     $id = ($this->id) ? 'pagination-'.$this->id : false;
+    $pages = "<div class='text-center'><ul class='pagination $id'>
     <li><a href='?p=1'>
     <span class='glyphicon glyphicon-triangle-left' aria-hidden='true'></span>
     </a></li>
