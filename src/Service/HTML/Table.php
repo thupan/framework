@@ -288,6 +288,7 @@ class Table {
             }
 
             if(self::$paginate) {
+                $paginator->id = $options['id'];
                 self::$table .= "<tr class='tfoot'><td colspan='100' class='nohover'>".$paginator->pages()."</td></tr>";
             }
         } else {
