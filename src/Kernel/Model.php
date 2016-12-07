@@ -101,8 +101,8 @@ class Model
             if($where === false) {
             // pesquisa por todos os campos
             if($value_all) {
-                $value = '%'. $value_all .'%';
-                $opt   = 'OR';
+                $mob .= " UPPER($k[0]) LIKE UPPER('%$value_all%') OR";
+                continue;
             } else {
                 // pesquisa por campos combinados
                 $opt = 'AND';
@@ -114,10 +114,14 @@ class Model
         }
 
             // monta a query
-            $columns[] = " $opt (UPPER($k[0]) LIKE '$value') ";
+            $columns[] = " $opt (UPPER($k[0]) LIKE UPPER('$value')) ";
         }
 
-        return ($columns) ? implode(' ', $columns) : false;
+        if($mob) {
+            return ' AND (' . rtrim($mob, ' OR') .')';
+        } else {
+            return ($columns) ? implode(' ', $columns) : false;
+        }
     }
 
     public static function getColumnsKey($keys = [], $value, $type = 'AND')
