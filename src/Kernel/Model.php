@@ -108,6 +108,10 @@ class Model
                 $opt = 'AND';
             }
         } else {
+            if($value_all) {
+                $mob2 .= " UPPER($k[0]) LIKE UPPER('%$value_all%') OR";
+                continue;
+            }
             $value = (!$value_all) ? $value : '%'. $value_all .'%';
             $opt = ' WHERE ';
             $where = false;
@@ -119,6 +123,8 @@ class Model
 
         if($mob) {
             return ' AND (' . rtrim($mob, ' OR') .')';
+        } else if($mob2) {
+            return ' WHERE (' . rtrim($mob2, ' OR') .')';
         } else {
             return ($columns) ? implode(' ', $columns) : false;
         }
