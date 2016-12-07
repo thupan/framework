@@ -236,6 +236,8 @@ class Table {
                         if(!is_numeric($k)) {
                             if(is_bool($action)) {
                                 $validarAcesso = $action;
+                            } else {
+                                $m_name = $action;
                             }
                             $action = $k;
                         }
@@ -247,6 +249,15 @@ class Table {
                                                         <span class='glyphicon glyphicon-list' aria-hidden='true'></span>
                                                         ".$language[Session::get('s_locale')]['app']['details']."
                                                      </a> ";
+                                }
+                            break;
+
+                            case 'modal':
+                                if($m_name) {
+                                    $m = explode(':', $m_name);
+                                    self::$table .= "<a href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-warning $name[0]' alt='$m[1]' title='$m[1]'>
+                                                    <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
+                                                 </a> ";
                                 }
                             break;
 
