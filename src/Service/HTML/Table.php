@@ -255,7 +255,7 @@ class Table {
                             case 'modal':
                                 if($m_name) {
                                     $m = explode(':', $m_name);
-                                    self::$table .= "<a href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-warning $m[0]' alt='$m[1]' title='$m[1]'>
+                                    self::$table .= "<a data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
                                                     <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
                                                  </a> ";
                                 }
