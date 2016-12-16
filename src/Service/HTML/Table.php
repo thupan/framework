@@ -38,7 +38,9 @@ class Table {
                          <tr>";
 
         foreach($data as $field => $key) {
-            self::$table .= '<th>'.$field.'</th>';
+            if($field != 'hidden') {
+                self::$table .= '<th>'.$field.'</th>';
+            }
         }
 
         if($id == 'tabela') $id = '';
@@ -49,14 +51,17 @@ class Table {
         $name[3] = ($id) ? 'tabela-'.$id : 'tabela';
         $name[4] = ($id) ? 'imprimir-'.$id : 'imprimir';
 
-
         self::$table .= '<th class="text-center">AÇÕES</th>
                          </tr>
                          <tr class="search-fields">
                          <form class="'.$name[2].'">';
 
         foreach($data as $field => $key) {
-         self::$table .= '<td><input name="'.$key.'" class="form-control Enter" type="text"/></td>';
+             if($field == 'hidden') {
+                 self::$table .= '<input name="'.$key.'" class="form-control" type="hidden"/>';
+             } else {
+                 self::$table .= '<td><input name="'.$key.'" class="form-control Enter" type="text"/></td>';
+             }
         }
 
         // se houver botoes de acoes
