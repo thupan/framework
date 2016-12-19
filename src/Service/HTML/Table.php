@@ -123,63 +123,27 @@ class Table {
             // prepara o conteudo dos campos para cada linha
             foreach($data as $index => $row) {
 
-                // prepara atributos para os elementos tr e td, se solicitado.
-                if($config) {
-                    //dd($config);
-                    foreach($config as $key => $configure) {
-
-                        $k = explode(':', $key);
-
-                        //
-                        // switch($k[0]) {
-                        //     case 'td':
-                        //
-                        //
-                        //
-                        //
-                        //         foreach($configure as $cfg_key => $cfg_val) {
-                        //             if($k[1]) {
-                        //
-                        //                 $attr_td = $cfg_key.'="'.$cfg_val.'" ';
-                        //             } else {
-                        //                 $attr_td = $cfg_key.'="'.$cfg_val.'" ';
-                        //             }
-                        //         }
-                        //         //dd($attr_td);
-                        //
-                        //     break;
-                        // }
-
-                        // switch($key) {
-                        //     case 'tr':
-                        //         foreach($configure as $tr_key => $tr_value) {
-                        //             $attr_tr .= $tr_key.'="'.$tr_value.'" ';
-                        //         }
-                        //     break;
-                        //
-                        //     case 'td':
-                        //     //dd($configure);
-                        //         foreach($configure as $td_key => $td_value) {
-                        //             //dd($td_key);
-                        //             if(is_array($td_value)) {
-                        //                 //dd($td_value);
-                        //             }
-                        //             else {
-                        //                 $attr_td .= $td_key.'="'.$td_value.'" ';
-                        //             }
-                        //
-                        //         }
-                        //     break;
-                        // }
-
-                    }
-                }
-
-                // seta atributo para o elemento tr
-                self::$table .= "<tr $attr_tr>";
+               $count = 0;
                 // pega o conteudo de cada campo
                 foreach($row as $field => $value) {
+                  if($count==0){
+                    // Configuração de atributos pra o tr da tabela
+                    if($config) {
 
+                      if($config['tr']){
+                        if($config['tr'][$field.':'.$value]){
+                          foreach($config['tr'][$field.':'.$value] as $key => $vl){
+                            $attr_tr .= $key.'="'.$vl.'" ';
+                          }
+                        }else{
+                          $attr_tr='';
+                        }
+                      }
+                    }
+                    // seta atributo para o elemento tr
+                    self::$table .= "<tr $attr_tr>";
+
+                  }
                     // verifica se existe campos para serem eliminados
                     if(self::$ignore) {
                         // remove os campos ignorados
@@ -196,6 +160,32 @@ class Table {
                     // retorna nome do campo limpo
                     $fname = explode('_', $field)[1];
 
+                    // Configuração de atributos pra o td da tabela
+                    if($config) {
+                      if($config['td']){
+
+                        // dd($config['td'][$field]);
+                        if($config['td'][$field]){
+                          foreach($config['td'][$field] as $key => $vl){
+                            $k = explode(':',$key);
+
+                            if($k[0]!='value'){
+                              $attr_td .= $key.'="'.$vl.'" ';
+                            }
+                          }
+                          if($config['td'][$field]['value:'.strtoupper($value)]){
+                            foreach($config['td'][$field]['value:'.strtoupper($value)] as $key_1 => $vl_1){
+                                $attr_td .= $key_1.'="'.$vl_1.'" ';
+                            }
+                          }
+
+                        }else{
+                          $attr_td='';
+                        }
+                      }
+                      // dd($attr_td);
+                    }
+
                     if($v[1]) {
                         if($field === $v[1]) {
                             self::$table .= "<td data-label='$fname' $attr_td>$value</td>";
@@ -206,7 +196,7 @@ class Table {
                     } else {
                         self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";
                     }
-
+                    $count++;
                 }
 
                 // se houver botoes de acoes
@@ -236,6 +226,8 @@ class Table {
                         if(!is_numeric($k)) {
                             if(is_bool($action)) {
                                 $validarAcesso = $action;
+                            } else {
+                                $m_name = $action;
                             }
                             $action = $k;
                         }
@@ -247,6 +239,15 @@ class Table {
                                                         <span class='glyphicon glyphicon-list' aria-hidden='true'></span>
                                                         ".$language[Session::get('s_locale')]['app']['details']."
                                                      </a> ";
+                                }
+                            break;
+
+                            case 'modal':
+                                if($m_name) {
+                                    $m = explode(':', $m_name);
+                                    self::$table .= "<a data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
+                                                    <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
+                                                 </a> ";
                                 }
                             break;
 
@@ -288,6 +289,7 @@ class Table {
             }
 
             if(self::$paginate) {
+                $paginator->id = $options['id'];
                 self::$table .= "<tr class='tfoot'><td colspan='100' class='nohover'>".$paginator->pages()."</td></tr>";
             }
         } else {
