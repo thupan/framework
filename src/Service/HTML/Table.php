@@ -266,6 +266,19 @@ class Table {
                                 }
                             break;
 
+                            case 'icon':
+                                if($m_name) {
+                                    $m    = explode(':', $m_name);
+                                    $w    = explode('.', $m[1]);
+                                    $w[1] = !$w[1] ? 'warning' : $w[1];
+
+                                    self::$table .= "<a data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                                    <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
+                                                    <span>$m[2]</span>
+                                                 </a> ";
+                                }
+                            break;
+
                             case 'edit':
                                 if($validarAcesso) {
                                     self::$table .= "<a href='$pk' class='btn btn-warning $name[0]' alt='".$language[Session::get('s_locale')]['app']['edit']."' title='".$language[Session::get('s_locale')]['app']['edit']."'>
