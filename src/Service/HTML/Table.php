@@ -8,7 +8,7 @@ use Service\Session;
 class Table {
     protected static $table    = null;
     protected static $message  = null;
-    protected static $paginate = true;
+    public static $paginate = true;
     public static $ignore = null;
     public static $only   = null;
 

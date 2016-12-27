@@ -66,6 +66,8 @@ class XHR
 
     public static function table($id, $data, $action = [], $pkey = [], $config = [])
     {
+        Table::$paginate = self::$paginate;
+        
         if(self::$ignore) {
             Table::ignore(self::$ignore);
         } else if(self::$only) {
