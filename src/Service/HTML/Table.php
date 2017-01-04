@@ -50,6 +50,7 @@ class Table {
         $name[2] = ($id) ? 'form-fields-'.$id : 'form-fields';
         $name[3] = ($id) ? 'tabela-'.$id : 'tabela';
         $name[4] = ($id) ? 'imprimir-'.$id : 'imprimir';
+        $name[5] = ($id) ? 'Enter-'.$id : 'Enter';
 
         self::$table .= '<th class="text-center">AÇÕES</th>
                          </tr>
@@ -60,7 +61,7 @@ class Table {
              if($field == 'hidden') {
                  self::$table .= '<input name="'.$key.'" class="form-control" type="hidden"/>';
              } else {
-                 self::$table .= '<td><input name="'.$key.'" class="form-control Enter" type="text"/></td>';
+                 self::$table .= '<td><input name="'.$key.'" class="form-control '.$name[5].'" type="text"/></td>';
              }
         }
 
