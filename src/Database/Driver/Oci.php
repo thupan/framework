@@ -161,7 +161,11 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             $fieldNames = implode(',', array_keys($data));
 
             foreach ($data as $key => $value) {
-                $fieldValues .= ":$key,";
+                if($value == 'sysdate' OR $value == 'SYSDATE') {
+                    $fieldValues .= "sysdate,";
+                } else {
+                    $fieldValues .= ":$key,";
+                }
             }
 
             $fieldValues = rtrim($fieldValues, ',');
@@ -172,7 +176,7 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
-                $values .= "'$value',";
+                $values .= ($value == 'sysdate' OR $value == 'SYSDATE') ? "$value," : "'$value',";
             }
 
             $values = rtrim($values, ',');
@@ -202,8 +206,15 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             $fieldDetails = null;
 
             foreach ($data as $key => $value) {
-                $fieldDetails .= "$key=:$key,";
-                $values .= "$key='$value',";
+
+                if($value == 'sysdate' OR $value == 'SYSDATE')
+                {
+                    $fieldDetails .= "$key=sysdate,";
+                }
+                else{
+                    $fieldDetails .= "$key=:$key,";
+                }
+
             }
 
             $fieldDetails = rtrim($fieldDetails, ',');
