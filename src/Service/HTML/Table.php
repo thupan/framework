@@ -369,12 +369,16 @@ class Table {
         }
 
         return self::$message = "
+                <div class='row'>
+                <div class='container'>
                         <div class='alert alert-$type alert-dismissible fade in text-left' role='alert'>
                             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
                                 <span aria-hidden='true'>&times;</span>
                             </button>
                             $icon $message
-                        </div>";
+                        </div>
+                </div>
+                </div>";
     }
 
     public static function Show() {

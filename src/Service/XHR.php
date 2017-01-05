@@ -21,7 +21,7 @@ class XHR
 
     public static function getBreadCrumb($title)
     {
-        $local = explode('/', substr(ROUTER_REQUEST, 0, strlen(URL)));
+        $local = explode('/', substr(ROUTER_REQUEST, 0, strlen(ROUTER_REQUEST)));
 
         !$local[0] ? $local[0] = $title : false;
 
@@ -32,6 +32,11 @@ class XHR
             $local[$i] = (is_numeric($local[$i])) ? '#'.$local[$i] : $local[$i];
             $active = ($i == 0) ? " href='".URL."{$tmp}' " : " style='text-decoration:none; color:#9c9c9c; ' ";
             $name = ($i == 0) ? $title : $local[$i];
+
+            $name = ($name == 'detail') ? 'detalhes' : $name;
+            $name = ($name == 'edit')   ? 'edição' : $name;
+            
+
             $pwd .= "<li><a $active >$name</a></li>";
         }
 
@@ -67,7 +72,7 @@ class XHR
     public static function table($id, $data, $action = [], $pkey = [], $config = [])
     {
         Table::$paginate = self::$paginate;
-        
+
         if(self::$ignore) {
             Table::ignore(self::$ignore);
         } else if(self::$only) {
