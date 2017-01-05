@@ -17,7 +17,7 @@
                 <!-- botão de novo -->
                 <div class=" left" style="margin-left:20px">
                     {% if validarAcesso() %}
-                        <a href="{{URL}}{%controller_name%}/novo" class="btn btn-success">
+                        <a href="{{URL}}{{controller}}/novo" class="btn btn-success">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             NOVO
                         </a>
