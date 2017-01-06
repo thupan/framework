@@ -148,6 +148,38 @@ if(!function_exists('autoload_config')) {
 }
 
 /**
+ * Função global para retornar a traduacao.
+ * @method translate(param, param)
+ * @param  String Arquivo de idiomas
+ * @param  String Chave do arquivo de idiomas
+ * @param  Array  Troca de palavras sequencias
+ * @return Array
+ */
+if(!function_exists('translate')) {
+    function translate($l = 'app', $k = null, $a = []) {
+
+        foreach(glob(DOC_ROOT . 'app/Language/*/*') as $file) {
+            $keys = explode('/', $file);
+            $lang = $keys[ sizeof($keys) - 2 ];
+            $key  = $keys[ sizeof($keys) - 1 ];
+            $key  = strtolower(str_replace('.php', '', $key));
+
+            $array[$lang][$key] = require $file;
+        }
+
+        $key = $array[\Service\Session::get('s_locale')][$l][$k];
+
+        if($a) {
+            foreach($a as $index => $value) {
+                    $key = str_replace('{'.$index.'}', $value, $key);
+            }
+        }
+
+        return $key;
+    }
+}
+
+/**
  * Função global de carregar maquinas de acesso ao ambiente
  *
  * Quando utilizado a maquina que estiver na lista de ambientes so podera ter acesso

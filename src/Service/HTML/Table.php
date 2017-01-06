@@ -8,7 +8,7 @@ use Service\Session;
 class Table {
     protected static $table    = null;
     protected static $message  = null;
-    protected static $paginate = true;
+    public static $paginate = true;
     public static $ignore = null;
     public static $only   = null;
 
@@ -38,7 +38,9 @@ class Table {
                          <tr>";
 
         foreach($data as $field => $key) {
-            self::$table .= '<th>'.$field.'</th>';
+            if($field != 'hidden') {
+                self::$table .= '<th>'.$field.'</th>';
+            }
         }
 
         if($id == 'tabela') $id = '';
@@ -48,7 +50,7 @@ class Table {
         $name[2] = ($id) ? 'form-fields-'.$id : 'form-fields';
         $name[3] = ($id) ? 'tabela-'.$id : 'tabela';
         $name[4] = ($id) ? 'imprimir-'.$id : 'imprimir';
-
+        $name[5] = ($id) ? 'Enter-'.$id : 'Enter';
 
         self::$table .= '<th class="text-center">AÇÕES</th>
                          </tr>
@@ -56,7 +58,11 @@ class Table {
                          <form class="'.$name[2].'">';
 
         foreach($data as $field => $key) {
-         self::$table .= '<td><input name="'.$key.'" class="form-control Enter" type="text"/></td>';
+             if($field == 'hidden') {
+                 self::$table .= '<input name="'.$key.'" class="form-control" type="hidden"/>';
+             } else {
+                 self::$table .= '<td><input name="'.$key.'" class="form-control '.$name[5].'" type="text"/></td>';
+             }
         }
 
         // se houver botoes de acoes
@@ -251,6 +257,19 @@ class Table {
                                 }
                             break;
 
+                            case 'icon':
+                                if($m_name) {
+                                    $m    = explode(':', $m_name);
+                                    $w    = explode('.', $m[1]);
+                                    $w[1] = !$w[1] ? 'warning' : $w[1];
+
+                                    self::$table .= "<a data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                                    <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
+                                                    <span>$m[2]</span>
+                                                 </a> ";
+                                }
+                            break;
+
                             case 'edit':
                                 if($validarAcesso) {
                                     self::$table .= "<a href='$pk' class='btn btn-warning $name[0]' alt='".$language[Session::get('s_locale')]['app']['edit']."' title='".$language[Session::get('s_locale')]['app']['edit']."'>
@@ -340,12 +359,16 @@ class Table {
         }
 
         return self::$message = "
+                <div class='row'>
+                <div class='container'>
                         <div class='alert alert-$type alert-dismissible fade in text-left' role='alert'>
                             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
                                 <span aria-hidden='true'>&times;</span>
                             </button>
                             $icon $message
-                        </div>";
+                        </div>
+                </div>
+                </div>";
     }
 
     public static function Show() {

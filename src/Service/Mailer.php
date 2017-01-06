@@ -20,11 +20,16 @@ class Mailer {
     public static function send($to = [], $subject = '', $message = '', $attach = []) {
         $config = autoload_config();
 
+        if($charset = $config['mailer']['charset']) {
+            self::getInstance()->CharSet = $charset;
+        }
+
         if(self::$server === 'smtp') {
             self::getInstance()->isSMTP();
-            self::getInstance()->SMTPSecure = $config['mailer'][self::$server]['secure'];
-            self::getInstance()->SMTPDebug = $config['mailer'][self::$server]['debug'];
-            self::getInstance()->SMTPAuth  = $config['mailer'][self::$server]['auth'];
+            self::getInstance()->SMTPSecure  = $config['mailer'][self::$server]['secure'];
+            self::getInstance()->SMTPDebug   = $config['mailer'][self::$server]['debug'];
+            self::getInstance()->SMTPAuth    = $config['mailer'][self::$server]['auth'];
+            self::getInstance()->SMTPOptions = $config['mailer']['options'];
         }
 
         self::getInstance()->Host     = $config['mailer'][self::$server]['host'];

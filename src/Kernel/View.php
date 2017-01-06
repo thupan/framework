@@ -173,6 +173,8 @@ class View
                     break;
                 }
 
+                Session::set('s_token_csrf', md5(uniqid(rand(), true)));
+
                 self::$instance->addGlobal('environment_current',  $env);
 
                 self::$instance->addGlobal('server',         $_SERVER);
@@ -180,6 +182,8 @@ class View
                 self::$instance->addGlobal('post',           $_POST);
                 self::$instance->addGlobal('get',            $_GET);
                 self::$instance->addGlobal('request',        $_REQUEST);
+
+                self::$instance->addGlobal('token_csrf',    Session::get('s_token_csrf'));
 
                 self::$instance->addGlobal('flash',         Session::get('flash') ? Session::flash() : false);
                 self::$instance->addGlobal('token',         Session::get('s_token'));

@@ -97,7 +97,7 @@ class Request
                     }
                 }
 
-                $data[str_replace('|','.',$key)] = ($upper) ? strtoupper(addslashes(trim($value))) : addslashes(trim($value));
+                $data[str_replace('|','.',$key)] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
             }
 
             if ($request['request_data']) {
@@ -108,7 +108,7 @@ class Request
                         continue;
                     }
 
-                    $data_rd[$key] = ($upper) ? strtoupper(addslashes(trim($value))) : addslashes(trim($value));
+                    $data_rd[$key] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
                 }
 
                 $data = array_merge($data, $data_rd);

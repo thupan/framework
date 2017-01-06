@@ -90,6 +90,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
         $this->setQuery($sql);
 
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+                1 => self::getError(),
+                ])]];
+        }
+
         try {
             $sth = $connection->prepare($sql);
             $sth->execute();
@@ -111,6 +118,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function find($table, $where = null)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             if (!empty($table)) {
                 $table = rtrim($table);
@@ -136,11 +150,22 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function insert($table, $data)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             $fieldNames = implode(',', array_keys($data));
 
             foreach ($data as $key => $value) {
-                $fieldValues .= ":$key,";
+                if($value == 'sysdate' OR $value == 'SYSDATE') {
+                    $fieldValues .= "sysdate,";
+                } else {
+                    $fieldValues .= ":$key,";
+                }
             }
 
             $fieldValues = rtrim($fieldValues, ',');
@@ -151,7 +176,7 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
 
             foreach ($data as $key => $value) {
                 $sth->bindValue(":$key", $value);
-                $values .= "'$value',";
+                $values .= ($value == 'sysdate' OR $value == 'SYSDATE') ? "$value," : "'$value',";
             }
 
             $values = rtrim($values, ',');
@@ -168,14 +193,28 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function update($table, $data, $where)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             ksort($data);
 
             $fieldDetails = null;
 
             foreach ($data as $key => $value) {
-                $fieldDetails .= "$key=:$key,";
-                $values .= "$key='$value',";
+
+                if($value == 'sysdate' OR $value == 'SYSDATE')
+                {
+                    $fieldDetails .= "$key=sysdate,";
+                }
+                else{
+                    $fieldDetails .= "$key=:$key,";
+                }
+
             }
 
             $fieldDetails = rtrim($fieldDetails, ',');
@@ -186,10 +225,12 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             $sth = $connection->prepare($sql);
 
             foreach ($data as $key => $value) {
+                $dt .= "$key = '$value',";
                 $sth->bindValue(":$key", $value);
             }
 
-            $this->setQuery("UPDATE $table SET $values");
+            $dt = rtrim($dt, ',');
+            $this->setQuery("UPDATE $table SET $dt");
 
             return $sth->execute();
         } catch (PDOException $e) {
@@ -201,6 +242,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function delete($table, $where)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             $sql = "DELETE FROM $table WHERE $where";
 
@@ -222,6 +270,13 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
     public function execute($sql)
     {
         foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
         try {
             return $connection->exec($sql);
         } catch (PDOException $e) {
