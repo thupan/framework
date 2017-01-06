@@ -225,10 +225,12 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
             $sth = $connection->prepare($sql);
 
             foreach ($data as $key => $value) {
+                $dt .= "$key = '$value',";
                 $sth->bindValue(":$key", $value);
             }
 
-            $this->setQuery("UPDATE $table SET $values");
+            $dt = rtrim($dt, ',');
+            $this->setQuery("UPDATE $table SET $dt");
 
             return $sth->execute();
         } catch (PDOException $e) {
