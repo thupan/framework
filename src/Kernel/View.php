@@ -139,6 +139,16 @@ class View
                 self::$instance->addGlobal('URL',           URL);
                 self::$instance->addGlobal('bower_dir',     URL . self::$config['app']['BOWER_COMPONENTS']);
 
+
+                // controle de versao em template
+                $version = DOC_ROOT . '/VERSION.txt';
+
+                if(file_exists($version)) {
+                    $version = file_get_contents($version);
+                    self::$instance->addGlobal('thupan_version', $version);
+                }
+                // fim do controle de versao em template
+
                 self::$instance->addGlobal('app_name',      self::$config['app']['APP_NAME']);
                 self::$instance->addGlobal('app_title',      self::$config['app']['APP_TITLE']);
                 self::$instance->addGlobal('app_version',   self::$config['app']['APP_VERSION']);
