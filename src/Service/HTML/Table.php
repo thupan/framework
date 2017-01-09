@@ -57,6 +57,7 @@ class Table {
                          <tr class="search-fields">
                          <form class="'.$name[2].'">';
 
+
         foreach($data as $field => $key) {
              if($field == 'hidden') {
                  self::$table .= '<input name="'.$key.'" class="form-control" type="hidden"/>';
@@ -69,6 +70,7 @@ class Table {
         if($actions) {
             // seta o atributo para o elemento td
             self::$table .= "<td style='width:150px !important;'>";
+            self::$table .= '<div class="btn-group" role="group" aria-label="...">';
             // verifica quais os botoes serao adicionados
             foreach($actions as $action) {
                 switch($action) {
@@ -96,6 +98,7 @@ class Table {
                                          </button>";
                 }
             }
+            self::$table .= '</div>';
             // fecha a coluna dos botoes
             self::$table .= '</td>';
         }
@@ -226,6 +229,7 @@ class Table {
                     $validarAcesso = true;
                     $link = URL . \Routing\Router::getControllerName();
 
+                        self::$table .= '<div class="btn-group" role="group" aria-label="...">';
                     // verifica quais os botoes serao adicionados
                     foreach($actions as $k => $action) {
 
@@ -241,7 +245,7 @@ class Table {
                         switch($action) {
                             case 'detail':
                                 if($validarAcesso) {
-                                    self::$table .= "<a href='$link/detail/$pk' class='btn btn-primary' alt='".$language[Session::get('s_locale')]['app']['details']."' title='".$language[Session::get('s_locale')]['app']['details']."'>
+                                    self::$table .= "<a  href='$link/detail/$pk' class='btn btn-primary' alt='".$language[Session::get('s_locale')]['app']['details']."' title='".$language[Session::get('s_locale')]['app']['details']."'>
                                                         <span class='glyphicon glyphicon-list' aria-hidden='true'></span>
                                                         ".$language[Session::get('s_locale')]['app']['details']."
                                                      </a> ";
@@ -251,9 +255,9 @@ class Table {
                             case 'modal':
                                 if($m_name) {
                                     $m = explode(':', $m_name);
-                                    self::$table .= "<a data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
+                                    self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
                                                     <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
-                                                 </a> ";
+                                                 </button> ";
                                 }
                             break;
 
@@ -263,43 +267,45 @@ class Table {
                                     $w    = explode('.', $m[1]);
                                     $w[1] = !$w[1] ? 'warning' : $w[1];
 
-                                    self::$table .= "<a data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                    self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
                                                     <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
                                                     <span>$m[2]</span>
-                                                 </a> ";
+                                                 </button> ";
                                 }
                             break;
 
                             case 'edit':
                                 if($validarAcesso) {
-                                    self::$table .= "<a href='$pk' class='btn btn-warning $name[0]' alt='".$language[Session::get('s_locale')]['app']['edit']."' title='".$language[Session::get('s_locale')]['app']['edit']."'>
+                                    self::$table .= "<button type='button' href='$pk' class='btn btn-warning $name[0]' alt='".$language[Session::get('s_locale')]['app']['edit']."' title='".$language[Session::get('s_locale')]['app']['edit']."'>
                                                     <span class='glyphicon glyphicon-edit' aria-hidden='true'></span>
-                                                 </a> ";
+                                                 </button> ";
                                 }
                             break;
 
                             case 'delete':
                                 if($validarAcesso) {
-                                        self::$table .= "<a href='$pk' class='btn btn-danger $name[1]' alt='".$language[Session::get('s_locale')]['app']['delete']."' title='".$language[Session::get('s_locale')]['app']['delete']."'>
+                                        self::$table .= "<button type='button' href='$pk' class='btn btn-danger $name[1]' alt='".$language[Session::get('s_locale')]['app']['delete']."' title='".$language[Session::get('s_locale')]['app']['delete']."'>
                                                         <span class='glyphicon glyphicon-trash' aria-hidden='true'></span>
-                                                     </a> ";
+                                                     </button> ";
                                 }
                             break;
 
                             case 'print':
                                 if($validarAcesso) {
-                                    self::$table .= "<a href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['print']."' title='".$language[Session::get('s_locale')]['app']['print']."'>
+                                    self::$table .= "<button type='button' href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['print']."' title='".$language[Session::get('s_locale')]['app']['print']."'>
                                                         <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-                                                     </a> ";
+                                                     </button> ";
                                 }
                             break;
 
                             default:
-                                self::$table .= "<a href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['btnUnknow']."' title='".$language[Session::get('s_locale')]['app']['btnUnknow']."'>
+                                self::$table .= "<button type='button' href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['btnUnknow']."' title='".$language[Session::get('s_locale')]['app']['btnUnknow']."'>
                                                     <span class='glyphicon' aria-hidden='true'>?</span>
-                                                 </a> ";
+                                                 </button> ";
                         }
+
                     }
+                                            self::$table .= '</div>';
                     // fecha a coluna dos botoes
                     self::$table .= '</td>';
                 }
