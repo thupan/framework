@@ -236,6 +236,8 @@ class Table {
                         if(!is_numeric($k)) {
                             if(is_bool($action)) {
                                 $validarAcesso = $action;
+                            } else if(is_array($action)) {
+                                $m_name = $action;
                             } else {
                                 $m_name = $action;
                             }
@@ -261,8 +263,9 @@ class Table {
                                 }
                             break;
 
+                            // icon => 'nome_id:botao_ico.botao_tipo'
                             case 'icon':
-                                if($m_name) {
+                                if(!is_array($m_name)) {
                                     $m    = explode(':', $m_name);
                                     $w    = explode('.', $m[1]);
                                     $w[1] = !$w[1] ? 'warning' : $w[1];
@@ -271,6 +274,47 @@ class Table {
                                                     <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
                                                     <span>$m[2]</span>
                                                  </button> ";
+                                } else {
+                                    foreach($m_name as $i => $v) {
+                                        if(is_array($v)) {
+                                            $m    = explode(':', $i);
+                                            $w    = explode('.', $m[1]);
+                                            $w[1] = !$w[1] ? 'warning' : $w[1];
+
+                                            self::$table .= "<div class='btn-group'>
+                                                <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                    <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
+                                                <span>$m[2]</span>
+                                                <span class='caret'></span>
+                                                </button>
+                                                <ul class='dropdown-menu'>";
+
+                                            foreach($v as $in => $va){
+                                                $m    = explode(':', $va);
+                                                $w    = explode('.', $m[1]);
+                                                $w[1] = !$w[1] ? 'warning' : $w[1];
+
+                                                self::$table .= "<li><a>
+                                                <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
+                                                <span>$m[2]</span></a>
+                                                </li>";
+                                            }
+
+                                            self::$table  .= "</ul>
+
+                                            </div>";
+
+                                        } else {
+                                            $m    = explode(':', $v);
+                                            $w    = explode('.', $m[1]);
+                                            $w[1] = !$w[1] ? 'warning' : $w[1];
+
+                                            self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                                            <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
+                                                            <span>$m[2]</span>
+                                                         </button> ";
+                                        }
+                                    }
                                 }
                             break;
 
