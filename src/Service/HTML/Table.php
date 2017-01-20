@@ -294,7 +294,7 @@ class Table {
                                                 $w    = explode('.', $m[1]);
                                                 $w[1] = !$w[1] ? 'warning' : $w[1];
 
-                                                self::$table .= "<li><a>
+                                                self::$table .= "<li><a class='{$m[0]}' data-href='$pk'>
                                                 <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
                                                 <span>$m[2]</span></a>
                                                 </li>";
