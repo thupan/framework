@@ -5,7 +5,7 @@ namespace Database\Driver;
 use \PDOException;
 use \Service\Debug\Debug;
 
-class Oci implements \Database\Interfaces\PersistenceDatabase
+class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 {
     protected static $config = [];
     protected static $error  = [];
@@ -41,7 +41,9 @@ class Oci implements \Database\Interfaces\PersistenceDatabase
                     )";
 
             $this->connection[$current] = new \PDO("oci:dbname=$tns;charset=UTF8", $username, $password);
+            $this->connection[$current]->beginTransaction();
             $this->connection[$current]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->connection[$current]->setAttribute(\PDO::ATTR_AUTOCOMMIT, 0);
 
             if($nls = self::$config['database']['DB_OCI_NLS']) {
               foreach($nls as $key => $value) {

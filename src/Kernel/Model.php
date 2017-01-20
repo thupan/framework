@@ -8,6 +8,7 @@ class Model
 {
     public static $connection = false;
     public static $all        = false;
+    public static $persistence = true;
 
     protected static $db = null;
 
@@ -179,27 +180,57 @@ class Model
 
     public static function query($sql, $type = null)
     {
-        return self::dbConnection()->getInstance(self::$connection)->query($sql, $type);
+        $data = self::dbConnection()->getInstance(self::$connection)->query($sql, $type);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
     }
 
     public static function find($table, $where = null)
     {
-        return self::dbConnection()->getInstance(self::$connection)->find($table, $where);
+        $data = self::dbConnection()->getInstance(self::$connection)->find($table, $where);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
     }
 
     public static function insert($table, $data)
     {
-        return self::dbConnection()->getInstance(self::$connection)->insert($table, $data);
+        $data = self::dbConnection()->getInstance(self::$connection)->insert($table, $data);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
     }
 
     public static function update($table, $data, $where)
     {
-        return self::dbConnection()->getInstance(self::$connection)->update($table, $data, $where);
+        $data = self::dbConnection()->getInstance(self::$connection)->update($table, $data, $where);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
     }
 
     public static function delete($table, $where)
     {
-        return self::dbConnection()->getInstance(self::$connection)->delete($table, $where);
+        $data = self::dbConnection()->getInstance(self::$connection)->delete($table, $where);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
     }
 
     public static function execute($sql)

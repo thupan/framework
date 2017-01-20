@@ -197,10 +197,10 @@ class Table {
 
                     if($v[1]) {
                         if($field === $v[1]) {
-                            self::$table .= "<td data-label='$fname' $attr_td>$value</td>";
+                            self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";
                             unset($attr_td);
                         } else {
-                            self::$table .= "<td data-label='$fname'>$value</td>";
+                            self::$table .= "<td data-label='$fname' class='$field'>$value</td>";
                         }
                     } else {
                         self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";

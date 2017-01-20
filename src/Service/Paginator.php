@@ -68,44 +68,72 @@ class Paginator {
 
   public function pages() {
      $id = ($this->id) ? 'pagination-'.$this->id : false;
-    $pages = "<div class='text-center'><ul class='pagination $id'>
-    <li><a href='?p=1'>
-    <span class='glyphicon glyphicon-triangle-left' aria-hidden='true'></span>
-    </a></li>
-    <li><a href='?p={$this->previous_page()}'>
-    <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span>
-    </a></li>";
+
+    $pages = "<div class='text-center'>
+                <ul class='pagination $id'>
+                    <li>
+                        <a href='?p=1'>
+                            <span class='glyphicon glyphicon-triangle-left' aria-hidden='true'></span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href='?p={$this->previous_page()}'>
+                            <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span>
+                        </a>
+                    </li>";
 
     if( ($this->current_page - ($this->links_page - 1)) < 1) {
-      $previous = 1;
-      $next = $this->links_page;
+
+        $previous = 1;
+        $next = $this->links_page;
+
     } else {
-      $previous = $this->current_page;
-      if( ($this->current_page+$this->links_page) > $this->total_page ) {
-        $next = $this->total_page;
-      } else {
-        $next = $this->current_page + $this->links_page;
-      }
+
+        $previous = $this->current_page;
+
+        if( ($this->current_page+$this->links_page) > $this->total_page ) {
+
+            $next = $this->total_page;
+
+        } else {
+
+            $next = $this->current_page + $this->links_page;
+        }
     }
 
     for($i = $previous; $i <= $next; $i++) {
-      if($i > $this->total_page) break;
 
-      if($i == $this->current_page) {
-        $pages .= "<li class='active'><a href='?p=$i'>$i</a></li>";
-      } else {
-        $pages .= "<li><a href='?p=$i'>$i</a></li>";
-      }
+        if($i > $this->total_page) break;
+
+        if($i == $this->current_page) {
+
+            $pages .= "<li class='active'><a href='?p=$i'>$i</a></li>";
+
+        } else {
+
+            $pages .= "<li><a href='?p=$i'>$i</a></li>";
+
+        }
     }
+
     $pages .= "
-    <li><a href='?p={$this->next_page()}'>
-    <span class='glyphicon glyphicon-menu-right' aria-hidden='true'></span>
-    </a></li>
-    <li><a href='?p={$this->total_page}'>
-    <span class='glyphicon glyphicon-triangle-right' aria-hidden='true'></span>
-    </a></li>
+    <li>
+        <a href='?p={$this->next_page()}'>
+            <span class='glyphicon glyphicon-menu-right' aria-hidden='true'></span>
+        </a>
+    </li>
+
+    <li>
+        <a href='?p={$this->total_page}'>
+            <span class='glyphicon glyphicon-triangle-right' aria-hidden='true'></span>
+        </a>
+    </li>
+
     </ul>
+
     <p class='text-center'><i>$this->current_page de <b>$this->total_page</b></i></p>
+
     </div>";
 
     return ($this->total_page) ? $pages : false;
