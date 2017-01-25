@@ -18,11 +18,12 @@ class Redirect
      *
      * @return none
      */
-    public static function to($location)
+    public static function to($location, $data = null)
     {
         $location = ($location === '/') ? URL : URL . $location;
 
-        header('Location: ' . $location);
+        $c = ($data) ? '?twigformfields='.base64_encode(json_encode($data)) : null;
+        header('Location: ' . $location . $c);
         exit;
     }
 }

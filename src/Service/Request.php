@@ -153,6 +153,18 @@ class Request
         return ($oneRow) ? $data = $a : false;
     }
 
+    public static function prepareData() {
+        self::get($data, false);
+
+        if($data['twigformfields']) {
+            $data = json_decode(base64_decode($data['twigformfields']));
+
+            foreach($data as $key => $value) {
+                View::assign($key, $value);
+            }
+        }
+    }
+
     public static function prepareCombo($array)
     {
         foreach ($array as $key => $value) {
