@@ -12,10 +12,66 @@ class Table {
     public static $ignore = null;
     public static $only   = null;
 
+    public static function formSearch($id, $url =null , $actions = [], $validate = true) {
+        // carrega as configurações do frame para pegar o idioma
+        $language = autoload_config();
+
+        $name[0] = (!$id || $id == 'tabela') ? 'search'      : 'search-'.$id;
+        $name[1] = (!$id || $id == 'tabela') ? 'form-fields' : 'form-fields-'.$id;
+
+        $form = "
+          <div class='row'>
+          <div class='container'>
+                <div class='clearfix visible-xs visible-sm right mobile-search'>
+                    <form class='$name[1]'>
+                          <div class='form-group'>
+                            <div class='input-group '>
+                              <input type='text' class='form-control Enter' id='TX_PESQUISA' name='TX_PESQUISA' placeholder='".$language[Session::get('s_locale')]['app']['search_']."'>
+                              <div class='input-group-btn'>
+                                  <div class='btn-group' role='group'>
+                                    <button type='button' class='btn btn-primary $name[0]'>
+                                      <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
+                                    </button>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                    </form>
+                </div>
+          </div>
+        </div>";
+
+        echo $form;
+    }
+
     public static function Open($options = ['class' => 'table table-striped table-hover listview']) {
         foreach($options as $key => $value) {
             $attr .= $key.'="'.$value.'" ';
         }
+
+        // self::$table = "
+        //
+        // <!-- barra de pesquisa mobile -->
+        // <div class='clearfix visible-xs visible-sm right mobile-search'>
+        //     <div class='row' style='padding:10px;margin-top:10px'>
+        //         <div class='container'>
+        //             <div class='form-group col-md-12'>
+        //                 <div class='input-group right'>
+        //                     <input type='text' class='form-control Enter' id='TX_PESQUISA' placeholder='Pesquisa Rápida'>
+        //                     <div class='input-group-btn'>
+        //                         <div class='btn-group' role='group'>
+        //                             <button type='button' class='btn btn-primary search'>
+        //                                 <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
+        //                             </button>
+        //                         </div>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
+        //
+        // ";
 
         self::$table = "<table $attr>";
     }
@@ -59,11 +115,19 @@ class Table {
 
 
         foreach($data as $field => $key) {
-             if($field == 'hidden') {
-                 self::$table .= '<input name="'.$key.'" class="form-control" type="hidden"/>';
-             } else {
-                 self::$table .= '<td><input name="'.$key.'" class="form-control '.$name[5].'" type="text"/></td>';
-             }
+            $combo = explode('@', $key);
+            if($combo[1]) {
+                $key  = $combo[0];
+                $data = json_decode(base64_decode($combo[2]), true);
+                $options = "<option value=''></option>";
+                foreach($data as $s_index => $s_array) {
+                    $options .= "<option value='".$s_array['ID']."'>".$s_array['TEXT']."</option>";
+                }
+                self::$table .= '<td><select name="'.$key.'" class="form-control-select2 '.$name[5].'">'.$options.'</select></td>';
+            } else {
+                self::$table .= '<td><input name="'.$key.'" class="form-control '.$name[5].'" type="text"/></td>';
+            }
+
         }
 
         // se houver botoes de acoes

@@ -5,6 +5,69 @@
  * GERADO POR: {%GC_DEVELOPER%} @ {%GC_MACHINE%}
  ************************************************************/
 
+ /**
+  * Você pode criar funções dinamicas para as abas de detail. Todos os métodos
+  * dinamicos fazem o intermédio com o javascript, portanto, esses métodos iniciam
+  * com o nome 'xhr' no qual seu siguinificado é 'Xml Http Request' seguido do nome da ação
+  * em camelcase.
+  *
+  * Exemplo para um combo dinamico:
+  *
+  * public function xhrComboLista() {
+  *     Request::any($data);
+  *     echo NomeDoModel::comboLista($data);
+  * }
+  *
+  * para tabelas dinamicas:
+  *
+  * public function xhrPesquisarLista() {
+  *     Request::any($data);
+  *     $data = NomeDoModel::pesquisarLista($data);
+  *     if($erro = NomeDoModel::getError()) {
+  *         XHR::alert($erro, 'danger');
+  *     }
+  *
+  *     // Para não mostrar determinados campos na tabela faça
+  *     XHR::ignore(['CAMPO1','CAMPO2','CAMPON']);
+  *     // Para ignorar um campo na saida use: XHR::ignore(['NOME_DO_CAMPO']);
+  *      XHR::table('tabela', $data, ['detail','edit','delete'], ['CHAVE1','CHAVE2','CHAVEN']);
+  * }
+  *
+  * para salvar (add/edit):
+  *
+  * public function xhrSaveLista() {
+  *     Request::any($data);
+  *
+  *     if($data['edit']) {
+  *         NomeDaModel::addLista($data);
+  *         if($erro = NomeDaModel::getError()) {
+  *             XHR::alert($erro, 'danger');
+  *         }
+  *     } else {
+  *         NomeDaModel::editLista($data);
+  *         if($erro = NomeDaModel::getError()) {
+  *             XHR::alert($erro, 'danger');
+  *         }
+  *     }
+  *     // impede novas requisições
+  *     Request::filter(false);
+  *     $this->xhrPesquisarLista();
+  * }
+  *
+  * para deletar:
+  *
+  * public function xhrDeleteLista() {
+  *   Request::any($data);
+  *   NomeDaModel::deleteLista($data);
+  *   if($erro = NomeDaModel::getError()) {
+  *     XHR::alert($erro, 'danger');
+  *   }
+  *     // impede novas requisições
+  *     Request::filter(false);
+  *     $this->xhrPesquisarLista();
+  * }
+  */
+
  namespace App\Http\Controllers;
 
  use \App\Domain\AppController as Controller;
@@ -90,6 +153,8 @@
      public function novo() {
          // verifica se algum campo obrigatorio não foi preenchido.
          Request::prepareRequired();
+         // Caso o post falhe mantem o ultimo post ativo
+         Request::prepareData();
 
          /*
           * Manipulação de dados, criação de combos aqui.
@@ -201,7 +266,7 @@
                  Redirect::to("$this->controller/edit/" . $data['edit'] . Request::getRequired($error));
              } else {
                  // se for modo adição, redireciona para a pagina.
-                 Redirect::to("$this->controller/novo/" . Request::getRequired($error));
+                 Redirect::to("$this->controller/novo/" . Request::getRequired($error), $data);
              }
          }
 
@@ -233,7 +298,7 @@
                  // Guarda o erro na sessão
                  View::flash($erro, 'danger');
                  // Redireciona para pagina de novo
-                 Redirect::to("$this->controller/novo/");
+                 Redirect::to("$this->controller/novo/", $data);
              } else {
                  // Se tudo estiver ok, guarda a mensagem na sessao
                  View::flash("Registro <b>" . $id . "</b> adicionado com sucesso!", 'success');
@@ -242,111 +307,4 @@
              }
          }
      }
-
-     /**
-      * Este método é responsável em gerar o PDF referente a pesquisa da tela principal.
-      *
-      * @return void
-      */
-     public function xhrImprimirPesquisa() {
-         // verifica as requisições feitas ou não.
-         Request::any($data);
-         // Solicita a pesquisa com as requisições passadas ou não.
-         $data = {%Controller%}::pesquisar($data);
-
-         // Se ocorrer um erro.
-         if($erro = {%Controller%}::getError()) {
-             // Guarda a mensagem de erro
-             View::flash($erro, 'danger');
-             // Redireciona para pagina principal do controlador.
-             Redirect::to("$this->controller");
-         }
-
-         // Sem erros, então carrega o PDF da pesquisa.
-         Pdf{%Controller%}Pesquisa::conteudo($data);
-     }
-
-     /**
-      * Este método carrega a tabela de pesquisa dinamicamente.
-      *
-      * @return void
-      */
-     public function xhrPesquisar() {
-         // Faz as requisições
-         Request::any($data);
-
-         // Se ocorrer um erro
-         if($erro = {%Controller%}::getError()) {
-             // faz um alerta com a msg de erro
-             XHR::alert($erro, 'danger');
-         }
-
-         // Solicita a pesquisa com as requisições
-         $data = {%Controller%}::pesquisar($data);
-
-         // Formata os dados dinamicamente em tabela
-         //XHR::table($data, "$this->controller:{%tablePk%}");
-
-         XHR::table('tabela', $data, ['detail'], {%arrayPkTable%});         
-     }
-
-     /**
-      * Você pode criar funções dinamicas para as abas de detail. Todos os métodos
-      * dinamicos fazem o intermédio com o javascript, portanto, esses métodos iniciam
-      * com o nome 'xhr' no qual seu siguinificado é 'Xml Http Request' seguido do nome da ação
-      * em camelcase.
-      *
-      * Exemplo para um combo dinamico:
-      *
-      * public function xhrComboLista() {
-      *     Request::any($data);
-      *     echo NomeDoModel::comboLista($data);
-      * }
-      *
-      * para tabelas dinamicas:
-      *
-      * public function xhrPesquisarLista() {
-      *     Request::any($data);
-      *     $data = NomeDoModel::pesquisarLista($data);
-      *     if($erro = NomeDoModel::getError()) {
-      *         XHR::alert($erro, 'danger');
-      *     }
-      *     // Para ignorar um campo na saida use: XHR::ignore(['NOME_DO_CAMPO']);
-      *     XHR:tablex($data, 'nome_da_aba:edit.del:chave_da_tabela');
-      * }
-      *
-      * para salvar (add/edit):
-      *
-      * public function xhrSaveLista() {
-      *     Request::any($data);
-      *
-      *     if($data['edit']) {
-      *         NomeDaModel::addLista($data);
-      *         if($erro = NomeDaModel::getError()) {
-      *             XHR::alert($erro, 'danger');
-      *         }
-      *     } else {
-      *         NomeDaModel::editLista($data);
-      *         if($erro = NomeDaModel::getError()) {
-      *             XHR::alert($erro, 'danger');
-      *         }
-      *     }
-      *     // impede novas requisições
-      *     Request::filter(false);
-      *     $this->xhrPesquisarLista();
-      * }
-      *
-      * para deletar:
-      *
-      * public function xhrDeleteLista() {
-      *   Request::any($data);
-      *   NomeDaModel::deleteLista($data);
-      *   if($erro = NomeDaModel::getError()) {
-      *     XHR::alert($erro, 'danger');
-      *   }
-      *     // impede novas requisições
-      *     Request::filter(false);
-      *     $this->xhrPesquisarLista();
-      * }
-      */
  }

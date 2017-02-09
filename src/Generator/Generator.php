@@ -35,14 +35,16 @@ class Generator
     public function __construct()
     {
         //dd($_REQUEST);
-        $this->setPaths();
 
-        $this->program_name = $_REQUEST['TX_URL'];
+        $this->program_name = strtolower($_REQUEST['TX_URL']);
         $this->tablePk = $this->cleanPk($_REQUEST['TABLE_PK']);
         $this->tablePk_var = $this->cleanPk_var($_REQUEST['TABLE_PK']);
         $this->table = $_REQUEST['TABLE_NAME'];
         $this->query = $_REQUEST['TABLE_SQL'];
         $this->queryBuscar = $_REQUEST['TABLE_SQL_BUSCAR'];
+
+        $this->setPaths();
+
         $this->ColumnsDB = $this->Options();
         $this->search = $this->setSearch();
         $this->tableHeader = $this->setHeader();
@@ -69,8 +71,8 @@ class Generator
         $this->pathModel      = DOC_ROOT . 'app/Http/Models/';
         $this->pathView       = DOC_ROOT . 'app/Http/Views/';
 
-        $this->pathViewCss    = DOC_ROOT . 'public/app/css/';
-        $this->pathViewJs     = DOC_ROOT . 'public/app/js/';
+        $this->pathViewCss    = DOC_ROOT . 'app/Http/Views/' . $this->program_name . '/css/';
+        $this->pathViewJs     = DOC_ROOT . 'app/Http/Views/' . $this->program_name . '/js/';
         $this->pathPdf       = DOC_ROOT  . 'app/Pdf/';
 
         $this->pathTemplate = __DIR__ . DS . '../Support/Templates/Generator/tpl/';
@@ -686,6 +688,14 @@ class Generator
     if (!file_exists($this->pathView.$this->program_name)) {
         mkdir($this->pathView.$this->program_name, $mode, true);
     }
+
+    if (!file_exists($this->pathViewCss)) {
+        mkdir($this->pathViewCss, $mode, true);
+    }
+
+    if (!file_exists($this->pathViewJs)) {
+        mkdir($this->pathViewJs, $mode, true);
+    }
     // tudo ok!
     //return true;
     }
@@ -728,13 +738,51 @@ class Generator
             break;
 
             case 'css':
-              $path = $this->pathViewCss;
-              $program = strtolower($this->program_name).'.css';
+              switch ($filename[1]) {
+                case 'index':
+                  $path = $this->pathViewCss;
+                  $program = 'index.css';
+                break;
+
+                case 'detail':
+                  $path = $this->pathViewCss;
+                  $program = 'detail.css';
+                break;
+
+                case 'edit':
+                  $path = $this->pathViewCss;
+                  $program = 'edit.css';
+                break;
+
+                case 'novo':
+                  $path = $this->pathViewCss;
+                  $program = 'novo.css';
+                break;
+              }
             break;
 
             case 'js':
-              $path = $this->pathViewJs;
-              $program = strtolower($this->program_name).'.js';
+              switch ($filename[1]) {
+                case 'index':
+                  $path = $this->pathViewJs;
+                  $program = 'index.js';
+                break;
+
+                case 'detail':
+                  $path = $this->pathViewJs;
+                  $program = 'detail.js';
+                break;
+
+                case 'edit':
+                  $path = $this->pathViewJs;
+                  $program = 'edit.js';
+                break;
+
+                case 'novo':
+                  $path = $this->pathViewJs;
+                  $program = 'novo.js';
+                break;
+              }
             break;
 
             case 'twig':

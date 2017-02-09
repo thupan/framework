@@ -55,12 +55,183 @@ class View
                     }
                 });
 
+                self::$functions[] = new \Twig_SimpleFunction('load_js', function() {
+                    $default_methods = ['index', 'novo', 'edit', 'detail'];
+                    $files_loaded    = [];
+                    $scripts         = [];
+
+                    // verifica a tela atual pelo método do controlador
+                    if(in_array(Router::getMethod(), $default_methods)) {
+                        // verifica se o script deste metodo existe
+                        if( file_exists($script = DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/js/' . Router::getMethod() . '.js') ) {
+                            // explode o path do script
+                            $file_name = explode('/', $script);
+                            // pega apenas o nome do script ignorando a extenção
+                            $file_name = explode('.', end($file_name))[0];
+                            // verifica se o arquivo ja foi carregado
+                            if(!in_array($file_name, $files_loaded)) {
+                                $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
+                                $files_loaded[] = $file_name;
+                            }
+                        }
+
+                        // pega todos os filhos existentes da tela atual
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/js/' . Router::getMethod() . '-*.js') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
+                        // pega todos os scripts restantes do controlador
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/js/*.js') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se é filho da tela
+                                $child     = explode('-', $file_name);
+                                // se não for filho, ignora o script
+                                if(count($child) >= 2) {
+                                    if($child[0] != Router::getMethod()) continue;
+                                }
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded) && !in_array($file_name, $default_methods)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
+                        // carrega todos os scripts do public
+                        foreach(glob(DOC_ROOT . 'public/js/*.js') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+                    }
+
+                    echo implode("\n", $scripts);
+                });
+
+                self::$functions[] = new \Twig_SimpleFunction('load_css', function() {
+                    $default_methods = ['index', 'novo', 'edit', 'detail'];
+                    $files_loaded    = [];
+                    $scripts         = [];
+
+                    // verifica a tela atual pelo método do controlador
+                    if(in_array(Router::getMethod(), $default_methods)) {
+                        // verifica se o script deste metodo existe
+                        if( file_exists($script = DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/css/' . Router::getMethod() . '.css') ) {
+                            // explode o path do script
+                            $file_name = explode('/', $script);
+                            // pega apenas o nome do script ignorando a extenção
+                            $file_name = explode('.', end($file_name))[0];
+                            // verifica se o arquivo ja foi carregado
+                            if(!in_array($file_name, $files_loaded)) {
+                                $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
+                                $files_loaded[] = $file_name;
+                            }
+                        }
+
+                        // pega todos os filhos existentes da tela atual
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/css/' . Router::getMethod() . '-*.css') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
+                        // pega todos os scripts restantes do controlador
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/css/*.css') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se é filho da tela
+                                $child     = explode('-', $file_name);
+                                // se não for filho, ignora o script
+                                if(count($child) >= 2) {
+                                    if($child[0] != Router::getMethod()) continue;
+                                }
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded) && !in_array($file_name, $default_methods)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
+                        // carrega todos os scripts do public
+                        foreach(glob(DOC_ROOT . 'public/css/*.css') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+                    }
+
+                    echo implode("\n", $scripts);
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('table', function($id, $fields = [], $actions = []) {
                     //NOME:TABELA.CAMPO:TIPO_PESQUISA
-                    foreach($fields as $key) {
-                        $k = explode(':', $key);
-                        $arr[$k[0]] = $k[1].':'.$k[2];
+
+                    foreach($fields as $index => $key) {
+                        if(is_array($key)) {
+                            $value = array_values($key)[0];
+                            $key   = array_keys($key)[0];
+
+                            if($value) {
+                                $data_value = '@' . base64_encode(json_encode($value));
+                            }
+
+                            $k = explode(':', $key);
+                            $arr[$k[0]] = $k[1].':'.$k[2].'@select2' . $data_value;
+                        } else {
+                            $k = explode(':', $key);
+                            $arr[$k[0]] = $k[1].':'.$k[2];
+                        }
                     }
+
+                    \Service\HTML\Table::formSearch($id);
 
                     \Service\HTML\Table::Open();
                     \Service\HTML\Table::Header([], $id, $arr, $actions);
@@ -86,20 +257,22 @@ class View
                     return dd($var);
                 });
 
-                self::$functions[] = new \Twig_SimpleFunction('validate', function($array, $key) {
+                self::$functions[] = new \Twig_SimpleFunction('validate', function($array = [], $key = null) {
                     if(in_array($key, $array)) {
                         return '<span style="color:red">' . self::$config[Session::get('s_locale')]['app']['requiredMsg'] . '</span>';
                     }
                 });
 
-                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array, $var = null) {
-                    $options = "<option value=''></option>";
-                    foreach($array as $index) {
-                            $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
-                            $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";
+                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array = [], $var = null) {
+                    if($array) {
+                        $options = "<option value=''></option>";
+                        foreach($array as $index) {
+                                $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
+                                $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";
+                        }
                     }
 
-                    return $options;
+                    return ($options) ? $options : '<option selected>ERRO: não houve retorno do array no select2_options</option>';
                 });
 
                 foreach (self::$functions as $key => $function) {
