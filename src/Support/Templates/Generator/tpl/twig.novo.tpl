@@ -4,6 +4,11 @@
  * GERADO POR: {%GC_DEVELOPER%} @ {%GC_MACHINE%}
  ************************************************************#}
 
+ {# ignora o menu na tela #}
+ {# set disable_menu = true #}
+ {# ignora o breadcrumb na tela #}
+ {# set disable_breadcrumb = true #}
+
  {% extends "index.twig" %}
  {% block content %}
 

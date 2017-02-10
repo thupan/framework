@@ -4,6 +4,11 @@
  * GERADO POR: {%GC_DEVELOPER%} @ {%GC_MACHINE%}
  ************************************************************#}
 
+ {# ignora o menu na tela #}
+ {# set disable_menu = true #}
+ {# ignora o breadcrumb na tela #}
+ {# set disable_breadcrumb = true #}
+
 {% extends "index.twig" %}
 {% block content %}
 
@@ -87,45 +92,11 @@
                             </div>
 
                             {# TABELA DE PESQUISA #}
-                            <div class="row">
-                                <table class="listview table table-striped table-hover">
-                                    <thead id="tabela-header">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>NOME CAMPO</th>
-
-                                            <th>AÇÕES</th>
-                                        </tr>
-                                        <tr class="search-fields">
-                                            <form class="form-fields-aba1">
-                                                <input type="hidden" name="CAMPO_ABA1" value="{{CAMPO_ABA1}}" id="CAMPO_ABA1"/>
-
-                                                <td><input name="TABELA.CAMPO_ABA1:ANY" class="form-control" type='text'/></td>
-                                                <td><input name="TABELA.CAMPO_ABA1:ANY" class="form-control" type='text'/></td>
-
-                                                <td style='width:150px !important;'>
-
-                                                    <button type="button" class="btn btn-primary search-aba1">
-                                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button" class="btn btn-default search-aba1-refresh">
-                                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button" class="btn btn-default" id="imprimir-aba1">
-                                                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                                                    </button>
-
-                                                </td>
-                                            </form>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tabela-aba1"></tbody>
-                                </table>
-                            </div>
+                            {{table('aba1', [
+                            	'#:TABELA.CAMPO_ABA1:ANY',
+                           	    'CAMPO:TABELA.CAMPO_ABA1:ANY',
+                            ], ['search', 'reset']) | raw}}
                             {# FIM TABELA PESQUISA#}
-
                             {# FIM CONTEUDO EXEMPLO ABA 1 #}
                     </div>
 

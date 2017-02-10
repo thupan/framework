@@ -221,63 +221,79 @@ class Generator
 </tr>
 
 */
-
     private function setHeader()
     {
         $campos = $_REQUEST['campos'];
 
-        if (!$campos) {
-            return false;
-        }
         if ($campos) {
-            $i = 0;
-            foreach ($campos as $key => $val) {
-                $val = explode(':', $val);
-                $val = explode('_', $val[1]);
-                if($val[0] === 'ID' && $i === 0) {
-                    $val[1] = '#';
-                    $i++;
-                }
-                $pdf_header .= " '$val[1]',\n ";
-                $table .= "<th>{$val[1]}</th>\n";
+            foreach ($campos as $index => $key) {
+                $key2   = explode(':', $key)[1];
+                $label  = explode('_', $key2);
+                $label  = (strtolower($label[0]) == 'id') ? '#' : $label[1];
+                $key    = str_replace(':', '.', $key);
+                $html[] = "\t'$label:$key:ANY'";
             }
-
-            $table .= "<th class='text-center'>AÇÕES</th>\n";
-
-            $table .= "<tr class='search-fields'>\n
-                            <form class='form-fields'>\n";
-
-            foreach ($campos as $key => $val) {
-                    $val = str_replace(':', '.', $val);
-                    $field_name = explode('.', $val);
-                    if(count($field_name) > 1) {
-                        $pdf_fields .= "\$linha['{$field_name[1]}'],\n";
-                    } else {
-                        $pdf_fields .= "\$linha['{$field_name[0]}'],\n";
-                    }
-
-                    $table .= "<td><input name='$val:ANY' class='form-control Enter' type='text'/></td>\n";
-            }
-
-            $table .= "
-            <td style='width:130px !important;'>
-              <button type='button' class='btn btn-primary search'>
-                <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
-              </button>\n\n
-
-              <button type='button' class='btn btn-default search-refresh'>
-                <span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>
-              </button>\n\n
-            </td> \n\n";
-
-            $table .= "</form>\n
-                        </tr>\n";
+            return implode(",\n", $html);
         }
-
-        $this->HeaderClean = rtrim($pdf_header, ',');
-        $this->FieldsPDF   = rtrim($pdf_fields, ',');
-        return $table;
+        return false;
     }
+
+    // private function setHeader_old()
+    // {
+    //     $campos = $_REQUEST['campos'];
+    //
+    //     if (!$campos) {
+    //         return false;
+    //     }
+    //     if ($campos) {
+    //         $i = 0;
+    //         foreach ($campos as $key => $val) {
+    //             $val = explode(':', $val);
+    //             $val = explode('_', $val[1]);
+    //             if($val[0] === 'ID' && $i === 0) {
+    //                 $val[1] = '#';
+    //                 $i++;
+    //             }
+    //             $pdf_header .= " '$val[1]',\n ";
+    //             $table .= "<th>{$val[1]}</th>\n";
+    //         }
+    //
+    //         $table .= "<th class='text-center'>AÇÕES</th>\n";
+    //
+    //         $table .= "<tr class='search-fields'>\n
+    //                         <form class='form-fields'>\n";
+    //
+    //         foreach ($campos as $key => $val) {
+    //                 $val = str_replace(':', '.', $val);
+    //                 $field_name = explode('.', $val);
+    //                 if(count($field_name) > 1) {
+    //                     $pdf_fields .= "\$linha['{$field_name[1]}'],\n";
+    //                 } else {
+    //                     $pdf_fields .= "\$linha['{$field_name[0]}'],\n";
+    //                 }
+    //
+    //                 $table .= "<td><input name='$val:ANY' class='form-control Enter' type='text'/></td>\n";
+    //         }
+    //
+    //         $table .= "
+    //         <td style='width:130px !important;'>
+    //           <button type='button' class='btn btn-primary search'>
+    //             <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
+    //           </button>\n\n
+    //
+    //           <button type='button' class='btn btn-default search-refresh'>
+    //             <span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>
+    //           </button>\n\n
+    //         </td> \n\n";
+    //
+    //         $table .= "</form>\n
+    //                     </tr>\n";
+    //     }
+    //
+    //     $this->HeaderClean = rtrim($pdf_header, ',');
+    //     $this->FieldsPDF   = rtrim($pdf_fields, ',');
+    //     return $table;
+    // }
 
     private function getFieldType($type = false, $label = false)
     {

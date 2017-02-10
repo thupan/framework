@@ -307,4 +307,44 @@
              }
          }
      }
+
+     public function xhrImprimirPesquisa() {
+         // verifica as requisições feitas ou não.
+         Request::any($data);
+         // Solicita a pesquisa com as requisições passadas ou não.
+         $data = {%Controller%}::pesquisar($data);
+
+         // Se ocorrer um erro.
+         if($erro = {%Controller%}::getError()) {
+             // Guarda a mensagem de erro
+             View::flash($erro, 'danger');
+             // Redireciona para pagina principal do controlador.
+             Redirect::to("$this->controller");
+         }
+
+         // Sem erros, então carrega o PDF da pesquisa.
+         Pdf{%Controller%}Pesquisa::conteudo($data);
+     }
+
+     /**
+      * Este método carrega a tabela de pesquisa dinamicamente.
+      *
+      * @return void
+      */
+     public function xhrPesquisar() {
+         // Faz as requisições
+         Request::any($data);
+
+         // Solicita a pesquisa com as requisições
+         $data = {%Controller%}::pesquisar($data);
+
+         // Se ocorrer um erro
+         if($erro = {%Controller%}::getError()) {
+             // faz um alerta com a msg de erro
+             XHR::alert($erro, 'danger');
+         }
+
+         // XHR::ignore(['CHAVE_PARA_N_MOSTRAR_NA_TABELA']);
+         XHR::table('tabela', $data, ['detail'], {%arrayPkTable%});
+     }
  }
