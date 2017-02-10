@@ -44,34 +44,70 @@ class Table {
         echo $form;
     }
 
+    public static function formHeader($url = null, $buttons = [], $validate = true) {
+        $language = autoload_config();
+
+        if($validate) {
+            $btn_new = "
+
+            <a href='$url' class='btn btn-success'>
+                <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+                ".$language[Session::get('s_locale')]['app']['new']."
+            </a>
+
+            ";
+        }
+
+        foreach($buttons as $but) {
+            switch($but) {
+                case 'pdf':
+                $btns .= "
+
+                <button id='imprimir' type='button' class='btn btn-default'>
+                    <span class='fa fa-2x fa-file-pdf-o' aria-hidden='true' style='color:red' alt='Exportar para pdf' title='Exportar para pdf'></span>
+                </button>
+
+                ";
+                break;
+
+                case 'xls':
+                $btns .= "
+
+                <button id='imprimir-xls' type='button' class='btn btn-default'>
+                    <span class='fa fa-2x fa-file-excel-o' aria-hidden='true' style='color:green' alt='Exportar para excel' title='Exportar para excel'></span>
+                </button>
+
+                ";
+                break;
+            }
+        }
+
+        $html .= "
+
+        <div class='row row-header'>
+            <div class='container'>
+                <!-- botão de novo -->
+                <div class='left'>
+                $btn_new
+                </div>
+                <!-- botões de exportação -->
+                <div class='right' style='margin-right:0px'>
+                    <div class='btn-group' role='group' aria-label='...'>
+                        $btns
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        ";
+
+        return $html;
+    }
+
     public static function Open($options = ['class' => 'table table-striped table-hover listview']) {
         foreach($options as $key => $value) {
             $attr .= $key.'="'.$value.'" ';
         }
-
-        // self::$table = "
-        //
-        // <!-- barra de pesquisa mobile -->
-        // <div class='clearfix visible-xs visible-sm right mobile-search'>
-        //     <div class='row' style='padding:10px;margin-top:10px'>
-        //         <div class='container'>
-        //             <div class='form-group col-md-12'>
-        //                 <div class='input-group right'>
-        //                     <input type='text' class='form-control Enter' id='TX_PESQUISA' placeholder='Pesquisa Rápida'>
-        //                     <div class='input-group-btn'>
-        //                         <div class='btn-group' role='group'>
-        //                             <button type='button' class='btn btn-primary search'>
-        //                                 <span class='glyphicon glyphicon-search' aria-hidden='true'></span>
-        //                             </button>
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
-        //
-        // ";
 
         self::$table = "<table $attr>";
     }
@@ -116,12 +152,17 @@ class Table {
 
         foreach($data as $field => $key) {
             $combo = explode('@', $key);
+
             if($combo[1]) {
                 $key  = $combo[0];
                 $data = json_decode(base64_decode($combo[2]), true);
-                $options = "<option value=''></option>";
-                foreach($data as $s_index => $s_array) {
-                    $options .= "<option value='".$s_array['ID']."'>".$s_array['TEXT']."</option>";
+                if($data) {
+                    $options = "<option value=''></option>";
+                    foreach($data as $s_index => $s_array) {
+                        $options .= "<option value='".$s_array['ID']."'>".$s_array['TEXT']."</option>";
+                    }
+                } else {
+                    $options = "<option selected>Seu array não retornou dados</option>";
                 }
                 self::$table .= '<td><select name="'.$key.'" class="form-control-select2 '.$name[5].'">'.$options.'</select></td>';
             } else {
@@ -184,11 +225,11 @@ class Table {
             }
 
             // mostra uma mensagem de alerta se existir.
-            if(self::$message) {
-                self::$table .= "<tr>
-                                    <td colspan='100'>".self::$message."</td>
-                                 </tr>";
-            }
+            // if(self::$message) {
+            //     self::$table .= "<tr>
+            //                         <td colspan='100%'>".self::$message."</td>
+            //                      </tr>";
+            // }
 
             $name[0] = ($options['id']) ? 'edit-'.$options['id'] : 'edit';
             $name[1] = ($options['id']) ? 'del-'.$options['id'] : 'delete';
@@ -472,7 +513,7 @@ class Table {
             break;
         }
 
-        return self::$message = "
+        self::$message = "
                 <div class='row'>
                 <div class='container'>
                         <div class='alert alert-$type alert-dismissible fade in text-left' role='alert'>
@@ -483,6 +524,8 @@ class Table {
                         </div>
                 </div>
                 </div>";
+
+        return self::$message;
     }
 
     public static function Show() {

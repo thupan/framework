@@ -211,6 +211,10 @@ class View
                     echo implode("\n", $scripts);
                 });
 
+                self::$functions[] = new \Twig_SimpleFunction('header', function($url, $buttons, $validate) {
+                    echo \Service\HTML\Table::formHeader($url, $buttons, $validate);
+                });
+
                 self::$functions[] = new \Twig_SimpleFunction('table', function($id, $fields = [], $actions = []) {
                     //NOME:TABELA.CAMPO:TIPO_PESQUISA
 
@@ -386,7 +390,7 @@ class View
 
     public static function flash($message, $alert = 'info')
     {
-        Session::set('flash', XHR::alert($message, $alert));
+        Session::set('flash', XHR::alertx($message, $alert));
     }
 
     public static function assign($key, $value)
