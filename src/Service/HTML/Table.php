@@ -236,10 +236,23 @@ class Table {
 
             // prepara o conteudo dos campos para cada linha
             foreach($data as $index => $row) {
-
                $count = 0;
+
                 // pega o conteudo de cada campo
                 foreach($row as $field => $value) {
+                    // verifica se existe campos para serem eliminados
+                    if(self::$ignore) {
+                        // remove os campos ignorados
+                        if(in_array($field, self::$ignore)) {
+                            continue;
+                        }
+                    } else if(self::$only) {
+                        // remove todos os campos que nao forem passados
+                        if(!in_array($field, self::$only)) {
+                            continue;
+                        }
+                    }
+
                   if($count==0){
                     // Configuração de atributos pra o tr da tabela
                     if($config) {
@@ -258,18 +271,7 @@ class Table {
                     self::$table .= "<tr $attr_tr>";
 
                   }
-                    // verifica se existe campos para serem eliminados
-                    if(self::$ignore) {
-                        // remove os campos ignorados
-                        if(in_array($field, self::$ignore)) {
-                            continue;
-                        }
-                    } else if(self::$only) {
-                        // remove todos os campos que nao forem passados
-                        if(!in_array($field, self::$only)) {
-                            continue;
-                        }
-                    }
+
 
                     // retorna nome do campo limpo
                     $fname = explode('_', $field)[1];
