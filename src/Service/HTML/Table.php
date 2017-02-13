@@ -394,7 +394,7 @@ class Table {
                                                 <span>$m[2]</span>
                                                 <span class='caret'></span>
                                                 </button>
-                                                <ul class='dropdown-menu'>";
+                                                <ul class='dropdown-menu' style='left:auto; right:0;' role='menu'>";
 
                                             foreach($v as $in => $va){
                                                 $m    = explode(':', $va);
