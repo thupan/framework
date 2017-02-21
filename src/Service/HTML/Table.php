@@ -339,7 +339,6 @@ class Table {
                         self::$table .= '<div class="btn-group" role="group" aria-label="...">';
                     // verifica quais os botoes serao adicionados
                     foreach($actions as $k => $action) {
-
                         if(!is_numeric($k)) {
                             if(is_bool($action)) {
                                 $validarAcesso = $action;
@@ -363,10 +362,18 @@ class Table {
 
                             case 'modal':
                                 if($m_name) {
-                                    $m = explode(':', $m_name);
-                                    self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
+                                    if(is_array($m_name)) {
+                                        $m = explode(':', array_keys($m_name)[0]);
+                                        $validarAcessoModal = (bool) array_values($m_name)[0];
+                                    } else {
+                                        $m = explode(':', $m_name);
+                                        $validarAcessoModal = true;
+                                    }
+                                    if($validarAcessoModal) {
+                                        self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
                                                     <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
                                                  </button> ";
+                                    }
                                 }
                             break;
 
