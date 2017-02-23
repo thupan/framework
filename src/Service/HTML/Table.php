@@ -515,7 +515,7 @@ class Table {
 
                         }
                     }
-                    self::$table .= '</tr>';
+                    self::$table .= '<td></td></tr>';
                 }
             }
 
