@@ -11,6 +11,7 @@ class Table {
     public static $paginate = true;
     public static $ignore = null;
     public static $only   = null;
+    public static $columns_data  = [];
 
     public static function formSearch($id, $url =null , $actions = [], $validate = true) {
         // carrega as configurações do frame para pegar o idioma
@@ -305,12 +306,15 @@ class Table {
                     if($v[1]) {
                         if($field === $v[1]) {
                             self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";
+                            $columns_x[] = $field;
                             unset($attr_td);
                         } else {
                             self::$table .= "<td data-label='$fname' class='$field'>$value</td>";
+                            $columns_x[] = $field;
                         }
                     } else {
                         self::$table .= "<td data-label='$fname' $attr_td class='$field'>$value</td>";
+                        $columns_x[] = $field;
                     }
                     $count++;
                 }
@@ -462,6 +466,50 @@ class Table {
                 }
                 // finaliza a linha
                 self::$table .= '</tr>';
+            }
+
+            if(self::$columns_data) {
+                //dd(self::$columns_data);
+                $columns_x = array_unique($columns_x);
+
+                foreach(self::$columns_data as $index => $row) {
+                    $td_null = 0;
+                    self::$table .= '<tr>';
+
+                    foreach($row['data'] as $f_y_k => $f_y_v) {
+                        foreach($columns_x as $i_x_k => $f_x_k) {
+                            if($f_y_k == $f_x_k) {
+                                unset($columns_x[$i_x_k]);
+                                $td_found .=  '<td>' . $f_y_v . '</td>';
+                                if($td_null == 0) {
+                                    self::$table .= $td_found;
+                                    $td_null  = 0;
+                                    $td_found = '';
+                                    break;
+                                } else {
+                                    unset($columns_x[$i_x_k]);
+                                    if(!$title) {
+                                        $title     = $row['title'];
+                                        $title_cfg = " style='text-align:right' ";
+                                    } else {
+                                        $title = null;
+                                        $title_cfg = null;
+                                    }
+                                    self::$table .= "<td colspan='$td_null' $title_cfg>$title</td>";
+                                    self::$table .= $td_found;
+                                    $td_null  = 0;
+                                    $td_found = '';
+                                    break;
+                                }
+                            } else {
+                                $td_null++;
+                                unset($columns_x[$i_x_k]);
+                            }
+
+                        }
+                    }
+                    self::$table .= '</tr>';
+                }
             }
 
             if(self::$paginate) {

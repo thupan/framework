@@ -14,6 +14,10 @@ class XHR
 
     public static $paginate = true;
 
+    public static function row($title = '', $columns = []) {
+        Table::$columns_data[] = ['title' => $title, 'data' => $columns];
+    }
+
     public static function alertx($message, $type = 'info')
     {
         return Table::Alert($message, $type);
