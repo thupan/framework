@@ -4,6 +4,7 @@ namespace Database\Driver;
 
 use \PDOException;
 use \Service\Debug\Debug;
+use \Service\Session;
 
 class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 {
@@ -21,6 +22,20 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
     public static function getError()
     {
         return self::$error;
+    }
+
+    public function ociChangePassword($username, $old_password, $new_password) {
+        try {
+            self::$config = autoload_config();
+            $host = self::$config['database']['connections'][Session::get('s_environment')][0]['host'];
+            $port = self::$config['database']['connections'][Session::get('s_environment')][0]['port'];
+            $dbase = self::$config['database']['connections'][Session::get('s_environment')][0]['database'];
+            $database = $host . ':' . $port . "/" . $dbase;
+
+            return oci_password_change($database, $username, $old_password, $new_password);
+        } catch(Exception $e) {
+            return false;
+        }
     }
 
     public function connect($connection, $database, $host, $port, $username, $password)
