@@ -212,6 +212,30 @@ class Table {
         self::$table .= '</form></tr>';
     }
 
+    public static function validarRow($data=null,$param=null,$opt=null)
+    {
+        switch($opt)
+        {
+            case 'IN':
+            if(in_array($data,$param)){
+                $r = true;
+            }else{
+                $r = false;
+            }
+            break;
+            case 'NOT NULL':
+            if(!is_null($data))
+             {
+                 $r = true;
+             }else{
+                $r = false;
+             }
+             break;
+
+        }
+        return $r;
+    }
+
     public static function Rows($options = [], $data, $actions = [], $pkey = [], $config = []) {
         // carrega as configurações do frame para pegar o idioma
         $language = autoload_config();
@@ -365,20 +389,53 @@ class Table {
                             break;
 
                             case 'modal':
-                                if($m_name) {
-                                    if(is_array($m_name)) {
-                                        $m = explode(':', array_keys($m_name)[0]);
-                                        $validarAcessoModal = (bool) array_values($m_name)[0];
-                                    } else {
-                                        $m = explode(':', $m_name);
-                                        $validarAcessoModal = true;
-                                    }
-                                    if($validarAcessoModal) {
-                                        self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
-                                                    <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
-                                                 </button> ";
-                                    }
+
+                                if (is_array($m_name[array_keys($m_name)[0]])) {
+                                    $tag = $m_name[array_keys($m_name)[0]];
+                                    $valida = self::validarRow($row[$tag['COL']],$tag['PARAM'],$tag['OPT']);
+                                } else if(is_bool($m_name[array_keys($m_name)[0]])) {
+                                    $valida = $m_name[array_keys($m_name)[0]];
+                                } else {
+                                    $valida = true;
                                 }
+
+
+
+                                if($valida){
+                                    self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
+                                                                <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
+                                                            </button> ";
+                                }
+
+                                // if($m_name) {
+                                //     if(is_array($m_name)) {
+                                //         if(is_callable(array_values($m_name)[0])) {
+                                //             $vArgs = func_get_args();
+                                //             dd($vArgs);
+                                //             //
+                                //             // foreach(call_user_func_array(array_values($m_name)[0], $vArgs[1]) as $iix => $aar) {
+                                //             //     foreach($arr as $kk => $vv) {
+                                //             //         if($kk == $field) {
+                                //             //
+                                //             //         }
+                                //             //     }
+                                //             // }
+                                //
+                                //             dd( call_user_func_array(array_values($m_name)[0], $vArgs) );
+                                //         } else {
+                                //             $m = explode$row (':', array_keys($m_name)[0]);
+                                //             $validarAcessoModal = (bool) array_values($m_name)[0];
+                                //         }
+                                //     } else {
+                                //         $m = explode(':', $m_name);
+                                //         $validarAcessoModal = true;
+                                //     }
+                                //     if($validarAcessoModal) {
+                                //         self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
+                                //                             <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
+                                //                         </button> ";
+                                //     }
+                                // }
                             break;
 
                             // icon => 'nome_id:botao_ico.botao_tipo'
