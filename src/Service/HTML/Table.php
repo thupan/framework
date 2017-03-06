@@ -48,7 +48,7 @@ class Table {
     public static function formHeader($url = null, $buttons = [], $validate = true) {
         $language = autoload_config();
 
-        if($validate) {
+        if($validate && $url) {
             $btn_new = "
 
             <a href='$url' class='btn btn-success'>
@@ -389,6 +389,7 @@ class Table {
                             break;
 
                             case 'modal':
+                                $m = explode(':', $m_name[array_keys($m_name)[0]]);
 
                                 if (is_array($m_name[array_keys($m_name)[0]])) {
                                     $tag = $m_name[array_keys($m_name)[0]];
@@ -398,8 +399,6 @@ class Table {
                                 } else {
                                     $valida = true;
                                 }
-
-
 
                                 if($valida){
                                     self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
