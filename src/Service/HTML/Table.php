@@ -389,9 +389,11 @@ class Table {
                             break;
 
                             case 'modal':
-                                $m = explode(':', $m_name[array_keys($m_name)[0]]);
 
+                                $m = explode(':', array_keys($m_name)[0]);
                                 if (is_array($m_name[array_keys($m_name)[0]])) {
+
+
                                     $tag = $m_name[array_keys($m_name)[0]];
                                     $valida = self::validarRow($row[$tag['COL']],$tag['PARAM'],$tag['OPT']);
                                 } else if(is_bool($m_name[array_keys($m_name)[0]])) {
