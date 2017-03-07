@@ -81,6 +81,23 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         return self::$queries;
     }
 
+    public function callProcedure($sp_name = null, $sp_args = []) {
+        foreach ($this->connection as $connection);
+
+        try {
+            $sth = $connection->prepare("CALL $sp_name(?,?)");
+            $sth->bindParam(1, $sp_args[0], \PDO::PARAM_STR);
+            $sth->bindParam(2, $sp_args[1], \PDO::PARAM_STR|\PDO::PARAM_INPUT_OUTPUT, 30);
+            if($sth->execute()) {
+                return $sp_args[1];
+            }
+
+        } catch (PDOException $e) {
+            self::$error[] = $e->getMessage();
+            Debug::getInstance('exceptions')->addException($e);
+        }
+    }
+
     public function setQuery($sql) {
         $sql = self::getError() ? self::getError() : $sql;
 

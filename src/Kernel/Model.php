@@ -241,4 +241,8 @@ class Model
     {
         return self::dbConnection()->getInstance(self::$connection)->execute($sql);
     }
+
+    public static function callProcedure($sp_name = null, $sp_args = []) {
+        return self::dbConnection()->getInstance(self::$connection)->callProcedure($sp_name, $sp_args);
+    }
 }
