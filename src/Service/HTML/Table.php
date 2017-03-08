@@ -211,31 +211,7 @@ class Table {
 
         self::$table .= '</form></tr>';
     }
-
-    public static function validarRow($data=null,$param=null,$opt=null)
-    {
-        switch($opt)
-        {
-            case 'IN':
-            if(in_array($data,$param)){
-                $r = true;
-            }else{
-                $r = false;
-            }
-            break;
-            case 'NOT NULL':
-            if(!is_null($data))
-             {
-                 $r = true;
-             }else{
-                $r = false;
-             }
-             break;
-
-        }
-        return $r;
-    }
-
+   
     public static function Rows($options = [], $data, $actions = [], $pkey = [], $config = []) {
         // carrega as configurações do frame para pegar o idioma
         $language = autoload_config();
@@ -391,15 +367,16 @@ class Table {
                             case 'modal':
 
                                 $m = explode(':', array_keys($m_name)[0]);
-                                if (is_array($m_name[array_keys($m_name)[0]])) {
+                                if (is_callable($m_name[array_keys($m_name)[0]])){
+                                    
+                                     $valida = $m_name[array_keys($m_name)[0]]($row);
 
-
-                                    $tag = $m_name[array_keys($m_name)[0]];
-                                    $valida = self::validarRow($row[$tag['COL']],$tag['PARAM'],$tag['OPT']);
                                 } else if(is_bool($m_name[array_keys($m_name)[0]])) {
-                                    $valida = $m_name[array_keys($m_name)[0]];
+
+                                     $valida = $m_name[array_keys($m_name)[0]];
                                 } else {
-                                    $valida = true;
+
+                                     $valida = true;
                                 }
 
                                 if($valida){
@@ -407,6 +384,7 @@ class Table {
                                                                 <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
                                                             </button> ";
                                 }
+
 
                                 // if($m_name) {
                                 //     if(is_array($m_name)) {
