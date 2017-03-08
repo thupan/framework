@@ -94,7 +94,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             $sth = $connection->prepare("CALL $sp_name($args)");
 
             for($i = 0, $z =1; $i < count($sp_args); $i++, $z++) {
-                dd($sp_args[$i]);
                 $sth->bindParam($z, $sp_args[$i], \PDO::PARAM_STR|\PDO::PARAM_INPUT_OUTPUT, 2000);
             }
 
