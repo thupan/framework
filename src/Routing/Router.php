@@ -139,7 +139,7 @@ class Router
         unset($request[array_search(ROUTER_REQUEST, $request)]);
         ksort($request);
 
-        $Path = implode('/', $request);
+        $Path = implode('/', $request) . '/';
 
         //$Path = str_replace('//', '/', str_replace(ROUTER_REQUEST, '', explode('?', REQUEST_URI)[0]));
 
