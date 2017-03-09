@@ -133,10 +133,17 @@ class Router
 
         define('ROUTER_REQUEST', $url);
 
-        $Path = str_replace('//', '/', str_replace(ROUTER_REQUEST, '', explode('?', REQUEST_URI)[0]));
+        $request = explode('/', explode('?',REQUEST_URI)[0]);
+        krsort($request);
+
+        unset($request[array_search(ROUTER_REQUEST, $request)]);
+        ksort($request);
+
+        $Path = implode('/', $request);
+
+        //$Path = str_replace('//', '/', str_replace(ROUTER_REQUEST, '', explode('?', REQUEST_URI)[0]));
 
         self::$uri = $url;
-
         return $Path;
     }
 
