@@ -123,6 +123,7 @@ class Router
         $key = array_search('index.php', $dir);
 
         for ($i = 0; $i <= $key; ++$i) {
+            $droot[] = $dir[$i];
             unset($dir[$i]);
         }
 
@@ -133,17 +134,12 @@ class Router
 
         define('ROUTER_REQUEST', $url);
 
-        $request = explode('/', explode('?',REQUEST_URI)[0]);
-        krsort($request);
+        $droot[array_search('index.php', $droot)] = '';
 
-        unset($request[array_search(ROUTER_REQUEST, $request)]);
-        ksort($request);
-
-        $Path = implode('/', $request) . '/';
-
-        //$Path = str_replace('//', '/', str_replace(ROUTER_REQUEST, '', explode('?', REQUEST_URI)[0]));
+        $Path = str_replace('//','/', implode('/', $droot));
 
         self::$uri = $url;
+
         return $Path;
     }
 
