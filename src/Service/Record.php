@@ -99,25 +99,39 @@ class Record {
      * @param boolean
      * @return Array
      */
-    public static function sortRecord($records, $field, $reverse=false)
+    public static function sortRecord($records, $field, $order=true)
     {
-        $hash = array();
+        $new_array = array();
+        $sortable_array = array();
 
-        foreach($records as $key => $record)
-        {
-            $hash[$record[$field].$key] = $record;
+        if (count($records) > 0) {
+            foreach ($records as $k => $v) {
+                if (is_array($v)) {
+                    foreach ($v as $k2 => $v2) {
+                        if ($k2 == $field) {
+                            $sortable_array[$k] = $v2;
+                        }
+                    }
+                } else {
+                    $sortable_array[$k] = $v;
+                }
+            }
+
+            switch ($order) {
+                case true:
+                    asort($sortable_array);
+                break;
+                case false:
+                    arsort($sortable_array);
+                break;
+            }
+
+            foreach ($sortable_array as $k => $v) {
+                $new_array[$k] = $records[$k];
+            }
         }
 
-        ($reverse)? krsort($hash) : ksort($hash);
-
-        $records = array();
-
-        foreach($hash as $record)
-        {
-            $records []= $record;
-        }
-
-        return $records;
+        return $new_array;
     }
      /**
      * Método público retorna uma pesquisa em um PDO.
