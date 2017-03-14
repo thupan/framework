@@ -36,7 +36,6 @@ class Paginator {
   public function paginate(&$data) {
     if(!is_null($data)) {
       $this->current_page = ($_REQUEST['p']) ? $_REQUEST['p'] : 1;
-
       $page_data = array_chunk($data, $this->per_page);
       $this->total_page = count($page_data);
       $new_data = $page_data[$this->current_page-1];
@@ -48,20 +47,16 @@ class Paginator {
   }
 
   private function previous_page() {
-    if($this->current_page < 1) {
-      return 1;
-    } else if($this->current_page <= $this->links_page) {
-      return 1;
-    } else {
-      return $this->current_page - $this->links_page;
-    }
+    if($this->current_page > 1) {
+      return $this->current_page - 1;
+    }else{
+      return $this->current_page;
+    } 
   }
-  private function next_page() {
+  private function next_page() {    
     if($this->current_page < $this->total_page) {
-      return $this->current_page + $this->links_page;
-    } else if($this->current_page > $this->total_page) {
-      return $this->total_page;
-    } else {
+      return $this->current_page + 1;
+    }else{
       return $this->current_page;
     }
   }
