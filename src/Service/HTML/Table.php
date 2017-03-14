@@ -150,9 +150,12 @@ class Table {
                          <tr class="search-fields">
                          <form class="'.$name[2].'">';
 
-
         foreach($data as $field => $key) {
             $combo = explode('@', $key);
+
+            $key    = ($key === ":") ? false : $key;
+
+            $filter = ($key) ? true : false;
 
             if($combo[1]) {
                 $key  = $combo[0];
@@ -166,14 +169,16 @@ class Table {
                     $options = "<option selected>Seu array não retornou dados</option>";
                 }
                 self::$table .= '<td><select name="'.$key.'" class="form-control-select2 '.$name[5].'">'.$options.'</select></td>';
-            } else {
+            } else if($key && $key !== ":") {
                 self::$table .= '<td><input name="'.$key.'" class="form-control '.$name[5].'" type="text"/></td>';
+            } else {
+                break;
             }
 
         }
 
         // se houver botoes de acoes
-        if($actions) {
+        if($actions && $filter) {
             // seta o atributo para o elemento td
             self::$table .= "<td style='width:150px !important;'>";
             self::$table .= '<div class="btn-group" role="group" aria-label="...">';
@@ -211,7 +216,7 @@ class Table {
 
         self::$table .= '</form></tr>';
     }
-   
+
     public static function Rows($options = [], $data, $actions = [], $pkey = [], $config = []) {
         // carrega as configurações do frame para pegar o idioma
         $language = autoload_config();
@@ -368,7 +373,7 @@ class Table {
 
                                 $m = explode(':', array_keys($m_name)[0]);
                                 if (is_callable($m_name[array_keys($m_name)[0]])){
-                                    
+
                                      $valida = $m_name[array_keys($m_name)[0]]($row);
 
                                 } else if(is_bool($m_name[array_keys($m_name)[0]])) {
