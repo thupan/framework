@@ -6,119 +6,210 @@ use \FPDF;
 
 class PDF extends FPDF
 {
-    var $widths;
     var $aligns;
-    // Background Fill Color
     var $backgrounds;
-    // Border
     var $borders;
-    var $fontz;
+    var $fills;
+    var $fontes; // fonts já é usado
+    var $heights;
+    var $sizes;
+    var $styles;
+    var $valigns;
+    var $widths;
+    var $resetar;
 
-    function SetWidths($w)
-    {
-        //Set the array of column widths
-        $this->widths=$w;
+    function __construct(){
+        parent::__construct();
     }
 
-    /**
-    * Função para aplicar alinhamentos na função Row().
-    * @param mixed[] $a array ou string ('R' || 'L' || 'C' || ['R||L||R'])
-    * @example SetAligns(['R', L, 'R', 'C']) - Congurações para quantidades exata de colunas.
-    * @example SetAligns('C') - Centralizado para todos.
-    */
-    function SetAligns($a)
-    {
+    function SetAligns($a) {
         //Set the array of column alignments
-        $this->aligns=$a;
+        $this->aligns = $a;
     }
 
-    function SetBackgrounds($bfc)
-    {
+    function SetBackgrounds($bfc) {
         //Set the array of column alignments
-        $this->backgrounds=$bfc;
+        $this->backgrounds = $bfc;
     }
 
-     /**
-     * Array para aplicar borda de cada célula da função Row.
-     * O símbolo '&|' significa que pode ser 'E ou OU'
-     * @todo add an array parameter to border.
-     * @param mixed[] $border int ou string (0 || 1, 'B &| L &| R &| T')
-     * @example SetBorder([0, 1, 'TB', 'RL' , 'TBRL'])
-     * @return array de string ou de int.
-     */
-    public function SetBorders($b)
-    {
+    function SetBorders($b) {
         //Set the array of borders
         $this->borders = $b;
     }
 
-    function SetFontConfig($f){
-        // Set the array of column fonts
-        $this->fontz = $f;
+    function SetFills($fl){
+        //Set the array of fills
+        $this->fills = $fl;
     }
 
-    function Row($data)
-    {
+    function SetFonts($f){
+        $this->fontes = $f;
+    }
+
+    function SetHeights($h){
+        $this->heights = $h;
+    }
+
+    function SetSizes($si){
+        $this->sizes = $si;
+    }
+
+    function SetStyles($s){
+        $this->styles = $s;
+    }
+
+    function SetVAligns($v){
+        $this->valigns = $v;
+    }
+
+    function SetWidths($w) {
+        //Set the array of column widths
+        $this->widths = $w;
+    }
+
+    function ResetConfig($r) {
+
+        $this->resetar = $r;
+    }
+
+    function Row($data) {
 
         //Calculate the height of the row
-        $nb=0;
-        for($i=0;$i<count($data);$i++){
+        $nb = 0;
+        for ($i = 0; $i < count($data); $i++) {
             // Seta a configuração de um array de fontes
-            if (is_array($this->fontz[$i]))
-                $this->SetFont($this->fontz[$i]['font'], $this->fontz[$i]['style'], $this->fontz[$i]['size']);
-            $nb=max($nb,$this->NbLines($this->widths[$i],$data[$i])); // retorna o maior número de linhas
+            // FONTE
+            if (!is_array($this->fontes)) {
+                $fonte = is_string($this->fontes) ? $this->fontes : false;
+            } else {
+                $fonte = isset($this->fontes[$i]) ? $this->fontes[$i] : 'Helvetica';
+            }
+            // ESTILO
+            if (!is_array($this->styles)) {
+                $estilo = is_string($this->styles) ? $this->styles : false;
+            } else {
+                $estilo = isset($this->styles[$i]) ? $this->styles[$i] : '';
+            }
+            // TAMANHO
+            if (!is_array($this->sizes)) {
+                $tamanho = is_integer($this->sizes) ? $this->sizes : false;
+            } else {
+                $tamanho = isset($this->sizes[$i]) ? $this->sizes[$i] : 9;
+            }
+            if ( isset($this->fontes) || isset($this->styles)  || isset($this->sizes) )
+                $this->SetFont($fonte, $estilo, $tamanho);
+
+            $nb = max($nb, $this->NbLines($this->widths[$i], $data[$i])); // retorna o maior número de linhas
         }
 
-        $h=5*$nb;
+        $h = ($this->heights ? $this->heights : 5) * $nb;
         //Concatenate with blank for background fill
-        for($i=0;$i<count($data);$i++)
-        {
-            $diff = $nb-$this->NbLines($this->widths[$i],$data[$i]); // diferença entre a maior linha e a linha atual
-            if ($diff > 0)
-            {
-                for($j=0;$j<($diff);$j++)
-                    $data[$i].="\n ";
+        for ($i = 0; $i < count($data); $i++) {
+            $v = !is_array($this->valigns) ? $this->valigns : $this->valigns[$i];
+            $diff = $nb - $this->NbLines($this->widths[$i], $data[$i]); // diferença entre a maior linha e a linha atual
+            if ($diff > 0) {
+                for ($j = 0; $j < ($diff); $j++){
+                    if ($v != 'M' && $v != 'B')
+                        $data[$i].="\n ";
+                    if ($v == 'M' && $j < ($diff/2))
+                        $data[$i] = "\n".$data[$i];
+                    if ($v == 'M' && $j >= ($diff/2))
+                       $data[$i] .="\n ";
+                    if ($v == 'B')
+                       $data[$i] = "\n ".$data[$i];
+                }
             }
         }
         //Issue a page break first if needed
         $this->CheckPageBreak($h);
         //Draw the cells of the row
-        for($i=0;$i<count($data);$i++)
-        {
-            $w=$this->widths[$i];
-            // Alinhamentos em array ou string
-              if (!is_array($this->aligns)){
-                 $a= is_string($this->aligns) ? $this->aligns : false;
-              }else{
-                $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
-              }
-            // Array Background Fill Color
-            if (!is_array($this->backgrounds)){
-                $bfc= $this->backgrounds == true ? true : false;
+        for ($i = 0; $i < count($data); $i++) {
+            $w = $this->widths[$i];
+            if (!is_array($this->aligns)) {
+                $a = is_string($this->aligns) ? $this->aligns : false;
             } else {
-                $bfc=isset($this->backgrounds[$i]) ? $this->backgrounds[$i] : false;
+                $a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
             }
+
+            // Array Backgrounds
+            if (!is_array($this->backgrounds)) {
+                $bfc = $this->backgrounds == true ? true : false;
+            } else {
+                $bfc = isset($this->backgrounds[$i]) ? $this->backgrounds[$i] : false;
+            }
+
+            // Array Fill Color
+            if(!is_null($this->fills)){
+                if (!is_array($this->fills)) {
+                    $fi = is_integer($this->fills) ? $this->fills : false;
+                } else {
+                    $fi = isset($this->fills[$i]) ? $this->fills[$i] : 255;
+                }
+
+                if (!is_array($fi)){
+                    $this->SetFillColor($fi);
+                } else {
+                    $this->SetFillColor($fi[0],$fi[1],$fi[2]);
+                }
+            }
+
             //Save the current position
-            $x=$this->GetX();
-            $y=$this->GetY();
+            $x = $this->GetX();
+            $y = $this->GetY();
             //Draw the border
-            if (!isset($this->borders[$i])) {
+            if (is_null($this->borders) && $this->borders!=0) {
                 $this->Rect($x, $y, $w, $h);
             }
             // Array para setar bordas independentes
             if (!is_array($this->borders)) {
-                $b = $this->borders == 1 ? 1 : 0;
+                $b = $this->borders;
+
             } else {
                 $b = isset($this->borders[$i]) ? $this->borders[$i] : 0;
             }
             //Seta Fontes, Tamanhos e Formatos independentes
-             if (is_array($this->fontz[$i]))
-                $this->SetFont($this->fontz[$i]['font'], $this->fontz[$i]['style'], $this->fontz[$i]['size']);
+            // FONTE
+            if (!is_array($this->fontes)) {
+                $fonte = is_string($this->fontes) ? $this->fontes : false;
+            } else {
+                $fonte = isset($this->fontes[$i]) ? $this->fontes[$i] : 'Helvetica';
+            }
+            // ESTILO
+            if (!is_array($this->styles)) {
+                $estilo = is_string($this->styles) ? $this->styles : false;
+            } else {
+                $estilo = isset($this->styles[$i]) ? $this->styles[$i] : '';
+            }
+            // TAMANHO
+            if (!is_array($this->sizes)) {
+                $tamanho = is_integer($this->sizes) ? $this->sizes : false;
+            } else {
+                $tamanho = isset($this->sizes[$i]) ? $this->sizes[$i] : 9;
+            }
+            if ( isset($this->fontes) || isset($this->styles)  || isset($this->sizes))
+                $this->SetFont($fonte, $estilo, $tamanho);
+
             //Print the text
-            $this->MultiCell($w,5,utf8_decode($data[$i]),$b,$a, $bfc);
+            $this->AutoPageBreak = false;
+            $this->MultiCell($w, ($this->heights ? $this->heights : 5), $data[$i], $b, $a, $bfc);
             //Put the position to the right of the cell
-            $this->SetXY($x+$w,$y);
+            $this->SetXY($x + $w, $y);
         }
+
+        if ($this->resetar){
+            $this->valigns      = null;
+            $this->aligns       = null;
+            $this->backgrounds  = null;
+            $this->borders      = null;
+            $this->fills        = null;
+            $this->fontes       = null;
+            $this->heights      = null;
+            $this->sizes        = null;
+            $this->styles       = null;
+            $this->widths       = null;
+            $this->resetar      = null;
+        }
+
         //Go to the next line
         $this->Ln($h);
     }
@@ -181,6 +272,62 @@ class PDF extends FPDF
         return $nl;
     }
 
+    /**
+         * O formato do array segue nas especificações abaixo:
+         * As chaves possíveis são:
+
+         * CHAVE        | OPÇÕES                                    | DESCRIÇÃO
+
+         * border       : ('B' &| 'T' &| 'R' &| 'L') || 1 || 0      - string ou inteiro (bordas da celula)
+         * style        : 'B' | 'I' | 'U' | ''                      - string (formato da fonte)
+         * font         : 'NomeDaFonte'                             - string (nome da fonte)
+         * background   : true || false                             - boolean (com fundo ou sem fundo)
+         * fill         : 0 à 255                                   - inteiro (cor do preenchimento)
+         * size         : 4 à 62                                    - inteiro (tamanho da fonte)
+         * align        : 'L' || 'R' || 'C' || 'J'                  - string (alinhamento do texto)
+         * width        : 1 a (275<landscape> || 190<portrait>)     - array (tamanho da coluna)
+         * height       : 1 a N                                     - inteiro (tamanho da altura da linha)
+         * reset        : true || false                             - boolean (reseta as configurações do row)
+         *
+         * OBS: para cada CHAVE pode-se receber UM VALOR ou um ARRAY com valores
+         *
+         * @param mixed[] $config Array de configurações com chave e valores.
+         *
+         * Exemplo para colunas padronizadas (como um theader):
+
+         $arrayConfig = [
+            'border'        => 1,                // aceita array também
+            'style'         => 'B',              // aceita array também
+            'font'          => 'Helvetica',      // aceita array também
+            'background'    => true,             // aceita array também
+            'fill'          => 240,              // aceita array também
+            'size'          => 9,                // aceita array também
+            'align'         => 'C',              // aceita array também
+            'width'         => [15,40,23,20,20], // só aceita array
+            'height'        => 5 ,               // só aceita inteiro
+            'reset'        => true               // só aceita booleano
+        ];
+
+         */
+
+    public function RowConfig($config){
+
+        $conf = (object) $config;
+
+        ($conf->align     ) ? $this->SetAligns     ($conf->align     ):false;
+        ($conf->background) ? $this->SetBackgrounds($conf->background):false;
+        ($conf->border    ) ? $this->SetBorders    ($conf->border    ):false;
+        ($conf->fill      ) ? $this->SetFills      ($conf->fill      ):false;
+        ($conf->font      ) ? $this->SetFonts      ($conf->font      ):false;
+        ($conf->height    ) ? $this->SetHeights    ($conf->height    ):false;
+        ($conf->style     ) ? $this->SetStyles     ($conf->style     ):false;
+        ($conf->size      ) ? $this->SetSizes      ($conf->size      ):false;
+        ($conf->valign    ) ? $this->SetVAligns    ($conf->valign    ):false;
+        ($conf->width     ) ? $this->SetWidths     ($conf->width     ):false;
+        ($conf->reset     ) ? $this->ResetConfig   ($conf->reset     ):false;
+
+    }
+
     // Funções adicionais para calcular intervalos
 
     // Function for sum intervals of an array
@@ -208,15 +355,17 @@ class PDF extends FPDF
     }
 
     // Matriz Transposta - transforma array dados de linhas em colunas
-	function flipDiagonally($arr)
-	{
-		$out = array();
-		foreach ($arr as $key => $subarr) {
-			foreach ($subarr as $subkey => $subvalue) {
-				$out[$subkey][$key] = $subvalue;
-			}
-		}
-		return $out;
-	}
+    function flipDiagonally($arr)
+    {
+        $out = array();
+        foreach ($arr as $key => $subarr) {
+            foreach ($subarr as $subkey => $subvalue) {
+                $out[$subkey][$key] = $subvalue;
+            }
+        }
+        return $out;
+    }
+
+
 
 }
