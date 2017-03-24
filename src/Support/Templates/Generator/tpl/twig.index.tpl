@@ -8,7 +8,7 @@
  {# ignora o breadcrumb na tela #}
  {# set disable_breadcrumb = true #}
 
- {% extends "index.twig" %}
+ {% extends "_templates/pmm/index.twig" %}
  {% block content %}
 
  {{ flash | raw }}
