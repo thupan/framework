@@ -56,11 +56,12 @@ class Model
 
         foreach ($data as $key => $value) {
 
-            // da prioridade de pesquisa na versao mobile
-            if(in_array('TX_PESQUISA', array_keys($data))) {
-                if($value) {
-                    $value_all = $value;
-                }
+            if(is_null($value)) {
+                unset($data[$key]);
+            }
+
+            if($data['TX_PESQUISA']) {
+                $value_all = $data['TX_PESQUISA'];
                 unset($data['TX_PESQUISA']);
                 continue;
             }
