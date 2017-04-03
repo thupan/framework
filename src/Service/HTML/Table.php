@@ -110,11 +110,14 @@ class Table {
             $attr .= $key.'="'.$value.'" ';
         }
 
-        self::$table = "<table $attr>";
+        self::$table = "
+        <div class='table-responsive'>
+
+        <table $attr>";
     }
 
     public static function Close() {
-        self::$table .= '</table>';
+        self::$table .= '</table> </div>';
 
         echo self::$table;
     }
