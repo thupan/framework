@@ -390,7 +390,7 @@ class Table {
 
                                 if($valida){
                                     self::$table .= "<button type='button' data-href='$pk' data-toggle='modal' data-target='#$m[0]' class='btn btn-info modal-$m[0]' alt='$m[1]' title='$m[1]'>
-                                                                <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span>
+                                                                <span class='glyphicon glyphicon-list-alt' aria-hidden='true'></span> {$action[1]}
                                                             </button> ";
                                 }
 
@@ -494,6 +494,7 @@ class Table {
                                 if($validarAcesso) {
                                         self::$table .= "<button type='button' href='$pk' class='btn btn-danger $name[1]' alt='".$language[Session::get('s_locale')]['app']['delete']."' title='".$language[Session::get('s_locale')]['app']['delete']."'>
                                                         <span class='glyphicon glyphicon-trash' aria-hidden='true'></span>
+                                                        {$action[1]}
                                                      </button> ";
                                 }
                             break;
@@ -502,6 +503,7 @@ class Table {
                                 if($validarAcesso) {
                                     self::$table .= "<button type='button' href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['print']."' title='".$language[Session::get('s_locale')]['app']['print']."'>
                                                         <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+                                                        {$action[1]}
                                                      </button> ";
                                 }
                             break;
@@ -509,6 +511,7 @@ class Table {
                             default:
                                 self::$table .= "<button type='button' href='$pk' class='btn btn-default' alt='".$language[Session::get('s_locale')]['app']['btnUnknow']."' title='".$language[Session::get('s_locale')]['app']['btnUnknow']."'>
                                                     <span class='glyphicon' aria-hidden='true'>?</span>
+                                                    {$action[1]}
                                                  </button> ";
                         }
 
