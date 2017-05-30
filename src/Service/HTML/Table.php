@@ -362,7 +362,8 @@ class Table {
                             $action = $k;
                         }
 
-                        switch($action) {
+	                    $action = explode(':', $action);
+                        switch($action[0]) {
                             case 'detail':
                                 if($validarAcesso) {
                                     self::$table .= "<a  href='$link/detail/$pk' class='btn btn-primary' alt='".$language[Session::get('s_locale')]['app']['details']."' title='".$language[Session::get('s_locale')]['app']['details']."'>
@@ -432,7 +433,7 @@ class Table {
                                     $w    = explode('.', $m[1]);
                                     $w[1] = !$w[1] ? 'warning' : $w[1];
 
-                                    self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                    self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[3]' title='$m[3]'>
                                                     <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
                                                     <span>$m[2]</span>
                                                  </button> ";
@@ -471,7 +472,7 @@ class Table {
                                             $w    = explode('.', $m[1]);
                                             $w[1] = !$w[1] ? 'warning' : $w[1];
 
-                                            self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[2]' title='$m[2]'>
+                                            self::$table .= "<button type='button' data-href='$pk' class='btn btn-$w[1] $m[0]' alt='$m[3]' title='$m[3]'>
                                                             <span class='glyphicon glyphicon-$w[0]' aria-hidden='true'></span>
                                                             <span>$m[2]</span>
                                                          </button> ";
@@ -484,6 +485,7 @@ class Table {
                                 if($validarAcesso) {
                                     self::$table .= "<button type='button' href='$pk' class='btn btn-warning $name[0]' alt='".$language[Session::get('s_locale')]['app']['edit']."' title='".$language[Session::get('s_locale')]['app']['edit']."'>
                                                     <span class='glyphicon glyphicon-edit' aria-hidden='true'></span>
+                                                    {$action[1]}
                                                  </button> ";
                                 }
                             break;

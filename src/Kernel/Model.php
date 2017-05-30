@@ -170,6 +170,15 @@ class Model
         return ($search) ? implode(' ', $search) : false;
     }
 
+
+
+
+
+
+
+
+
+
     public static function ociChangePassword($username, $old_password, $new_password) {
         return self::dbConnection()->getInstance(self::$connection)->ociChangePassword($username, $old_password, $new_password);
     }
