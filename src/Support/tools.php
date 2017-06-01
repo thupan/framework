@@ -2,6 +2,21 @@
 
 use \Service\Session;
 
+function dateConvert($date, $type) {
+	switch($type) {
+		case 'pt-br':
+		case 'pt-BR':
+			$date = implode('/', array_reverse(explode('-', substr($date, 0, 10)))).substr($date, 10);
+			break;
+		case 'us':
+		case 'US':
+			$date = implode('-', array_reverse(explode('/', substr($date, 0, 10)))).substr($date, 10);
+			break;
+	}
+
+	return $date;
+}
+
 /**
  * Função global para fazer concat em scripts.
  *
