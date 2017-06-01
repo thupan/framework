@@ -23,12 +23,12 @@ if(!function_exists('moneyConvert')) {
 	function moneyConvert($money, $type)
 	{
 		switch ($type) {
-			case 'pt-br':
-			case 'pt-BR':
-				$money = number_format($money, 2, '.', '');
-				break;
 			case 'us':
 			case 'US':
+				$money = number_format($money, 2, '.', '');
+				break;
+			case 'pt-br':
+			case 'pt-BR':
 				$money = number_format($money, 2, ',', '.');
 				break;
 		}
