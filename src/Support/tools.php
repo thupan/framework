@@ -1,6 +1,22 @@
 <?php
 
 use \Service\Session;
+
+if(!function_exists('dateDiff')) {
+	function dateDiff($date_start, $date_end)
+	{
+		$date_start = implode('-', array_reverse(explode('/', substr($date_start, 0, 10)))) . substr($date_start, 10);
+		$date_end   = implode('-', array_reverse(explode('/', substr($date_end, 0, 10)))) . substr($date_end, 10);
+
+		$dts = new \DateTime($date_start);
+		$dte = new \DateTime($date_end);
+
+		$interval = $dts->diff($dte);
+
+		return $interval;
+	}
+}
+
 if(!function_exists('dateConvert')) {
 	function dateConvert($date, $type)
 	{
