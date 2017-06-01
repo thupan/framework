@@ -1,20 +1,40 @@
 <?php
 
 use \Service\Session;
+if(!function_exists('dateConvert')) {
+	function dateConvert($date, $type)
+	{
+		switch ($type) {
+			case 'pt-br':
+			case 'pt-BR':
+				$date = implode('/', array_reverse(explode('-', substr($date, 0, 10)))) . substr($date, 10);
+				break;
+			case 'us':
+			case 'US':
+				$date = implode('-', array_reverse(explode('/', substr($date, 0, 10)))) . substr($date, 10);
+				break;
+		}
 
-function dateConvert($date, $type) {
-	switch($type) {
-		case 'pt-br':
-		case 'pt-BR':
-			$date = implode('/', array_reverse(explode('-', substr($date, 0, 10)))).substr($date, 10);
-			break;
-		case 'us':
-		case 'US':
-			$date = implode('-', array_reverse(explode('/', substr($date, 0, 10)))).substr($date, 10);
-			break;
+		return $date;
 	}
+}
 
-	return $date;
+if(!function_exists('moneyConvert')) {
+	function moneyConvert($money, $type)
+	{
+		switch ($type) {
+			case 'pt-br':
+			case 'pt-BR':
+				$money = number_format($money, 2, '.', '');
+				break;
+			case 'us':
+			case 'US':
+				$money = number_format($money, 2, ',', '.');
+				break;
+		}
+
+		return $money;
+	}
 }
 
 /**
