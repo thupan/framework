@@ -31,14 +31,16 @@ class HGridView
     private static $totalReg =0;
     private static $gridOrder = true;
     private static $orderColField = '';
-
+    private static $onOrder = true;
+    
     public static function open($option=[])
     {
         array_key_exists('id',$option)? self::$id = 'tabela-'.$option['id']:self::$id = 'tabela-'.md5(self::$id);
         array_key_exists('reload',$option)? self::$reload = $option['reload']:false;
         array_key_exists('search',$option)? self::$search = $option['search']:false;
         array_key_exists('onPageSize',$option)? self::$onPageSize = $option['onPageSize']:false;
-       
+        array_key_exists('onOrder',$option)? self::$onOrder = $option['onOrder']:false;
+      
         self::$controller = ROUTER_REQUEST;
 
         if(!self::$reload){
@@ -146,22 +148,46 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
        $html .= Html::beginTag('tr',[]);
        foreach($colums as $key =>$value)
        {
-           if(!is_array($value)){
-            $html .= Html::tag('th',Html::a(str_replace('_',' ',$value),$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$value]),[]);
-           }else{
+           if(self::$onOrder){
+               //Label com order
+               if(!is_array($value)){
+                $html .= Html::tag('th',Html::a(str_replace('_',' ',$value),$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$value]),[]);
+               }else{
 
-               if(is_callable($value['label'])){
-                   
-                   $html .= Html::tag('th',$value['label']($url),[]);
+                   if(is_callable($value['label'])){
+
+                       $html .= Html::tag('th',$value['label']($url),[]);
+                   }
+                   else
+                   {
+                       if(!is_array($value['label'])){
+                            $html .= Html::tag('th',Html::a($value['label'],$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$value['searchField']]),[]);
+                       }else{
+                            $l = $value['label'];
+                            array_key_exists('option',$l) ? $op = $l['option']:$op=[];
+                            $html .= Html::tag('th',Html::a($l['value'],$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$l['name']]),$op);
+                       }
+                   }
                }
-               else
-               {     
-                   if(!is_array($value['label'])){                        
-                        $html .= Html::tag('th',Html::a($value['label'],$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$value['searchField']]),[]);
-                   }else{
-                        $l = $value['label'];
-                        array_key_exists('option',$l) ? $op = $l['option']:$op=[];
-                        $html .= Html::tag('th',Html::a($l['value'],$url,['class'=>'gridOrder-'.self::$id,'rel'=>'SORT_ASC', 'name'=>$l['name']]),$op);  
+           }else{
+               //Label sem order
+               if(!is_array($value)){
+                $html .= Html::tag('th',str_replace('_',' ',$value),[]);
+               }else{
+
+                   if(is_callable($value['label'])){
+
+                       $html .= Html::tag('th',$value['label']($url),[]);
+                   }
+                   else
+                   {
+                       if(!is_array($value['label'])){
+                            $html .= Html::tag('th',$value['label'],[]);
+                       }else{
+                            $l = $value['label'];
+                            array_key_exists('option',$l) ? $op = $l['option']:$op=[];
+                            $html .= Html::tag('th',$l['value'],$op);
+                       }
                    }
                }
            }
