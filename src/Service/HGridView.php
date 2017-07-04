@@ -186,9 +186,17 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
                    $html .= $tag;
 
                }else{
-                   $html .= Html::beginTag('td',[]);
-                   $html .= Html::input('text',$value['searchField'],'',['class'=>"form-control search-field-".self::$id]);
-                   $html .= Html::endTag('td');
+                 if(!is_array($value['searchField'])){
+                       $html .= Html::beginTag('td',[]);
+                       $html .= Html::input('text',$value['searchField'],'',['class'=>"form-control search-field-".self::$id]);
+                       $html .= Html::endTag('td');
+                   }else{
+                        $l = $value['searchField'];
+                        array_key_exists('option',$l) ? $op = $l['option']:$op=[];
+                        $html .= Html::beginTag('td',$op);
+                        $html .= Html::input('text',$l['name'],'',['class'=>"form-control search-field-".self::$id]);
+                        $html .= Html::endTag('td');
+                   }
                }
            }
        }
