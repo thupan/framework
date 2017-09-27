@@ -133,7 +133,7 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             $html.= Html::endTag('table');            
         }
         echo $html;
-    }"
+    }
 
     private static function header($option='')
     {
