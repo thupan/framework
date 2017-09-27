@@ -311,6 +311,12 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             }
 
             return $html;
+        } else {
+            return '<tr class="tfoot">
+                        <td class="nohover" colspan="100%" style="padding:30px; font-size:16px;">
+                            <i class="fa fa-exclamation-circle"></i> Nenhum registro foi encontrado.
+                        </td>
+                    </tr>';
         }
     }
        
