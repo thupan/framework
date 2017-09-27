@@ -133,7 +133,7 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             $html.= Html::endTag('table');            
         }
         echo $html;
-    }
+    }"
 
     private static function header($option='')
     {
@@ -207,10 +207,11 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
                $html .= Html::endTag('td');
            }else{
                if(is_callable($value['searchField'])){
+                  if($value['searchField']($url)){
                    $tag = Html::tag('td',$value['searchField']($url));
                    $tag = str_replace('search-field','search-field-'.self::$id,$tag);
                    $html .= $tag;
-
+                  }
                }else{
                  if(!is_array($value['searchField'])){
                        $html .= Html::beginTag('td',[]);
