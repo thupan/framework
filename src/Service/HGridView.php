@@ -306,6 +306,12 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             
             self::$pageRows = $countRow;
 
+            if(is_callable($option['row']['last'])){
+            
+                $html .= $option['row']['last']($data);
+        
+            }
+
             if(self::$paginate) {
                 $paginator->id = self::$id;
                 $html .= Html::tag('tr',Html::tag('td',$paginator->pages(),['colspan'=>100,'class'=>'nohover']),['class'=>'tfoot']); 
