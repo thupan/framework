@@ -69,8 +69,8 @@ if(!function_exists('moneyConvert')) {
       $news_file = [];
       $lock_file = [];
 
-      $plugins_file = DOC_ROOT . 'public/plugins.'.$type;
-      $plugins_lock = DOC_ROOT . 'public/plugins.'.$type.'.lock';
+      $plugins_file = __DIR__ . '/../../../../../' . 'public/plugins.'.$type;
+      $plugins_lock = __DIR__ . '/../../../../../' . 'public/plugins.'.$type.'.lock';
 
       if(file_exists($plugins_lock)) {
           $lock_file = file_get_contents($plugins_lock);
@@ -130,7 +130,7 @@ if(!function_exists('get_timestamp')) {
  */
 if(!function_exists('autoload_routes')) {
     function autoload_routes() {
-        foreach(glob(DOC_ROOT . 'app/Routes/route.*.php') as $file) {
+        foreach(glob(__DIR__ . '/../../../../../' . 'app/Routes/route.*.php') as $file) {
             file_exists($file) ? require $file : false;
         }
     }
@@ -166,7 +166,7 @@ if(!function_exists('remove_dots')) {
  */
 if(!function_exists('autoload_filters')) {
     function autoload_filters() {
-        foreach(glob(DOC_ROOT . 'app/Filters/filter.*.php') as $file) {
+        foreach(glob(__DIR__ . '/../../../../../' . 'app/Filters/filter.*.php') as $file) {
             file_exists($file) ? require $file : false;
         }
     }
@@ -180,14 +180,14 @@ if(!function_exists('autoload_filters')) {
  */
 if(!function_exists('autoload_config')) {
     function autoload_config() {
-        foreach(glob(DOC_ROOT . 'app/Config/*.php') as $file) {
+        foreach(glob(__DIR__ . '/../../../../../' . 'app/Config/*.php') as $file) {
             $key = explode('/', $file);
             $key = end($key);
             $key = strtolower(str_replace('.php', '', $key));
             $array[$key] = require $file;
         }
 
-        foreach(glob(DOC_ROOT . 'app/Language/*/*') as $file) {
+        foreach(glob(__DIR__ . '/../../../../../' . 'app/Language/*/*') as $file) {
             $keys = explode('/', $file);
             $lang = $keys[ sizeof($keys) - 2 ];
             $key  = $keys[ sizeof($keys) - 1 ];
@@ -211,7 +211,7 @@ if(!function_exists('autoload_config')) {
 if(!function_exists('translate')) {
     function translate($l = 'app', $k = null, $a = []) {
 
-        foreach(glob(DOC_ROOT . 'app/Language/*/*') as $file) {
+        foreach(glob(__DIR__ . '/../../../../../' . 'app/Language/*/*') as $file) {
             $keys = explode('/', $file);
             $lang = $keys[ sizeof($keys) - 2 ];
             $key  = $keys[ sizeof($keys) - 1 ];
@@ -289,7 +289,7 @@ if(!function_exists('dd')) {
  */
 if(!function_exists('load_file')) {
     function load_file($file) {
-        $file = DOC_ROOT . $file;
+        $file = __DIR__ . '/../../../../../' . $file;
         if(file_exists($file)) {
             return require $file;
         }
