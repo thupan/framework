@@ -2,45 +2,46 @@
     "name": "thupan/framework",
     "description": "Thupan PHP Framework",
     "license": "MIT",
-    "authors": [
-    {
-        "name": "Eduardo Vieira",
-        "email": "gceduvieira@gmail.com",
-        "homepage": "http://github.com/Eduardo-Vieira",
-        "role": "Developer"
-    },
-    {
-        "name": "Harryson Palheta",
-        "email": "harryson.palheta@gmail.com",
-        "homepage": "http://gitlab.com/rexrod",
-        "role": "Developer"
-    },
-    {
-        "name": "Luiz Schmitt",
-        "email": "lzschmitt@gmail.com",
-        "homepage": "http://github.com/luizschmitt",
-        "role": "Developer"
-    },
-    {
-        "name": "Rodrigo Cabral",
-        "email": "rodrixcornell@gmail.com",
-        "homepage": "http://github.com/rodrixcornell",
-        "role": "Developer"
-    },
-    {
-        "name": "Smith Junior",
-        "email": "smith.junior@icloud.com",
-        "homepage": "http://github.com/smithjunior",
-        "role": "Developer"
-    }],
+    "authors": [{
+            "name": "Eduardo Vieira",
+            "email": "gceduvieira@gmail.com",
+            "homepage": "http://github.com/Eduardo-Vieira",
+            "role": "Developer"
+        },
+        {
+            "name": "Harryson Palheta",
+            "email": "harryson.palheta@gmail.com",
+            "homepage": "http://gitlab.com/rexrod",
+            "role": "Developer"
+        },
+        {
+            "name": "Luiz Schmitt",
+            "email": "lzschmitt@gmail.com",
+            "homepage": "http://github.com/luizschmitt",
+            "role": "Developer"
+        },
+        {
+            "name": "Rodrigo Cabral",
+            "email": "rodrixcornell@gmail.com",
+            "homepage": "http://github.com/rodrixcornell",
+            "role": "Developer"
+        },
+        {
+            "name": "Smith Junior",
+            "email": "smith.junior@icloud.com",
+            "homepage": "http://github.com/smithjunior",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=5.5.0",
         "maximebf/debugbar": "~1.10",
         "twig/twig": "~1.24.0",
         "setasign/fpdf": "~1.7",
+        "mpdf/mpdf": "6.1.3",
         "phpmailer/phpmailer": "~5.2",
         "intervention/image": "~2.3",
-	    "filp/whoops": "2.1.2"
+        "filp/whoops": "2.1.2"
     },
     "autoload": {
         "psr-4": {

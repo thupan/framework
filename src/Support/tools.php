@@ -2,6 +2,16 @@
 
 use \Service\Session;
 
+if (!function_exists('mask')){
+    function  mask($mask,$str){
+      $str = preg_replace("/[^0-9]/", "", $str);
+      for($i=0;$i<strlen($str);$i++){
+         $mask[strpos($mask,"#")] = $str[$i];
+      }
+      return $mask;
+    }        
+  }
+
 if(!function_exists('dateDiff')) {
 	function dateDiff($date_start, $date_end)
 	{
