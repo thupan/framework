@@ -84,8 +84,6 @@
  use \App\Http\Models\{%Controller%};
  use \App\Pdf\Pdf{%Controller%}Pesquisa;
 
- use \Service\HGridView;
-
  class {%Controller%}Controller extends Controller implements \App\Http\Controllers\Interfaces\CRUD {
      // para acessar um controller é obrigatorio estar logado.
      public $auth = true;
@@ -338,7 +336,7 @@
          Request::any($data);
 
          // Solicita a pesquisa com as requisições
-         $dados = {%Controller%}::pesquisar($data);
+         $data = {%Controller%}::pesquisar($data);
 
          // Se ocorrer um erro
          if($erro = {%Controller%}::getError()) {
@@ -346,16 +344,7 @@
              XHR::alert($erro, 'danger');
          }
 
-         $reload = (is_array($data))? true:false;
-         HGridView::request($data);
-         HGridView::open(['dados'=> $dados, // Solicita a pesquisa com as requisições
-                          'reload'=>$reload,
-                          'onOrder'=>false, // Desabilitar os links de ordenação do grid
-                          'pageSize'=> 15,  // Total de regitros por páginas por default é 10  
-                          'colums'=>[{%colHgridView%}],
-                          'optionActions'=>['style'=>'width:15%;',],
-                          'colActions'=>'{detail}{edit}{delete}',
-                         ]);
-         
+         // XHR::ignore(['CHAVE_PARA_N_MOSTRAR_NA_TABELA']);
+         XHR::table('tabela', $data, ['detail'], {%arrayPkTable%});
      }
  }
