@@ -23,7 +23,9 @@ class Generator
             $HTMLDetailBtn,
             $ColumnsDB,
             $HeaderClean,
-            $FieldsPDF;
+            $FieldsPDF,
+            $colHgridView;
+            
 
     protected $pathController,
             $pathModel,
@@ -55,6 +57,7 @@ class Generator
         $this->HTMLEditFieldsID = $this->setEditIds();
         $this->HTMLDetail = $this->setDetailPage();
         $this->HTMLDetailBtn = $this->setDetailButtons();
+        $this->colHgridView = $this->setColHgridView();
     }
     public function generate()
     {
@@ -65,6 +68,7 @@ class Generator
             echo '*** ocorreu um erro ao tentar gerar os arquivos. verifique se todos os templates existem.';
         }
     }
+
     private function setPaths()
     {
         $this->pathController = DOC_ROOT . 'app/Http/Controllers/';
@@ -100,6 +104,21 @@ class Generator
         }
 
         return rtrim($new, '-');
+    }
+
+    public function setColHgridView()
+    {
+        $campos = $_REQUEST['campos'];
+        foreach ($campos as $key => $val) {
+            if (!$val) {
+                continue;
+            }
+            $val = str_replace(':', '.', $val);
+            $col .= "'".explode('.', $val)[1]."',";
+        }
+
+        return $col;
+
     }
 
     public function Options()
@@ -651,12 +670,14 @@ class Generator
     {
         $file = str_replace('{%arrayPkTable%}', $this->arrayPkTable(), $file);
         // controller
-    $file = str_replace('{%Controller%}',           ucwords(strtolower($this->program_name)), $file);
+        $file = str_replace('{%Controller%}',           ucwords(strtolower($this->program_name)), $file);
         $file = str_replace('{%controller_name%}',      strtolower($this->program_name), $file);
         $file = str_replace('{%tablePk%}',              $this->tablePk,     $file);
         $file = str_replace('{%tablePk_var%}',          $this->tablePk_var,     $file);
         $file = str_replace('{%TABLE_NAME%}',           strtoupper($this->table[0]), $file);
         $file = str_replace('{%ColumnsDB%}',            $this->ColumnsDB, $file);
+        $file = str_replace('{%colHgridView%}',         $this->colHgridView, $file);
+
     // model
         $this->query = str_replace(',', ",\n", $this->query);
         $this->query = str_replace("\n\n\n\n", "\n", $this->query);

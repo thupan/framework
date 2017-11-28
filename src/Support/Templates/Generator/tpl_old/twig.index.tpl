@@ -15,6 +15,8 @@
 
  {{header(URL ~ controller ~ '/novo', ['pdf', 'xls'], validarAcesso()) | raw}}
 
- <div id="Htabela"></div>
+ {{table('tabela', [
+ {%tableHeader%}
+ ], ['search', 'reset']) | raw}}
 
  {% endblock %}
