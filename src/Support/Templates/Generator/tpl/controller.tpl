@@ -337,24 +337,22 @@
          // Faz as requisições
          Request::any($data);
 
-         // Solicita a pesquisa com as requisições
-         $dados = {%Controller%}::pesquisar($data);
-
          // Se ocorrer um erro
          if($erro = {%Controller%}::getError()) {
              // faz um alerta com a msg de erro
              XHR::alert($erro, 'danger');
          }
-
-         $reload = (is_array($data))? true:false;
-         HGridView::request($data);
-         HGridView::open(['dados'=> $dados, // Solicita a pesquisa com as requisições
-                          'reload'=>$reload,
-                          'onOrder'=>false, // Desabilitar os links de ordenação do grid
-                          'pageSize'=> 15,  // Total de regitros por páginas por default é 10  
+        
+         // Solicita a pesquisa com as requisições
+         $dados = {%Controller%}::pesquisar(HGridView::request($data));         
+        
+         HGridView::open(['dados'=>  $dados, // Dados do resultado da pesquisa
+                          'onOrder'=> false, // Desabilitar ou habilitar links de ordenação do grid
+                          'pageSize'=> 15,   // Total de regitros por páginas por default é 10  
+                          'regSum' => false, // Desabilitar ou habilitar display de registro e linhas por pagina.                          
                           'colums'=>[{%colHgridView%}],
                           'optionActions'=>['style'=>'width:15%;',],
-                          'colActions'=>'{detail}{edit}{delete}',
+                          'colActions'=>'{detail}',
                          ]);
          
      }

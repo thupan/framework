@@ -7,6 +7,58 @@
  * @version 1.0.0
  *
  *
+ *        // Solicita a pesquisa com as requisições
+ *        $dados = Modelo::pesquisar(HGridView::request($data));
+ *        
+ *        // Monta HgridView Advence
+ *        HGridView::open(['dados'=>  $dados, // Dados do resultado da pesquisa
+ *                         'onOrder'=> false, // Desabilitar ou habilitar links de ordenação do grid
+ *                         'pageSize'=> 15,   // Total de regitros por páginas por default é 10  
+ *                         'regSum' => true,  // Desabilitar ou habilitar display de registro e linhas por pagina.
+ *                         'colums'=>[
+ *                           //col 1
+ *                           ['searchField'=>'UNID_GEST_REC_RC|ID_UNID_GEST_REC_RC:THIS',
+ *                           'label'=>'CÓDIGO',
+ *                           'value'=>'ID_UNID_GEST_REC_RC',
+ *                           'option' =>['class'=>'ID_UNID_GEST_REC_RC',],
+ *                           ],
+ *                           //col 2
+ *                           ['searchField'=>'UNID_GEST_REC_RC|TX_UNID_GEST_REC_RC:ANY',
+ *                           'label'=>'UNIDADE GESTORA',
+ *                           'value'=>'TX_UNID_GEST_REC_RC',
+ *                           'option' =>['class'=>'TX_UNID_GEST_REC_RC',],
+ *                           ],
+ *                           //col 3
+ *                           ['searchField'=>'UNID_GEST_REC_RC|DT_CADASTRO:ANY',
+ *                           'label'=>'DATA DE CADASTRO',
+ *                           'value'=>'DT_CADASTRO',
+ *                           'option' =>['class'=>'DT_CADASTRO',],
+ *                           ],
+ *                           //col 4
+ *                           ['searchField'=>'UNID_GEST_REC_RC|DT_ATUALIZACAO:ANY',
+ *                           'label'=>'DATA DE ATUALIZAÇÃO',
+ *                           'value'=>'DT_ATUALIZACAO',
+ *                           'option' =>['class'=>'DT_ATUALIZACAO',],
+ *                           ],                              
+ *                         ],
+ *                         'optionActions'=>['style'=>'width:15%;',],
+ *                         'colActions'=>'{detail}',
+ *                        ]);
+ *        
+ *       // Monta HgridView Simples
+ *       HGridView::open(['dados'=>  $dados, // Dados do resultado da pesquisa
+ *                        'onOrder'=> false, // Desabilitar ou habilitar links de ordenação do grid
+ *                        'pageSize'=> 15,   // Total de regitros por páginas por default é 10  
+ *                        'regSum' => true,  // Desabilitar ou habilitar display de registro e linhas por pagina.
+ *                        'colums'=>[   
+ *                          'ID_UNID_GEST_REC_RC',
+ *                          'TX_UNID_GEST_REC_RC',
+ *                          'DT_CADASTRO',
+ *                          'DT_ATUALIZACAO'                              
+ *                        ],
+ *                        'optionActions'=>['style'=>'width:15%;',],
+ *                        'colActions'=>'{detail} {edit} {delete}',
+ *       ]);
  **/
 
 namespace Service;
@@ -32,9 +84,11 @@ class HGridView
     private static $gridOrder = true;
     private static $orderColField = '';
     private static $onOrder = true;
+    private static $RegSum = false;
     
     public static function open($option=[])
     {
+        array_key_exists('regSum',$option)? self::$RegSum = $option['regSum']: false;
         array_key_exists('id',$option)? self::$id = 'tabela-'.$option['id']:self::$id = 'tabela-'.md5(self::$id);
         array_key_exists('reload',$option)? self::$reload = $option['reload']:false;
         array_key_exists('search',$option)? self::$search = $option['search']:false;
@@ -44,10 +98,13 @@ class HGridView
         self::$controller = ROUTER_REQUEST;
 
         if(!self::$reload){
-            // $html = Html::beginTag('div',[]);
-            // $html.= 'Registro(s): '.Html::tag('strong','{pageRow} - {totalReg}',['id'=>'regsum-'.self::$id]);
-            // $html.= Html::endTag('div');
-            if(self::$onPageSize){
+             if(self::$RegSum){
+                //RegSum
+                $html = Html::beginTag('div',[]);
+                $html.= 'Registro(s): '.Html::tag('strong','{pageRow} - {totalReg}',['id'=>'regsum-'.self::$id]);
+                $html.= Html::endTag('div');
+             }
+             if(self::$onPageSize){
                 $html.= Html::beginTag('div',['id'=>'lines-'.self::$id]);
                 $html.= ' <p><b>Linhas por página(s):</b></p>'.Html::tag('div','{pageSize}',['class'=>'btn-group linkPage-'.self::$id, 'role'=>'group', 'style'=>'margin-bottom:10px;']);
                 $html.= Html::beginTag('form',['class'=>'form-LinkPage-'.self::$id]);
@@ -61,16 +118,19 @@ class HGridView
         }
        
         $html.= self::rows($option);
+        
+        if(self::$RegSum){
+            //JS RegSum
+            $html.= Html::tag('script',"$('#regsum-".self::$id."').html('".self::$pageRows." de ".self::$totalReg."');");
+        }
 
-if(!self::$reload){
+        if(!self::$reload){
         $html.= Html::tag('script',"                 
 // ========== HgridView function ===========
 $('.form-control-select2').select2({
         placeholder: 'Escolha...',
         allowClear: true,
 });
-
-//$('#regsum-".self::$id."').html('".self::$pageRows." de ".self::$totalReg."');
 
 $('.linkPage-".self::$id."').html('".self::linkPage()."');
 
@@ -203,7 +263,7 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
        {
            if(!is_array($value)){
                $html .= Html::beginTag('td',[]);
-               $html .= Html::input('text',$value.':ANY','',['class'=>"form-control search-field-".self::$id]);
+               $html .= Html::input('text',$value.':ANY','',['placeholder'=>'Pesquisar','class'=>"form-control search-field-".self::$id]);
                $html .= Html::endTag('td');
            }else{
                if(is_callable($value['searchField'])){
@@ -215,13 +275,13 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
                }else{
                  if(!is_array($value['searchField'])){
                        $html .= Html::beginTag('td',[]);
-                       $html .= Html::input('text',$value['searchField'],'',['class'=>"form-control search-field-".self::$id]);
+                       $html .= Html::input('text',$value['searchField'],'',['placeholder'=>'Pesquisar','class'=>"form-control search-field-".self::$id]);
                        $html .= Html::endTag('td');
                    }else{
                         $l = $value['searchField'];
                         array_key_exists('option',$l) ? $op = $l['option']:$op=[];
                         $html .= Html::beginTag('td',$op);
-                        $html .= Html::input('text',$l['name'],'',['class'=>"form-control search-field-".self::$id]);
+                        $html .= Html::input('text',$l['name'],'',['placeholder'=>'Pesquisar','class'=>"form-control search-field-".self::$id]);
                         $html .= Html::endTag('td');
                    }
                }
@@ -305,7 +365,7 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             }
             
             self::$pageRows = $countRow;
-
+                        
             if(is_callable($option['row']['last'])){
             
                 $html .= $option['row']['last']($data);
@@ -353,6 +413,8 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
             unset($data['gridOrder-tabela-'.md5(self::$id)]);
         }
         
+        self::$reload = (is_array($data))? true:false;
+
         return  $data;
     }
 
