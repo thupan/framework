@@ -1,189 +1,187 @@
 {% set disable_menu = true %}
 {% set disable_breadcrumb = true %}
 
-{% extends "index.twig" %}
+{% extends "_templates/pmm/index.twig" %}
 
 {% block page_scripts %}
-
-    <script type="text/javascript" src="{{URL}}assets/thupan/generator.js"></script>
 
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
-            <!-- ABAS -->
-            <ul class="nav nav-tabs">
-                <li role="presentation" class="active"><a href="#sistema" data-toggle="tab" class="active">Sistema</a></li>
-                <li><a id="tabela-pesquisa-click" data-toggle='tab' href="#tabela-pesquisa" >Pesquisa</a></li>
-                <li><a id="tabela-buscar-click" data-toggle='tab' href="#tabela-buscar" >Buscar</a></li>
-                <li><a id="novo-click"   data-toggle='tab' href="#novo" >Novo</a></li>
-                <li><a id="edit-click"  data-toggle='tab' href="#edit" >Editar</a></li>
-                <li><a id="detail-click" data-toggle='tab'href="#detail" >Detalhes</a></li>
-                <li><a id="generator" class='btn btn-primary'>Gerar!</a></li>
-            </ul>
+	<!-- ABAS -->
+	<ul class="nav nav-tabs">
+		<li role="presentation" class="active"><a href="#sistema" data-toggle="tab" class="active">Sistema</a></li>
+		<li><a id="tabela-pesquisa-click" data-toggle='tab' href="#tabela-pesquisa" >Pesquisa</a></li>
+		<li><a id="tabela-buscar-click" data-toggle='tab' href="#tabela-buscar" >Buscar</a></li>
+		<li><a id="novo-click"   data-toggle='tab' href="#novo" >Novo</a></li>
+		<li><a id="edit-click"  data-toggle='tab' href="#edit" >Editar</a></li>
+		<li><a id="detail-click" data-toggle='tab'href="#detail" >Detalhes</a></li>
+		<li><a id="generator" class='btn btn-primary'>Gerar!</a></li>
+	</ul>
 
-            <!-- MEGA FORMULARIO / SEPARADO POR ABA -->
-            <form action="programa.php" method="POST">
-                <div class="tab-content">
+	<!-- MEGA FORMULARIO / SEPARADO POR ABA -->
+	<form action="programa.php" method="POST">
+		<div class="tab-content">
 
-                    <!-- INICIO ABA SISTEMA -->
-                    <div id="sistema" class="tab-pane active" style="padding:10px">
-                        <h1>Sistema/Programa</h1>
-                        <hr/>
-                        <div class="form-group col-md-12">
-                            <label class="form-control-label" for="ID_SISTEMA">SISTEMA</label>
-                            <select class="form-control" name="ID_SISTEMA" id="ID_SISTEMA"></select>
-                        </div>
+			<!-- INICIO ABA SISTEMA -->
+			<div id="sistema" class="tab-pane active" style="padding:10px">
+				<h1>Sistema/Programa</h1>
+				<hr/>
+				<div class="form-group col-md-12">
+					<label class="form-control-label" for="ID_SISTEMA_G">SISTEMA</label>
+					<select class="form-control" name="ID_SISTEMA_G" id="ID_SISTEMA_G"></select>
+				</div>
 
-                        <div class="form-group col-md-12">
-                            <label class="form-control-label" for="NB_MODULO">MÓDULO</label>
-                            <select class="form-control" name="NB_MODULO" id="NB_MODULO"></select>
-                        </div>
+				<div class="form-group col-md-12">
+					<label class="form-control-label" for="NB_MODULO_G">MÓDULO</label>
+					<select class="form-control" name="NB_MODULO_G" id="NB_MODULO_G"></select>
+				</div>
 
-                        <div class="form-group col-md-12">
-                            <label class="form-control-label" for="NB_PROGRAMA">PROGRAMA</label>
-                            <select class="form-control" name="NB_PROGRAMA" id="NB_PROGRAMA"></select>
-                        </div>
+				<div class="form-group col-md-12">
+					<label class="form-control-label" for="NB_PROGRAMA_G">PROGRAMA</label>
+					<select class="form-control" name="NB_PROGRAMA_G" id="NB_PROGRAMA_G"></select>
+				</div>
 
-                        <div class="form-group col-md-12">
-                            <label class="form-control-label" for="TX_URL">Controller/URL</label>
-                            <input class="form-control" type="text" name="TX_URL" id="TX_URL" readonly="true" />
-                        </div>
-                    </div>
-                    <!-- FIM ABA SISTEMA -->
-
-
-                    <!-- INICIO ABA PESQUISA -->
-                    <div id="tabela-pesquisa" class="tab-pane" style="padding:10px">
-                        <h1>Pesquisa</h1>
-                        <hr/>
-                        <div class="container">
-                            <div class="col-md-6">
-                                <div class="form-group col-md-12">
-                                    <label class="form-control-label">Tabelas</label>
-                                    <select multiple class="form-control js-example-basic-multiple" name="TABLE_NAME" id="TABLE_NAME" style="width:100%"></select>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <label class="form-control-label">Selecione os campos que estarão amostra na tabela de pesquisa.</label>
-                                    <div id="CAMPOS" class="col-md-12">
-
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group col-md-12">
-                                    <label class="form-control-label">SQL <small>(clique no código para editar)</small></label>
-                                    <p id="SQL" contenteditable="true" style="padding:10px; border:1px dashed #ccc; height:auto;"></p>
-                                    <input type="hidden" name="TABLE_SQL" id="TABLE_SQL" />
-                                </div>
-                            </div>
-
-                            <div id="sel_chaves" class="form-group col-md-12">
-                                <label class="form-control-label">Chave-Primaria (PK)</label>
-                                <div class="col-md-12" id="chaves">
-                                    <p>
-                                        <select id="chave" style="width:50%" class="form-control">
-                                            <option value=''>Escolha...</option>
-                                        </select>
-                                    </p>
-                                    <p>
-                                        <input  id="chave_add" class="btn btn-default" type="button" value="Inserir" />
-                                    </p>
-                                    <p class="col-md-6" style="border:1px dashed #ccc; height:auto; padding:10px;" id="pk"></p>
-                                    <input type="hidden" value="" name="TABLE_PK" id="TABLE_PK" />
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-12 rel_active">
-                                <label class="form-control-label">Relacionamentos</label>
-                                <div class="col-md-12" id="relacionamentos">
-                                    <p>
-                                        <select id="rel_1" style="width:50%" class="form-control">
-                                            <option value=''>Escolha...</option>
-                                        </select>
-                                    </p>
-                                    <p>
-                                        <select id="rel_2" style="width:50%" class="form-control">
-                                            <option value=''>Escolha...</option>
-                                        </select>
-                                    </p>
-                                    <p>
-                                        <input  id="rel_add" class="btn btn-default" type="button" value="Inserir" />
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 rel_active">
-                                <label class="form-control-label">WHERE <small>(clique no código para editar)</small></label>
-                                <p id="REL" contenteditable="true" style="padding:10px; border:1px dashed #ccc; height:auto"></p>
-                            </div>
-
-                            <div class="col-md-12">
-                                <input id="preview" class="btn btn-primary" type="button" value="Gerar Query" style="margin-top:5px; float:left;"/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- FIM ABA PESQUISA -->
+				<div class="form-group col-md-12">
+					<label class="form-control-label" for="TX_URL_G">Controller/URL</label>
+					<input class="form-control" type="text" name="TX_URL_G" id="TX_URL_G" readonly="true" />
+				</div>
+			</div>
+			<!-- FIM ABA SISTEMA -->
 
 
-                    <!-- INICIO ABA BUSCAR -->
-                    <div id="tabela-buscar" class="tab-pane" style="padding:10px">
-                        <h1>Buscar</h1>
-                        <hr/>
-                        <div class="container">
-                            <div class='col-md-6'>
-                                <input id="marca_todos_buscar" type="checkbox">Marcar todos</input>
-                                <div id='CAMPOS_BUSCAR'></div>
-                                <a class='btn btn-primary' id='preview-buscar'>Gerar Query!</a>
-                            </div>
+			<!-- INICIO ABA PESQUISA -->
+			<div id="tabela-pesquisa" class="tab-pane" style="padding:10px">
+				<h1>Pesquisa</h1>
+				<hr/>
+				<div class="container">
+					<div class="col-md-6">
+						<div class="form-group col-md-12">
+							<label class="form-control-label">Tabelas</label>
+							<select multiple class="form-control js-example-basic-multiple" name="TABLE_NAME" id="TABLE_NAME" style="width:100%"></select>
+						</div>
+						<div class="form-group col-md-12">
+							<label class="form-control-label">Selecione os campos que estarão amostra na tabela de pesquisa.</label>
+							<div id="CAMPOS" class="col-md-12">
 
-                            <div class='col-md-6'>
-                                <h5>SQL Buscar <small>selecione o código para editar</small></h5>
-                                <p id="SQL_BUSCAR" contenteditable="true"></p>
-                                <input id="TABLE_SQL_BUSCAR" name="TABLE_SQL_BUSCAR" type="hidden" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- FIM ABA BUSCAR -->
+							</div>
+						</div>
+
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group col-md-12">
+							<label class="form-control-label">SQL <small>(clique no código para editar)</small></label>
+							<p id="SQL" contenteditable="true" style="padding:10px; border:1px dashed #ccc; height:auto;"></p>
+							<input type="hidden" name="TABLE_SQL" id="TABLE_SQL" />
+						</div>
+					</div>
+
+					<div id="sel_chaves" class="form-group col-md-12">
+						<label class="form-control-label">Chave-Primaria (PK)</label>
+						<div class="col-md-12" id="chaves">
+							<p>
+								<select id="chave" style="width:50%" class="form-control">
+									<option value=''>Escolha...</option>
+								</select>
+							</p>
+							<p>
+								<input  id="chave_add" class="btn btn-default" type="button" value="Inserir" />
+							</p>
+							<p class="col-md-6" style="border:1px dashed #ccc; height:auto; padding:10px;" id="pk"></p>
+							<input type="hidden" value="" name="TABLE_PK" id="TABLE_PK" />
+						</div>
+					</div>
+
+					<div class="form-group col-md-12 rel_active">
+						<label class="form-control-label">Relacionamentos</label>
+						<div class="col-md-12" id="relacionamentos">
+							<p>
+								<select id="rel_1" style="width:50%" class="form-control">
+									<option value=''>Escolha...</option>
+								</select>
+							</p>
+							<p>
+								<select id="rel_2" style="width:50%" class="form-control">
+									<option value=''>Escolha...</option>
+								</select>
+							</p>
+							<p>
+								<input  id="rel_add" class="btn btn-default" type="button" value="Inserir" />
+							</p>
+						</div>
+					</div>
+
+					<div class="col-md-6 rel_active">
+						<label class="form-control-label">WHERE <small>(clique no código para editar)</small></label>
+						<p id="REL" contenteditable="true" style="padding:10px; border:1px dashed #ccc; height:auto"></p>
+					</div>
+
+					<div class="col-md-12">
+						<input id="preview" class="btn btn-primary" type="button" value="Gerar Query" style="margin-top:5px; float:left;"/>
+					</div>
+				</div>
+			</div>
+			<!-- FIM ABA PESQUISA -->
 
 
-                    <!-- INICIO ABA NOVO -->
-                    <div id="novo" class="tab-pane" style="padding:10px">
-                        <label class="form-control-label">Selecione somente os campos para inserção de dados.</label>
-                        <div id="CAMPOS_ADD" class="col-md-12"></div>
-                        <div class="col-md-12">
-                            <input id="aplicar_add" class="btn btn-default" type="button" value="Aplicar" style="margin-top:5px; float:left;"/>
-                        </div>
-                        <div id="HTML_ADD" class="col-md-12"></div>
-                    </div>
-                    <!-- FIM ABA SISTEMA -->
+			<!-- INICIO ABA BUSCAR -->
+			<div id="tabela-buscar" class="tab-pane" style="padding:10px">
+				<h1>Buscar</h1>
+				<hr/>
+				<div class="container">
+					<div class='col-md-6'>
+						<input id="marca_todos_buscar" type="checkbox">Marcar todos</input>
+						<div id='CAMPOS_BUSCAR'></div>
+						<a class='btn btn-primary' id='preview-buscar'>Gerar Query!</a>
+					</div>
+
+					<div class='col-md-6'>
+						<h5>SQL Buscar <small>selecione o código para editar</small></h5>
+						<p id="SQL_BUSCAR" contenteditable="true"></p>
+						<input id="TABLE_SQL_BUSCAR" name="TABLE_SQL_BUSCAR" type="hidden" />
+					</div>
+				</div>
+			</div>
+			<!-- FIM ABA BUSCAR -->
 
 
-                    <!-- INICIO ABA EDITAR -->
-                    <div id="edit" class="tab-pane" style="padding:10px">
-                        <label class="form-control-label">Desmarque os campos que não serão editáveis.</label>
-                        <div id="CAMPOS_EDIT" class="col-md-12"></div>
-                    </div>
-                    <!-- FIM ABA EDITAR -->
+			<!-- INICIO ABA NOVO -->
+			<div id="novo" class="tab-pane" style="padding:10px">
+				<label class="form-control-label">Selecione somente os campos para inserção de dados.</label>
+				<div id="CAMPOS_ADD" class="col-md-12"></div>
+				<div class="col-md-12">
+					<input id="aplicar_add" class="btn btn-default" type="button" value="Aplicar" style="margin-top:5px; float:left;"/>
+				</div>
+				<div id="HTML_ADD" class="col-md-12"></div>
+			</div>
+			<!-- FIM ABA SISTEMA -->
 
 
-                    <!-- INICIO ABA DETALHES -->
-                    <div id="detail" class="tab-pane" style="padding:10px">
-                        <div id="CAMPOS_DETAIL" class="col-md-12"></div>
-                        <div id="CAMPOS_DETAIL_ACAO" class="col-md-12">
-                            <label>
-                                AÇÃO:
-                                <input type="checkbox" name="botoes_acao[]" value="editar" checked='true'>EDITAR</input>
-                                <input type="checkbox" name="botoes_acao[]" value="remover" checked='true'>REMOVER</input>
-                            </label>
-                        </div>
-                    </div>
-                    <!-- FIM ABA DETALHES -->
-                </div>
-            </form>
-        </div>
+			<!-- INICIO ABA EDITAR -->
+			<div id="edit" class="tab-pane" style="padding:10px">
+				<label class="form-control-label">Desmarque os campos que não serão editáveis.</label>
+				<div id="CAMPOS_EDIT" class="col-md-12"></div>
+			</div>
+			<!-- FIM ABA EDITAR -->
+
+
+			<!-- INICIO ABA DETALHES -->
+			<div id="detail" class="tab-pane" style="padding:10px">
+				<div id="CAMPOS_DETAIL" class="col-md-12"></div>
+				<div id="CAMPOS_DETAIL_ACAO" class="col-md-12">
+					<label>
+						AÇÃO:
+						<input type="checkbox" name="botoes_acao[]" value="editar" checked='true'>EDITAR</input>
+						<input type="checkbox" name="botoes_acao[]" value="remover" checked='true'>REMOVER</input>
+					</label>
+				</div>
+			</div>
+			<!-- FIM ABA DETALHES -->
+		</div>
+	</form>
+</div>
 
 {% endblock %}
