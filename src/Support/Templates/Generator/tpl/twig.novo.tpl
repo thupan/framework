@@ -4,42 +4,47 @@
  * GERADO POR: {%GC_DEVELOPER%} @ {%GC_MACHINE%}
  ************************************************************#}
 
- {% extends "index.twig" %}
- {% block content %}
+{# ignora o menu na tela #}
+{# set disable_menu = true #}
+{# ignora o breadcrumb na tela #}
+{# set disable_breadcrumb = true #}
 
-     {{ flash | raw }}
+{% extends "_templates/pmm/index.twig" %}
+{% block content %}
 
-     {# DETALHES #}
-     <div class="row">
-         <div class="container">
-             <div class="panel panel-default">
-                 <div class="panel-heading">
-                     <h3 class="panel-title">Adicionar novo {{controller}}</h3>
-                 </div>
-                 <div class="panel-body">
-                     <form class="form-add-{%controller_name%}" method="post" action="{{URL}}{%controller_name%}/save" novalidate="novalidate">
-                         <input type="hidden" name="edit" id="edit" value="" />
-                         <input type="hidden" name="{%tablePk%}" id="{%tablePk%}" value="{{{%tablePk%}}}" />
+	{{ flash | raw }}
 
-                         {%HTMLNew%}
+	{# DETALHES #}
+	<div class="row">
+		<div class="container">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title" style="text-transform: uppercase;">Adicionar novo {{title}}</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-add-{%controller_name%}" method="post" action="{{URL}}{%controller_name%}/save" novalidate="novalidate">
+						<input type="hidden" name="edit" id="edit" value="" />
+						<input type="hidden" name="{%tablePk%}" id="{%tablePk%}" value="{{{%tablePk%}}}" />
 
-                         <div class="left">
-                             <a class="btn btn-default cancel">
-                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                 {{langApp.cancel}}
-                             </a>
-                         </div>
+						{%HTMLNew%}
 
-                         <div class="right">
-                             <a class="btn btn-success validate">
-                                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                 {{langApp.save}}
-                             </a>
-                         </div>
-                     </form>
-                 </div>
-             </div>
-         </div>
-     </div>
+						<div class="left">
+							<a class="btn btn-default cancel">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								{{langApp.cancel}}
+							</a>
+						</div>
 
- {% endblock %}
+						<div class="right">
+							<a class="btn btn-success validate">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								{{langApp.save}}
+							</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
