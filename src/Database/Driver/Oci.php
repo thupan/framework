@@ -273,7 +273,8 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             }
 
             $dt = rtrim($dt, ',');
-            $this->setQuery("UPDATE $table SET $dt");
+            $where = isset($where) ? "WHERE $where" : false;
+            $this->setQuery("UPDATE $table SET $dt $where");
 
             return $sth->execute();
         } catch (PDOException $e) {
