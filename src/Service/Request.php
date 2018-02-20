@@ -144,9 +144,13 @@ class Request
     public static function prepare(&$data, $oneRow = false)
     {
         foreach ($data as $key => $array) {
-            foreach ($array as $key => $value) {
-                $a[$key] = $value;
-                View::assign($key, $value);
+            if (is_array($array)) {
+                foreach ($array as $key => $value) {
+                    $a[$key] = $value;
+                    View::assign($key, trim($value));
+                }
+            } else {
+                View::assign($key, trim($array));
             }
         }
 
