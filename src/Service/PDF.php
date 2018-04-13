@@ -10,6 +10,7 @@ class PDF extends FPDF
     var $backgrounds;
     var $borders;
     var $fills;
+    var $fontColor;
     var $fontes; // fonts já é usado
     var $heights;
     var $sizes;
@@ -40,6 +41,10 @@ class PDF extends FPDF
     function SetFills($fl){
         //Set the array of fills
         $this->fills = $fl;
+    }
+    function SetFontColor($color){
+        //Set the array of colors
+        $this->fontColor = $color;
     }
 
     function SetFonts($f){
@@ -73,7 +78,7 @@ class PDF extends FPDF
     }
 
     function Row($data) {
-
+        
         //Calculate the height of the row
         $nb = 0;
         for ($i = 0; $i < count($data); $i++) {
@@ -98,7 +103,6 @@ class PDF extends FPDF
             }
             if ( isset($this->fontes) || isset($this->styles)  || isset($this->sizes) )
                 $this->SetFont($fonte, $estilo, $tamanho);
-
             $nb = max($nb, $this->NbLines($this->widths[$i], $data[$i])); // retorna o maior número de linhas
         }
 
@@ -152,6 +156,20 @@ class PDF extends FPDF
                     $this->SetFillColor($fi[0],$fi[1],$fi[2]);
                 }
             }
+            // Array Font Color           
+            if(!is_null($this->fontColor)){
+                if (!is_array($this->fontColor)) {
+                    $cl = is_integer($this->fontColor) ? $this->fontColor : false;
+                } else {
+                    $cl = isset($this->fontColor[$i]) ? $this->fontColor[$i] : 0;
+                }
+
+                if (!is_array($cl)){
+                    $this->SetTextColor($cl);
+                } else {
+                    $this->SetTextColor($cl[0],$cl[1],$cl[2]);
+                }
+            }
 
             //Save the current position
             $x = $this->GetX();
@@ -190,8 +208,9 @@ class PDF extends FPDF
                 $this->SetFont($fonte, $estilo, $tamanho);
 
             //Print the text
-            $this->AutoPageBreak = false;
+            $this->AutoPageBreak = false;            
             $this->MultiCell($w, ($this->heights ? $this->heights : 5), $data[$i], $b, $a, $bfc);
+            
             //Put the position to the right of the cell
             $this->SetXY($x + $w, $y);
         }
@@ -202,6 +221,7 @@ class PDF extends FPDF
             $this->backgrounds  = null;
             $this->borders      = null;
             $this->fills        = null;
+            $this->fontColor    = 0;
             $this->fontes       = null;
             $this->heights      = null;
             $this->sizes        = null;
@@ -318,6 +338,7 @@ class PDF extends FPDF
         ($conf->background) ? $this->SetBackgrounds($conf->background):false;
         ($conf->border    ) ? $this->SetBorders    ($conf->border    ):false;
         ($conf->fill      ) ? $this->SetFills      ($conf->fill      ):false;
+        ($conf->fontColor ) ? $this->SetFontColor  ($conf->fontColor ):false;
         ($conf->font      ) ? $this->SetFonts      ($conf->font      ):false;
         ($conf->height    ) ? $this->SetHeights    ($conf->height    ):false;
         ($conf->style     ) ? $this->SetStyles     ($conf->style     ):false;
@@ -369,3 +390,4 @@ class PDF extends FPDF
 
 
 }
+
