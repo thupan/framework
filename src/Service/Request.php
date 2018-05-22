@@ -169,13 +169,13 @@ class Request
         }
     }
 
-    public static function prepareCombo($array)
+    public static function prepareCombo($array, $type = '')
     {
         foreach ($array as $key => $value) {
             $a[] = ['ID' => $key, 'TEXT' => $value];
         }
 
-        return $a;
+        return ($type === 'json') ? json_encode($a) : $a;
     }
 
     // impede que um filtro de sql seja montando se for false
