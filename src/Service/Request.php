@@ -97,7 +97,15 @@ class Request
                     }
                 }
 
-                $data[str_replace('|','.',$key)] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
+                if (strpos($key, '|')) {
+                    $key = str_replace('|','.',$key);
+                }
+
+                if (!is_array($value)) {
+                    $data[$key] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
+                } else {
+                    $data[$key] = $value;
+                }
             }
 
             if ($request['request_data']) {
@@ -108,7 +116,15 @@ class Request
                         continue;
                     }
 
-                    $data_rd[$key] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
+                    if (strpos($key, '|')) {
+                        $key = str_replace('|','.',$key);
+                    }
+
+                    if (!is_array($value)) {
+                        $data_rd[$key] = ($upper) ? mb_strtoupper(addslashes(trim($value)), 'UTF-8') : addslashes(trim($value));
+                    } else {
+                        $data_rd[$key] = $value;
+                    }
                 }
 
                 $data = array_merge($data, $data_rd);
