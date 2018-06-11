@@ -249,15 +249,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             $fieldDetails = null;
 
             foreach ($data as $key => $value) {
-
-                if($value == 'sysdate' OR $value == 'SYSDATE')
-                {
-                    $fieldDetails .= "$key=sysdate,";
-                }
-                else{
-                    $fieldDetails .= "$key=:$key,";
-                }
-
+                $fieldDetails .= (preg_match("/(sysdate|SYSDATE)/", $value, $matched))  ? "$key=sysdate," : "$key=:$key,";
             }
 
             $fieldDetails = rtrim($fieldDetails, ',');
@@ -268,12 +260,14 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             $sth = $connection->prepare($sql);
 
             foreach ($data as $key => $value) {
-                $dt .= "$key = '$value',";
+                $dt .= (preg_match("/(sysdate|SYSDATE)/", $value, $matched))  ? "$key=sysdate," : "$key='$value',";
+
                 $sth->bindValue(":$key", $value);
             }
 
             $dt = rtrim($dt, ',');
             $where = isset($where) ? "WHERE $where" : false;
+
             $this->setQuery("UPDATE $table SET $dt $where");
 
             return $sth->execute();
