@@ -276,7 +276,7 @@ class View
                         }
                     }
 
-                    return ($options) ? $options : '<option selected>ERRO: não houve retorno do array no select2_options</option>';
+                    return ($options) ? $options : '<option selected>Nenhum registro encontrado.</option>';
                 });
 
                 foreach (self::$functions as $key => $function) {
