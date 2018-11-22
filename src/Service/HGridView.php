@@ -128,8 +128,9 @@ class HGridView
         $html.= Html::tag('script',"                 
 // ========== HgridView function ===========
 $('.form-control-select2').select2({
-        placeholder: 'Escolha...',
-        allowClear: true,
+    placeholder: 'Escolha...',
+    allowClear: true,
+    language: 'pt-BR'
 });
 
 $('.linkPage-".self::$id."').html('".self::linkPage()."');
