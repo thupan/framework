@@ -2,6 +2,12 @@
 
 use \Service\Session;
 
+if (!function_exists('set_magic_quotes_runtime')) {
+    function set_magic_quotes_runtime($new_setting) {
+        return true;
+    }
+}
+
 if (!function_exists('mask')){
     function  mask($mask,$str){
       $str = preg_replace("/[^0-9]/", "", $str);

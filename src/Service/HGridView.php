@@ -433,7 +433,9 @@ $(document).on('click','.gridOrder-".self::$id."', function(e) {
 
             $html = str_replace('{detail}',Html::a(Html::tag('i','',['class'=>'glyphicon glyphicon-list']).' '.translate('app','details'),$link.'/detail/'.$pk,['class'=>"btn btn-primary"]),$html);
             $html = str_replace('{edit}',Html::a(Html::tag('i','',['class'=>'glyphicon glyphicon-edit']).' '.translate('app','edit'),$link.'/edit/'.$pk,['class'=>"btn btn-warning"]),$html);
-            $html = str_replace('{delete}',Html::a(Html::tag('i','',['class'=>'glyphicon glyphicon-trash']).' '.translate('app','delete'),$link.'/delete/'.$pk,['class'=>"btn btn-danger"]),$html);  
+            $html = str_replace('{delete}',Html::a(Html::tag('i','',['class'=>'glyphicon glyphicon-trash']).' '.translate('app','delete'),$link.'/delete/'.$pk,['class'=>"btn btn-danger"]),$html); 
+            $html = str_replace('{visualize}',Html::a(Html::tag('i','',['class'=>'glyphicon glyphicon-eye-open']).' '.translate('app','visualize'),$link.'/visualize/'.$pk,['class'=>"btn btn-warning"]),$html);  
+ 
         
         return $html;
     }
