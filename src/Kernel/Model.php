@@ -170,14 +170,9 @@ class Model
         return ($search) ? implode(' ', $search) : false;
     }
 
-
-
-
-
-
-
-
-
+    public static function callFunction2($function, $params, $types = [],  &$output_data = []) {
+        return self::dbConnection()->getInstance(self::$connection)->callFunction2($function, $params, $types, $output_data);
+    }
 
     public static function ociChangePassword($username, $old_password, $new_password) {
         return self::dbConnection()->getInstance(self::$connection)->ociChangePassword($username, $old_password, $new_password);
@@ -190,6 +185,10 @@ class Model
     public static function getError()
     {
         return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getError());
+    }
+
+    public static function setError($error) {
+        return self::dbConnection()->getInstance(self::$connection)->setError($error);
     }
 
     public static function query($sql, $type = null)

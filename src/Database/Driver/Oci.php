@@ -24,6 +24,12 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         return self::$error;
     }
 
+    public static function setError($error)
+    {
+        $dbError = self::getError();
+        self::$error[] = $error . ' ERROR: ' . implode('<br>',$dbError);
+    }
+
     public function ociChangePassword($username, $old_password, $new_password) {
         try {
             self::$config = autoload_config();
@@ -100,6 +106,75 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             if($sth->execute()) {
                 return $sp_args;
             }
+
+        } catch (PDOException $e) {
+            self::$error[] = $e->getMessage();
+            Debug::getInstance('exceptions')->addException($e);
+        }
+    }
+
+    public function callFunction2($sp_name = null, $sp_args = [], $types = [], &$output_data = []) {
+        try {
+            foreach ($this->connection as $connection);
+
+            for($i = 0; $i < count($sp_args); $i++) {
+                $o[] = '?';
+            }
+
+            $args = implode(',', $o);
+
+            $sth = $connection->prepare("SELECT $sp_name($args) as OUTPUT FROM DUAL");
+
+            for($i = 0, $z =1; $i < count($sp_args); $i++, $z++) {
+                $param = false;
+
+                switch($types[$i]) {
+                    case 'float':
+                        $param = \PDO::PARAM_STR;
+                    break;
+
+                    case 'date':
+                        $param = \PDO::PARAM_STR;
+                    break;
+
+                    case 'int':
+                        $param = \PDO::PARAM_INT;
+                    break;
+
+                    case 'string':
+                        $param = \PDO::PARAM_STR;
+                    break;
+
+                    case 'output':
+                        $param = \PDO::PARAM_INPUT_OUTPUT;
+                    break;
+
+                    case 'null':
+                        $param = \PDO::PARAM_NULL;
+                    break;
+
+                    case 'bool':
+                        $param = \PDO::PARAM_BOOL;
+                    break;
+
+                    default:
+                        $param = false;
+                }
+
+                $output_data[] = [
+                    'param' => $sp_args[$i],
+                    'type' => $param,
+                    'size' => strlen($sp_args[$i])
+                ];
+
+                $sth->bindParam($z, $sp_args[$i], $param, strlen($sp_args[$i]));
+            }
+
+            if($sth->execute()) {
+                return $sth->fetch();
+            }
+
+
 
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
