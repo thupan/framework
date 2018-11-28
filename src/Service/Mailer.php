@@ -60,6 +60,8 @@ class Mailer {
 
         if($charset = $config['mailer']['charset']) {
             self::getInstance()->CharSet = $charset;
+        } else {
+            self::getInstance()->CharSet = 'UTF-8';
         }
 
         if(self::$server === 'smtp') {
