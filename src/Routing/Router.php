@@ -43,6 +43,11 @@ class Router
         $controller = explode('\\', self::getController());
         $controller = end($controller);
 
+        if (preg_match("/(.+)Controller/",$controller, $matched)) {
+            $controller = explodeCamelCase($matched[1]);
+            $controller = implode('-', $controller);
+        }
+
         if ($lower) {
             $controller = strtolower(str_replace('Controller', '', $controller));
         }
