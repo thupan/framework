@@ -59,7 +59,7 @@ if(!function_exists('moneyConvert')) {
 			case 'US':
 				$money = str_replace('.', '', $money);
 				$money = str_replace(',', '.', $money);
-				$money = number_format($money, 2, '.', '');
+				//$money = number_format($money, 2, '.', '');
 				break;
 			case 'pt-br':
 			case 'pt-BR':
