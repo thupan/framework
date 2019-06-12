@@ -184,6 +184,18 @@ class Router
         self::$controller = self::$controller ? self::$controller : DEFAULT_CONTROLLER;
         self::$method = self::$method ? self::$method : self::DEFAULT_METHOD;
         self::$args = !empty($parts) ? $parts : array();
+        
+        // feature para url amigaveis encontrar o controller
+        // se for url-amigavel
+        if(strpos(self::$controller, '-')) {
+            $urlPascalCase = [];
+            $urlAmigavel = explode('-', self::$controller);
+            foreach ($urlAmigavel as $name) {
+                $urlPascalCase[] = ucfirst($name);
+            }
+            self::$controller = implode('', $urlPascalCase);
+        }
+        // fim da feature url amigaveis
 
         $ControllerClass = ucfirst(self::$controller).'Controller';
 
