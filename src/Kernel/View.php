@@ -267,9 +267,11 @@ class View
                     }
                 });
 
-                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array = [], $var = null) {
+                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array = [], $var = null, $multiple = false) {
                     if($array) {
-                        $options = "<option value=''></option>";
+                        if (!$multiple) {
+                            $options = "<option value=''></option>";
+                        }
                         foreach($array as $index) {
                                 $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
                                 $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";

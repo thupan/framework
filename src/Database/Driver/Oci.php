@@ -19,6 +19,11 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         $this->connect($connection, $database, $host, $port, $username, $password);
     }
 
+    public function getInstanceDB() {
+        foreach ($this->connection as $conn);
+        return $conn;
+    }
+
     public static function getError()
     {
         return self::$error;

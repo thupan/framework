@@ -187,6 +187,19 @@ class Router
         self::$method = array_shift($parts);
 
         self::$controller = self::$controller ? self::$controller : DEFAULT_CONTROLLER;
+
+        // feature para url amigaveis encontrar o metodo do controller
+        // se for url-amigavel
+        if (strpos(self::$method, '-')) {
+            $urlPascalCase = [];
+            $urlAmigavel = explode('-', self::$method);
+            foreach ($urlAmigavel as $name) {
+                $urlPascalCase[] = ucfirst($name);
+            }
+            self::$method = implode('', $urlPascalCase);            
+        }
+        // fim da feature url amigaveis
+
         self::$method = self::$method ? self::$method : self::DEFAULT_METHOD;
         self::$args = !empty($parts) ? $parts : array();
         
