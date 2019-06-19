@@ -383,7 +383,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         try {
             $sql = "DELETE FROM $table WHERE $where";
 
-            $this->setQuery($sql);query
+            $this->setQuery($sql);
 
             return $connection->exec($sql);
         } catch (PDOException $e) {
