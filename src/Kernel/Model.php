@@ -187,6 +187,11 @@ class Model
         return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getError());
     }
 
+    public static function getException()
+    {
+        return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getException());
+    }    
+
     public static function setError($error) {
         return self::dbConnection()->getInstance(self::$connection)->setError($error);
     }
