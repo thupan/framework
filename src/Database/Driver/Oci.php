@@ -10,6 +10,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 {
     protected static $config = [];
     protected static $error  = [];
+    protected static $exception  = [];
     protected $connection    = [];
 
     protected static $queries = [];
@@ -29,6 +30,10 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         return self::$error;
     }
 
+    public static function getException() {
+        return self::$exception;
+    }
+
     public static function setError($error)
     {
         $dbError = self::getError();
@@ -45,6 +50,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
             return oci_password_change($database, $username, $old_password, $new_password);
         } catch(Exception $e) {
+            self::$exception[] = $e;
             return false;
         }
     }
@@ -82,6 +88,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             Debug::collectorPDO($this->connection[$current]);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
 
@@ -114,6 +121,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -183,6 +191,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -234,6 +243,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             }
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -266,6 +276,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->fetchAll(self::$config['database']['DB_FETCH']);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -309,6 +320,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->execute();
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -353,6 +365,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->execute();
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -370,11 +383,12 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         try {
             $sql = "DELETE FROM $table WHERE $where";
 
-            $this->setQuery($sql);
+            $this->setQuery($sql);query
 
             return $connection->exec($sql);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
 
@@ -399,6 +413,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $connection->exec($sql);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
