@@ -123,7 +123,15 @@ class Router
 
     public static function uri_prepare()
     {
-        $dir = explode('/', PHP_SELF);
+        if (PHP_SAPI != "cli-server") {
+            $dir = explode('/', "index.php". REQUEST_URI);
+            $root = '/';
+        } else  {
+            $dir = explode('/', PHP_SELF);
+            $root  = false;
+        }
+
+
 
         $key = array_search('index.php', $dir);
 
@@ -145,7 +153,7 @@ class Router
 
         self::$uri = $url;
 
-        return $Path;
+        return $root.$Path;
     }
 
     public static function filter($action, $name, $handle)
@@ -196,13 +204,13 @@ class Router
             foreach ($urlAmigavel as $name) {
                 $urlPascalCase[] = ucfirst($name);
             }
-            self::$method = implode('', $urlPascalCase);            
+            self::$method = implode('', $urlPascalCase);
         }
         // fim da feature url amigaveis
 
         self::$method = self::$method ? self::$method : self::DEFAULT_METHOD;
         self::$args = !empty($parts) ? $parts : array();
-        
+
         // feature para url amigaveis encontrar o controller
         // se for url-amigavel
         if(strpos(self::$controller, '-')) {
