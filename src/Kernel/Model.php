@@ -162,7 +162,7 @@ class Model
                     $val = $value.'%';
             }
 
-            ($key && $value) ? $search[] = " $type (UPPER($k[0]) LIKE '$val') " : false;
+            ($key && $value) ? $search[] = " $type (UPPER($k[0]) LIKE UPPER('$val')) " : false;
 
             unset($val);
         }
