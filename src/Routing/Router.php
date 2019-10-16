@@ -123,15 +123,13 @@ class Router
 
     public static function uri_prepare()
     {
-        if (PHP_SAPI != "cli-server") {
+        if (PHP_SAPI == "cli-server") {
             $dir = explode('/', "index.php". REQUEST_URI);
             $root = '/';
         } else  {
             $dir = explode('/', PHP_SELF);
             $root  = false;
         }
-
-
 
         $key = array_search('index.php', $dir);
 
