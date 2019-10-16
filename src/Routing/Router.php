@@ -123,7 +123,7 @@ class Router
 
     public static function uri_prepare()
     {
-        if (PHP_SAPI == "cli-server") {
+        if (PHP_SAPI == "cli-server" || PHP_SAPI == "fpm-fcgi") {
             $dir = explode('/', "index.php". REQUEST_URI);
             $root = '/';
         } else  {
