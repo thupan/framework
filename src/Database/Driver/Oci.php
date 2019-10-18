@@ -309,7 +309,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             $sth = $connection->prepare($sql);
 
             foreach ($data as $key => $value) {
-                $sth->bindValue(":$key", $value);
+                $sth->bindParam(":$key", $value, \PDO::PARAM_STR, strlen($value));
                 $values .= ($value == 'sysdate' OR $value == 'SYSDATE') ? "$value," : "'$value',";
             }
 
@@ -354,7 +354,7 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             foreach ($data as $key => $value) {
                 $dt .= (preg_match("/(sysdate|SYSDATE)/", $value, $matched))  ? "$key=sysdate," : "$key='$value',";
 
-                $sth->bindValue(":$key", $value);
+                $sth->bindParam(":$key", $value, \PDO::PARAM_STR, strlen($value));
             }
 
             $dt = rtrim($dt, ',');
