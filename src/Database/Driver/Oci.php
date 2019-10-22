@@ -231,11 +231,15 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         try {
             $sth = $connection->prepare($sql);
-            $sth->execute();
+            $r = $sth->execute();
 
             switch ($type) {
                 case 'json':
                     return json_encode($sth->fetchAll(self::$config['database']['DB_FETCH']));
+                break;
+
+                case 'sql':
+                    return $r;
                 break;
 
                 default:
@@ -324,6 +328,43 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             Debug::getInstance('exceptions')->addException($e);
         }
     }
+
+    public function forceInsert($table, $fields) {
+
+        foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
+        try {
+            $fieldNames = implode(',', array_keys($fields));
+
+            foreach ($fields as $key => $value) {
+                if($value == 'sysdate' OR $value == 'SYSDATE') {
+                    $fieldValues .= "sysdate,";
+                } else {
+                    $value = \addslashes($value);
+                    $fieldValues .= "'$value',";
+                }
+            }
+
+            $fieldValues = rtrim($fieldValues, ',');
+
+            $sql = "INSERT INTO $table ($fieldNames) VALUES ($fieldValues)";
+
+            $this->setQuery($sql);
+
+            $sth = $connection->prepare($sql);    
+            return $sth->execute();        
+        } catch (PDOException $e) {
+            self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
+            Debug::getInstance('exceptions')->addException($e);
+        }
+    } 
 
     public function update($table, $data, $where)
     {

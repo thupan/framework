@@ -229,6 +229,18 @@ class Model
         return $data;
     }
 
+
+    public static function forceInsert($table, $data)
+    {
+        $data = self::dbConnection()->getInstance(self::$connection)->forceInsert($table, $data);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
+    }    
+
     public static function update($table, $data, $where)
     {
         $data = self::dbConnection()->getInstance(self::$connection)->update($table, $data, $where);
