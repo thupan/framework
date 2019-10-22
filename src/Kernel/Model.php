@@ -252,6 +252,17 @@ class Model
         return $data;
     }
 
+    public static function forceUpdate($table, $data, $where)
+    {
+        $data = self::dbConnection()->getInstance(self::$connection)->forceUpdate($table, $data, $where);
+
+        if(self::$persistence) {
+            self::execute("COMMIT");
+        }
+
+        return $data;
+    }    
+
     public static function delete($table, $where)
     {
         $data = self::dbConnection()->getInstance(self::$connection)->delete($table, $where);

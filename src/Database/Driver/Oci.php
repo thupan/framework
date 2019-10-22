@@ -411,6 +411,44 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         }
     }
 
+    public function forceUpdate($table, $data, $where)
+    {
+        foreach ($this->connection as $connection);
+
+        if(!$connection) {
+            return [['ERRO' => translate('app', 'database.erro1', [
+    1 => self::getError(),
+    ])]];
+        }
+
+        try {
+            ksort($data);
+
+            $fieldDetails = null;
+
+            foreach ($data as $key => $value) {
+                $value = addslashes($value);
+                $fieldDetails .= (preg_match("/(sysdate|SYSDATE)/", $value, $matched))  ? "$key=sysdate," : "$key='$value',";
+            }
+
+            $fieldDetails = rtrim($fieldDetails, ',');
+
+            $sql = "UPDATE $table SET $fieldDetails WHERE $where";
+
+            $sth = $connection->prepare($sql);
+
+            $where = isset($where) ? "WHERE $where" : false;
+
+            $this->setQuery("UPDATE $table SET $fieldDetails $where");
+
+            return $sth->execute();            
+        } catch (PDOException $e) {
+            self::$error[] = $e->getMessage();
+            self::$exception[] = $e;
+            Debug::getInstance('exceptions')->addException($e);
+        }       
+    }
+
     public function delete($table, $where)
     {
         foreach ($this->connection as $connection);
