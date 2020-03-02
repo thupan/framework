@@ -36,7 +36,7 @@
     "require": {
         "php": ">=5.5.0",
         "maximebf/debugbar": "~1.10",
-        "twig/twig": "~1.24.0",
+        "twig/twig": "3.0.3",
         "setasign/fpdf": "~1.7",
         "phpmailer/phpmailer": "~5.2",
         "intervention/image": "~2.3",
