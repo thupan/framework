@@ -1,59 +1,60 @@
 {
-    "name": "thupan/framework",
-    "description": "Thupan PHP Framework",
-    "license": "MIT",
-    "authors": [{
-            "name": "Eduardo Vieira",
-            "email": "gceduvieira@gmail.com",
-            "homepage": "http://github.com/Eduardo-Vieira",
-            "role": "Developer"
-        },
-        {
-            "name": "Harryson Palheta",
-            "email": "harryson.palheta@gmail.com",
-            "homepage": "http://gitlab.com/rexrod",
-            "role": "Developer"
-        },
-        {
-            "name": "Luiz Schmitt",
-            "email": "lzschmitt@gmail.com",
-            "homepage": "http://github.com/luizschmitt",
-            "role": "Developer"
-        },
-        {
-            "name": "Rodrigo Cabral",
-            "email": "rodrixcornell@gmail.com",
-            "homepage": "http://github.com/rodrixcornell",
-            "role": "Developer"
-        },
-        {
-            "name": "Smith Junior",
-            "email": "smith.junior@icloud.com",
-            "homepage": "http://github.com/smithjunior",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">= 5.6",
-        "maximebf/debugbar": "1.10",
-        "twig/twig": "1.24.0",
-        "setasign/fpdf": "1.7",
-        "phpmailer/phpmailer": "6.1.6",
-        "intervention/image": "2.3",
-        "filp/whoops": "2.1.2"
+  "name": "thupan/framework",
+  "description": "Thupan PHP Framework",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Eduardo Vieira",
+      "email": "gceduvieira@gmail.com",
+      "homepage": "http://github.com/Eduardo-Vieira",
+      "role": "Developer"
     },
-    "autoload": {
-        "psr-4": {
-            "Console\\": "src/Console/",
-            "Kernel\\": "src/Kernel/",
-            "Service\\": "src/Service/",
-            "Database\\": "src/Database/",
-            "Support\\": "src/Support/",
-            "Exception\\": "src/Exception/",
-            "Routing\\": "src/Routing/",
-            "Log\\": "src/Log/",
-            "Generator\\": "src/Generator/"
-        }
+    {
+      "name": "Harryson Palheta",
+      "email": "harryson.palheta@gmail.com",
+      "homepage": "http://gitlab.com/rexrod",
+      "role": "Developer"
     },
-    "minimum-stability": "dev"
+    {
+      "name": "Luiz Schmitt",
+      "email": "lzschmitt@gmail.com",
+      "homepage": "http://github.com/luizschmitt",
+      "role": "Developer"
+    },
+    {
+      "name": "Rodrigo Cabral",
+      "email": "rodrixcornell@gmail.com",
+      "homepage": "http://github.com/rodrixcornell",
+      "role": "Developer"
+    },
+    {
+      "name": "Smith Junior",
+      "email": "smith.junior@icloud.com",
+      "homepage": "http://github.com/smithjunior",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">= 5.6",
+    "maximebf/debugbar": "1.10",
+    "twig/twig": "1.38.0",
+    "setasign/fpdf": "1.7",
+    "phpmailer/phpmailer": "6.1.6",
+    "intervention/image": "2.3",
+    "filp/whoops": "2.1.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "Console\\": "src/Console/",
+      "Kernel\\": "src/Kernel/",
+      "Service\\": "src/Service/",
+      "Database\\": "src/Database/",
+      "Support\\": "src/Support/",
+      "Exception\\": "src/Exception/",
+      "Routing\\": "src/Routing/",
+      "Log\\": "src/Log/",
+      "Generator\\": "src/Generator/"
+    }
+  },
+  "minimum-stability": "dev"
 }
