@@ -350,3 +350,9 @@ if(!function_exists('explodeCamelCase')) {
       return preg_split('/(?<=\\w)(?=[A-Z])/', $str);
     }
 }
+
+if(!function_exists('camel2dashed')) {
+    function camel2dashed($className) {
+        return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $className));
+    }
+}
