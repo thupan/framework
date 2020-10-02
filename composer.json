@@ -34,7 +34,7 @@
         }
     ],
     "require": {
-        "php": "<= 7.2",
+        "php": "<= 7.2.*",
         "maximebf/debugbar": "1.10",
         "twig/twig": "1.24.0",
         "setasign/fpdf": "1.7",
