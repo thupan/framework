@@ -10,7 +10,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 {
     protected static $config = [];
     protected static $error  = [];
-    protected static $exception  = [];
     protected $connection    = [];
 
     protected static $queries = [];
@@ -20,18 +19,9 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
         $this->connect($connection, $database, $host, $port, $username, $password);
     }
 
-    public function getInstanceDB() {
-        foreach ($this->connection as $conn);
-        return $conn;
-    }
-
     public static function getError()
     {
         return self::$error;
-    }
-
-    public static function getException() {
-        return self::$exception;
     }
 
     public static function setError($error)
@@ -50,7 +40,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
             return oci_password_change($database, $username, $old_password, $new_password);
         } catch(Exception $e) {
-            self::$exception[] = $e;
             return false;
         }
     }
@@ -88,7 +77,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             Debug::collectorPDO($this->connection[$current]);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
 
@@ -121,7 +109,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -191,7 +178,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -231,15 +217,11 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
 
         try {
             $sth = $connection->prepare($sql);
-            $r = $sth->execute();
+            $sth->execute();
 
             switch ($type) {
                 case 'json':
                     return json_encode($sth->fetchAll(self::$config['database']['DB_FETCH']));
-                break;
-
-                case 'sql':
-                    return $r;
                 break;
 
                 default:
@@ -247,7 +229,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             }
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -280,7 +261,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->fetchAll(self::$config['database']['DB_FETCH']);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
@@ -324,47 +304,9 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->execute();
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }
-
-    public function forceInsert($table, $fields) {
-
-        foreach ($this->connection as $connection);
-
-        if(!$connection) {
-            return [['ERRO' => translate('app', 'database.erro1', [
-    1 => self::getError(),
-    ])]];
-        }
-
-        try {
-            $fieldNames = implode(',', array_keys($fields));
-
-            foreach ($fields as $key => $value) {
-                if($value == 'sysdate' OR $value == 'SYSDATE') {
-                    $fieldValues .= "sysdate,";
-                } else {
-                    $value = \addslashes($value);
-                    $fieldValues .= "'$value',";
-                }
-            }
-
-            $fieldValues = rtrim($fieldValues, ',');
-
-            $sql = "INSERT INTO $table ($fieldNames) VALUES ($fieldValues)";
-
-            $this->setQuery($sql);
-
-            $sth = $connection->prepare($sql);    
-            return $sth->execute();        
-        } catch (PDOException $e) {
-            self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
-            Debug::getInstance('exceptions')->addException($e);
-        }
-    } 
 
     public function update($table, $data, $where)
     {
@@ -406,47 +348,8 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $sth->execute();
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
-    }
-
-    public function forceUpdate($table, $data, $where)
-    {
-        foreach ($this->connection as $connection);
-
-        if(!$connection) {
-            return [['ERRO' => translate('app', 'database.erro1', [
-    1 => self::getError(),
-    ])]];
-        }
-
-        try {
-            ksort($data);
-
-            $fieldDetails = null;
-
-            foreach ($data as $key => $value) {
-                $value = addslashes($value);
-                $fieldDetails .= (preg_match("/(sysdate|SYSDATE)/", $value, $matched))  ? "$key=sysdate," : "$key='$value',";
-            }
-
-            $fieldDetails = rtrim($fieldDetails, ',');
-
-            $sql = "UPDATE $table SET $fieldDetails WHERE $where";
-
-            $sth = $connection->prepare($sql);
-
-            $where = isset($where) ? "WHERE $where" : false;
-
-            $this->setQuery("UPDATE $table SET $fieldDetails $where");
-
-            return $sth->execute();            
-        } catch (PDOException $e) {
-            self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
-            Debug::getInstance('exceptions')->addException($e);
-        }       
     }
 
     public function delete($table, $where)
@@ -467,7 +370,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $connection->exec($sql);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
 
@@ -492,7 +394,6 @@ class Oci extends \PDO implements \Database\Interfaces\PersistenceDatabase
             return $connection->exec($sql);
         } catch (PDOException $e) {
             self::$error[] = $e->getMessage();
-            self::$exception[] = $e;
             Debug::getInstance('exceptions')->addException($e);
         }
     }

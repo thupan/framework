@@ -162,7 +162,7 @@ class Model
                     $val = $value.'%';
             }
 
-            ($key && $value) ? $search[] = " $type (UPPER($k[0]) LIKE UPPER('$val')) " : false;
+            ($key && $value) ? $search[] = " $type (UPPER($k[0]) LIKE '$val') " : false;
 
             unset($val);
         }
@@ -186,11 +186,6 @@ class Model
     {
         return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getError());
     }
-
-    public static function getException()
-    {
-        return implode('<br/>', self::dbConnection()->getInstance(self::$connection)->getException());
-    }    
 
     public static function setError($error) {
         return self::dbConnection()->getInstance(self::$connection)->setError($error);
@@ -229,18 +224,6 @@ class Model
         return $data;
     }
 
-
-    public static function forceInsert($table, $data)
-    {
-        $data = self::dbConnection()->getInstance(self::$connection)->forceInsert($table, $data);
-
-        if(self::$persistence) {
-            self::execute("COMMIT");
-        }
-
-        return $data;
-    }    
-
     public static function update($table, $data, $where)
     {
         $data = self::dbConnection()->getInstance(self::$connection)->update($table, $data, $where);
@@ -251,17 +234,6 @@ class Model
 
         return $data;
     }
-
-    public static function forceUpdate($table, $data, $where)
-    {
-        $data = self::dbConnection()->getInstance(self::$connection)->forceUpdate($table, $data, $where);
-
-        if(self::$persistence) {
-            self::execute("COMMIT");
-        }
-
-        return $data;
-    }    
 
     public static function delete($table, $where)
     {

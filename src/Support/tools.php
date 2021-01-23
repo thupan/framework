@@ -59,7 +59,7 @@ if(!function_exists('moneyConvert')) {
 			case 'US':
 				$money = str_replace('.', '', $money);
 				$money = str_replace(',', '.', $money);
-				//$money = number_format($money, 2, '.', '');
+				$money = number_format($money, 2, '.', '');
 				break;
 			case 'pt-br':
 			case 'pt-BR':
@@ -348,11 +348,5 @@ if(!function_exists('parse_str_to_array')) {
 if(!function_exists('explodeCamelCase')) {
     function explodeCamelCase($str) {
       return preg_split('/(?<=\\w)(?=[A-Z])/', $str);
-    }
-}
-
-if(!function_exists('camel2dashed')) {
-    function camel2dashed($className) {
-        return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $className));
     }
 }

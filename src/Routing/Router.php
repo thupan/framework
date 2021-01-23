@@ -43,11 +43,6 @@ class Router
         $controller = explode('\\', self::getController());
         $controller = end($controller);
 
-        if (preg_match("/(.+)Controller/",$controller, $matched)) {
-            $controller = explodeCamelCase($matched[1]);
-            $controller = implode('-', $controller);
-        }
-
         if ($lower) {
             $controller = strtolower(str_replace('Controller', '', $controller));
         }
@@ -123,13 +118,7 @@ class Router
 
     public static function uri_prepare()
     {
-        if (PHP_SAPI == "cli-server" || PHP_SAPI == "fpm-fcgi") {
-            $dir = explode('/', "index.php". explode('?', REQUEST_URI)[0]);
-            $root = '/';
-        } else  {
-            $dir = explode('/', PHP_SELF);
-            $root  = false;
-        }
+        $dir = explode('/', PHP_SELF);
 
         $key = array_search('index.php', $dir);
 
@@ -151,7 +140,7 @@ class Router
 
         self::$uri = $url;
 
-        return $root.$Path;
+        return $Path;
     }
 
     public static function filter($action, $name, $handle)
@@ -193,33 +182,8 @@ class Router
         self::$method = array_shift($parts);
 
         self::$controller = self::$controller ? self::$controller : DEFAULT_CONTROLLER;
-
-        // feature para url amigaveis encontrar o metodo do controller
-        // se for url-amigavel
-        if (strpos(self::$method, '-')) {
-            $urlPascalCase = [];
-            $urlAmigavel = explode('-', self::$method);
-            foreach ($urlAmigavel as $name) {
-                $urlPascalCase[] = ucfirst($name);
-            }
-            self::$method = implode('', $urlPascalCase);
-        }
-        // fim da feature url amigaveis
-
         self::$method = self::$method ? self::$method : self::DEFAULT_METHOD;
         self::$args = !empty($parts) ? $parts : array();
-
-        // feature para url amigaveis encontrar o controller
-        // se for url-amigavel
-        if(strpos(self::$controller, '-')) {
-            $urlPascalCase = [];
-            $urlAmigavel = explode('-', self::$controller);
-            foreach ($urlAmigavel as $name) {
-                $urlPascalCase[] = ucfirst($name);
-            }
-            self::$controller = implode('', $urlPascalCase);
-        }
-        // fim da feature url amigaveis
 
         $ControllerClass = ucfirst(self::$controller).'Controller';
 

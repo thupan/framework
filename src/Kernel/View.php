@@ -91,6 +91,28 @@ class View
                             }
                         }
 
+                        // pega todos os scripts restantes do controlador
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/js/*.js') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se é filho da tela
+                                $child     = explode('-', $file_name);
+                                // se não for filho, ignora o script
+                                if(count($child) >= 2) {
+                                    if($child[0] != Router::getMethod()) continue;
+                                }
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded) && !in_array($file_name, $default_methods)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
                         // carrega todos os scripts do public
                         foreach(glob(DOC_ROOT . 'public/js/*.js') as $script) {
                             // verifica se o script deste metodo existe
@@ -106,44 +128,7 @@ class View
                                 }
                             }
                         }
-                    } else {
-                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/' . camel2dashed(Router::getMethod()) . '/js/*.js') as $script) {
-                            // verifica se o script deste metodo existe
-                            if( file_exists($script) ) {
-                                // explode o path do script
-                                $file_name = explode('/', $script);
-                                // pega apenas o nome do script ignorando a extenção
-                                $file_name = explode('.', end($file_name))[0];
-                                // verifica se o arquivo ja foi carregado
-                                if(!in_array($file_name, $files_loaded)) {
-                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
-                                    $files_loaded[] = camel2dashed(Router::getMethod()) .'/'. $file_name;
-                                }
-                            }
-                        }
                     }
-
-                    // pega todos os scripts restantes do controlador
-                    foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/js/*.js') as $script) {
-                        // verifica se o script deste metodo existe
-                        if( file_exists($script) ) {
-                            // explode o path do script
-                            $file_name = explode('/', $script);
-                            // pega apenas o nome do script ignorando a extenção
-                            $file_name = explode('.', end($file_name))[0];
-                            // verifica se é filho da tela
-                            $child     = explode('-', $file_name);
-                            // se não for filho, ignora o script
-                            if(count($child) >= 2) {
-                                if($child[0] != Router::getMethod()) continue;
-                            }
-                            // verifica se o arquivo ja foi carregado
-                            if(!in_array($file_name, $files_loaded)) {
-                                $scripts[] = "\n<!-- autoloaded $file_name -->\n<script type='text/javascript'>". \Service\Minifier::minify(file_get_contents($script)) ."</script>\n";
-                                $files_loaded[] = $file_name;
-                            }
-                        }
-                    }                    
 
                     echo implode("\n", $scripts);
                 });
@@ -184,6 +169,28 @@ class View
                             }
                         }
 
+                        // pega todos os scripts restantes do controlador
+                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/css/*.css') as $script) {
+                            // verifica se o script deste metodo existe
+                            if( file_exists($script) ) {
+                                // explode o path do script
+                                $file_name = explode('/', $script);
+                                // pega apenas o nome do script ignorando a extenção
+                                $file_name = explode('.', end($file_name))[0];
+                                // verifica se é filho da tela
+                                $child     = explode('-', $file_name);
+                                // se não for filho, ignora o script
+                                if(count($child) >= 2) {
+                                    if($child[0] != Router::getMethod()) continue;
+                                }
+                                // verifica se o arquivo ja foi carregado
+                                if(!in_array($file_name, $files_loaded) && !in_array($file_name, $default_methods)) {
+                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
+                                    $files_loaded[] = $file_name;
+                                }
+                            }
+                        }
+
                         // carrega todos os scripts do public
                         foreach(glob(DOC_ROOT . 'public/css/*.css') as $script) {
                             // verifica se o script deste metodo existe
@@ -199,47 +206,7 @@ class View
                                 }
                             }
                         }
-                    } else {
-                        foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/' . camel2dashed(Router::getMethod()) . '/css/*.css') as $script) {
-                            // verifica se o script deste metodo existe
-                            if( file_exists($script) ) {
-                                // explode o path do script
-                                $file_name = explode('/', $script);
-                                // pega apenas o nome do script ignorando a extenção
-                                $file_name = explode('.', end($file_name))[0];
-                                // verifica se o arquivo ja foi carregado
-                                if(!in_array($file_name, $files_loaded)) {
-                                    $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
-                                    $files_loaded[] =  camel2dashed(Router::getMethod()) .'/'. $file_name;
-                                }
-                            }
-                        }
                     }
-
-                    // pega todos os scripts restantes do controlador
-                    foreach(glob(DOC_ROOT . 'app/Http/Views/' . Router::getControllerName() . '/css/*.css') as $script) {
-                       
-                        // verifica se o script deste metodo existe
-                        if( file_exists($script) ) {
-                           
-                            // explode o path do script
-                            $file_name = explode('/', $script);
-                            // pega apenas o nome do script ignorando a extenção
-                            $file_name = explode('.', end($file_name))[0];
-                            // verifica se é filho da tela
-                            $child     = explode('-', $file_name);
-                            // se não for filho, ignora o script
-                            if(count($child) >= 2) {
-                                if($child[0] != Router::getMethod()) continue;
-                            }
-
-                            // verifica se o arquivo ja foi carregado
-                            if(!in_array($file_name, $files_loaded)) {
-                                $scripts[] = "\n<!-- autoloaded $file_name -->\n<style type='text/css'>". \Service\Minifier::minify(file_get_contents($script)) ."</style>\n";
-                                $files_loaded[] = $file_name;
-                            }
-                        }
-                    }                    
 
                     echo implode("\n", $scripts);
                 });
@@ -300,11 +267,9 @@ class View
                     }
                 });
 
-                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array = [], $var = null, $multiple = false) {
+                self::$functions[] = new \Twig_SimpleFunction('select2_options', function($array = [], $var = null) {
                     if($array) {
-                        if (!$multiple) {
-                            $options = "<option value=''></option>";
-                        }
+                        $options = "<option value=''></option>";
                         foreach($array as $index) {
                                 $selected = ($index['ID'] == $var) ? ' selected="selected" ' : false;
                                 $options .= "<option value='{$index['ID']}' $selected>{$index['TEXT']}</option>";
